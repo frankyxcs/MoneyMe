@@ -1,10 +1,10 @@
-package com.devmoroz.moneyme.adapter;
+package com.devmoroz.moneyme.adapters;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.devmoroz.moneyme.fragment.ExampleFragment;
+import com.devmoroz.moneyme.fragments.ExampleFragment;
 
 public class TabsPagerFragmentAdapter extends FragmentPagerAdapter {
 

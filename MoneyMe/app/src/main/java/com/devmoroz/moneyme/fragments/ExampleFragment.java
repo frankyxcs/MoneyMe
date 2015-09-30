@@ -1,4 +1,4 @@
-package com.devmoroz.moneyme.fragment;
+package com.devmoroz.moneyme.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

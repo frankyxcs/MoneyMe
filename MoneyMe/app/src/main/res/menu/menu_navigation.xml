@@ -1,7 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
     <item android:title="@string/search_title"
         android:orderInCategory="1" />
     <item android:title="@string/search_title"
         android:orderInCategory="1" />
+</group>
+    <item android:title="@string/option_more">
+        <menu>
+            <item
+                android:id="@+id/item_navigation_drawer_settings"
+                android:title="@string/option_settings" />
+            <item
+                android:id="@+id/item_navigation_drawer_help_and_about"
+                android:title="@string/option_about_help" />
+        </menu>
+    </item>
 </menu>
