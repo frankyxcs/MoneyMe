@@ -3,7 +3,6 @@ package com.devmoroz.moneyme;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -24,7 +23,6 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private TabLayout tabLayout;
     private ViewPager viewPager;
-    private FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,15 +33,9 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         viewPager = (ViewPager) findViewById(R.id.view_pager);
         tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        fab = (FloatingActionButton) findViewById(R.id.fab_main);
 
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Snackbar.make(findViewById(R.id.coordinator), "Some very cool text", Snackbar.LENGTH_LONG)
-                        .show();
-            }
-        });
+
+
 
         initToolbar();
         initNavigationView();
