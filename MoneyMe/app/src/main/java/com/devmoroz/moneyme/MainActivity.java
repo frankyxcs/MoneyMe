@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.devmoroz.moneyme.adapters.TabsPagerFragmentAdapter;
+import com.devmoroz.moneyme.helpers.DBHelperFactory;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        DBHelperFactory.setHelper(getApplicationContext());
         setContentView(R.layout.activity_main);
 
         toolbar = (Toolbar)findViewById(R.id.toolbar);
@@ -42,6 +44,12 @@ public class MainActivity extends AppCompatActivity {
         initTabs();
 
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        DBHelperFactory.releaseHelper();
+        super.onDestroy();
     }
 
     private void initToolbar() {
