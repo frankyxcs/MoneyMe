@@ -9,13 +9,13 @@ import android.view.ViewGroup;
 
 import com.devmoroz.moneyme.R;
 
-public class ExampleFragment extends Fragment {
+public class GoalsFragment extends Fragment {
 
     private View view;
 
-    public static ExampleFragment getInstance() {
+    public static GoalsFragment getInstance() {
         Bundle args = new Bundle();
-        ExampleFragment fragment = new ExampleFragment();
+        GoalsFragment fragment = new GoalsFragment();
         fragment.setArguments(args);
 
         return fragment;
@@ -24,7 +24,7 @@ public class ExampleFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.example_fragment, container, false);
+        view = inflater.inflate(R.layout.goals_fragment, container, false);
         return view;
     }
 }

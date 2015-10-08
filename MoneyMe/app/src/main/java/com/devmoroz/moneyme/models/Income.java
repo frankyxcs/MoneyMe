@@ -6,8 +6,8 @@ import com.j256.ormlite.table.DatabaseTable;
 
 import java.sql.Date;
 
-@DatabaseTable(tableName = "goals")
-public class Goal {
+@DatabaseTable(tableName = "incomes")
+public class Income {
 
     @DatabaseField(generatedId = true)
     private int id;
@@ -18,22 +18,15 @@ public class Goal {
     @DatabaseField(canBeNull = true)
     private String notes;
 
-    @DatabaseField(dataType = DataType.DATE)
-    private Date deadlineDate;
+    @DatabaseField(dataType = DataType.SQL_DATE)
+    private Date dateOfReceipt;
 
-    @DatabaseField(canBeNull = false,dataType = DataType.INTEGER)
-    private int totalAmount;
-
-    @DatabaseField(canBeNull = true,dataType = DataType.INTEGER)
-    private int accumulated;
+    @DatabaseField(canBeNull = false,dataType = DataType.DOUBLE)
+    private double amount;
 
     @DatabaseField(canBeNull = false)
     private int currency;
 
-    @DatabaseField(dataType = DataType.BOOLEAN)
-    private boolean achieved;
-
-
-    public Goal() {
+    public Income() {
     }
 }

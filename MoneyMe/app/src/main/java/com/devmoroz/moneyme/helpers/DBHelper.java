@@ -5,7 +5,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.devmoroz.moneyme.dao.GoalDAO;
+import com.devmoroz.moneyme.dao.IncomeDAO;
+import com.devmoroz.moneyme.dao.OutcomeDAO;
 import com.devmoroz.moneyme.models.Goal;
+import com.devmoroz.moneyme.models.Income;
+import com.devmoroz.moneyme.models.Outcome;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
@@ -20,6 +24,8 @@ public class DBHelper extends OrmLiteSqliteOpenHelper {
     private static final int DATABASE_VERSION = 1;
 
     private GoalDAO goalDao = null;
+    private IncomeDAO incomeDAO = null;
+    private OutcomeDAO outcomeDAO = null;
 
     public DBHelper(Context context) {
         super(context,DATABASE_NAME,null,DATABASE_VERSION);
@@ -30,6 +36,8 @@ public class DBHelper extends OrmLiteSqliteOpenHelper {
         try
         {
             TableUtils.createTable(connectionSource, Goal.class);
+            TableUtils.createTable(connectionSource, Income.class);
+            TableUtils.createTable(connectionSource, Outcome.class);
         }
         catch (SQLException e){
             Log.e("","error creating DB " + DATABASE_NAME);
@@ -47,6 +55,8 @@ public class DBHelper extends OrmLiteSqliteOpenHelper {
     public void close(){
         super.close();
         goalDao = null;
+        incomeDAO = null;
+        outcomeDAO = null;
     }
 
     public GoalDAO getGoalDAO() throws SQLException{
@@ -54,5 +64,17 @@ public class DBHelper extends OrmLiteSqliteOpenHelper {
             goalDao = new GoalDAO(getConnectionSource(), Goal.class);
         }
         return goalDao;
+    }
+    public IncomeDAO getIncomeDAO() throws SQLException{
+        if(incomeDAO == null){
+            incomeDAO = new IncomeDAO(getConnectionSource(), Income.class);
+        }
+        return incomeDAO;
+    }
+    public OutcomeDAO getOutcomeDAO() throws SQLException{
+        if(outcomeDAO == null){
+            outcomeDAO = new OutcomeDAO(getConnectionSource(), Outcome.class);
+        }
+        return outcomeDAO;
     }
 }
