@@ -19,6 +19,8 @@ import java.sql.SQLException;
 
 public class DBHelper extends OrmLiteSqliteOpenHelper {
 
+    private static final String TAG = DBHelper.class.getSimpleName();
+
     private static final String DATABASE_NAME ="moneyme.db";
 
     private static final int DATABASE_VERSION = 1;
@@ -40,7 +42,7 @@ public class DBHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTable(connectionSource, Outcome.class);
         }
         catch (SQLException e){
-            Log.e("","error creating DB " + DATABASE_NAME);
+            Log.e(TAG,"error creating DB " + DATABASE_NAME);
             throw new RuntimeException(e);
         }
 
@@ -48,7 +50,17 @@ public class DBHelper extends OrmLiteSqliteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db,ConnectionSource connectionSource, int oldVersion, int newVersion) {
-
+        try{
+            //Так делают ленивые, гораздо предпочтительнее не удаляя БД аккуратно вносить изменения
+            TableUtils.dropTable(connectionSource, Goal.class, true);
+            TableUtils.dropTable(connectionSource, Income.class, true);
+            TableUtils.dropTable(connectionSource, Outcome.class, true);
+            onCreate(db, connectionSource);
+        }
+        catch (SQLException e){
+            Log.e(TAG,"error upgrading db "+DATABASE_NAME+"from ver "+oldVersion);
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
