@@ -4,7 +4,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import com.devmoroz.moneyme.fragments.ChartFragment;
 import com.devmoroz.moneyme.fragments.GoalsFragment;
+import com.devmoroz.moneyme.fragments.HistoryFragment;
 
 public class TabsPagerFragmentAdapter extends FragmentPagerAdapter {
 
@@ -14,7 +16,7 @@ public class TabsPagerFragmentAdapter extends FragmentPagerAdapter {
         super(fm);
 
         tabs = new String[]{
-          "Tab 1", "Tab 2", "Tab 3", "Tab 4", "Tab 5"
+          "История", "График", "Цели"
         };
     }
 
@@ -27,14 +29,10 @@ public class TabsPagerFragmentAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return GoalsFragment.getInstance();
+                return HistoryFragment.getInstance();
             case 1:
-                return GoalsFragment.getInstance();
+                return ChartFragment.getInstance();
             case 2:
-                return GoalsFragment.getInstance();
-            case 3:
-                return GoalsFragment.getInstance();
-            case 4:
                 return GoalsFragment.getInstance();
         }
 
