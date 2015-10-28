@@ -10,6 +10,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private TabLayout tabLayout;
     private ViewPager viewPager;
+    private RecyclerView recyclerView;
+    public static int currentItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,15 +39,19 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         viewPager = (ViewPager) findViewById(R.id.view_pager);
         tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-
-
-
+        recyclerView = (RecyclerView) findViewById(R.id.main_recycler_view);
 
         initToolbar();
         initNavigationView();
         initTabs();
+        initRecyclerView();
 
+    }
 
+    private void initRecyclerView() {
+        recyclerView.setHasFixedSize(true);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
     }
 
     @Override

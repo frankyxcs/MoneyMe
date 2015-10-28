@@ -61,6 +61,7 @@
             app:fab_title="Another one on the right"
             app:fab_colorPressed="#f1f1f1"/>
 
+
     </com.getbase.floatingactionbutton.FloatingActionsMenu>
 
     </android.support.design.widget.CoordinatorLayout>
