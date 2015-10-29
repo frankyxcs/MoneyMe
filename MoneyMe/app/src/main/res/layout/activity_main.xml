@@ -56,11 +56,22 @@
         <com.getbase.floatingactionbutton.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:fab_colorNormal="#fafafa"
+            android:id="@+id/fab_main_income"
+            app:fab_icon="@drawable/ic_fab_income"
+            app:fab_colorNormal="#009688"
+            app:fab_colorPressed="#26A69A"
             app:fab_size="mini"
-            app:fab_title="Another one on the right"
-            app:fab_colorPressed="#f1f1f1"/>
+            app:fab_title="Доход"/>
 
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/fab_main_outcome"
+            app:fab_icon="@drawable/ic_fab_outcome"
+            app:fab_colorNormal="#e91e63"
+            app:fab_colorPressed="#ec407a"
+            app:fab_size="mini"
+            app:fab_title="Расход"/>
 
     </com.getbase.floatingactionbutton.FloatingActionsMenu>
 

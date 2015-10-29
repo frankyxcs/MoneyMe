@@ -6,4 +6,7 @@
     <string name="option_more">More</string>
     <string name="view_navigation_open">Open</string>
     <string name="view_navigation_close">Close</string>
+    <string name="income_toolbar_name">Доход</string>
+    <string name="outcome_toolbar_name">Расход</string>
+    <string name="default_add_toolbar_name">Кошелек</string>
 </resources>

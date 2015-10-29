@@ -31,9 +31,11 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
     public void onBindViewHolder(MainViewHolder holder, int position) {
         TextView textAmount = holder.textAmount;
         TextView textDescription = holder.textDescription;
+        TextView textDateAdded = holder.textDateAdded;
 
         textAmount.setText(inOutData.get(position).getAmount());
         textDescription.setText(inOutData.get(position).getDescription());
+        textDateAdded.setText(inOutData.get(position).getFormatedDate().toString());
     }
 
     @Override
@@ -45,11 +47,13 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
 
         TextView textAmount;
         TextView textDescription;
+        TextView textDateAdded;
 
         public MainViewHolder(View v) {
             super(v);
             this.textAmount = (TextView)v.findViewById(R.id.card_main_amount);
             this.textDescription = (TextView)v.findViewById(R.id.card_main_description);
+            this.textDateAdded = (TextView)v.findViewById(R.id.card_main_date);
         }
 
     }

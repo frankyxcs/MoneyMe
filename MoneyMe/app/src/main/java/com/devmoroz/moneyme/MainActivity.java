@@ -18,7 +18,10 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.devmoroz.moneyme.adapters.TabsPagerFragmentAdapter;
+import com.devmoroz.moneyme.eventBus.BusProvider;
+import com.devmoroz.moneyme.helpers.DBHelper;
 import com.devmoroz.moneyme.helpers.DBHelperFactory;
+import com.getbase.floatingactionbutton.FloatingActionButton;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,12 +30,17 @@ public class MainActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private RecyclerView recyclerView;
+    private FloatingActionButton fabIn;
+    private FloatingActionButton fabOut;
+    private DBHelper dbHelper;
     public static int currentItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        DBHelperFactory.setHelper(getApplicationContext());
+       // DBHelperFactory.setHelper(getApplicationContext());
+      //  dbHelper = DBHelperFactory.getHelper();
+
         setContentView(R.layout.activity_main);
 
         toolbar = (Toolbar)findViewById(R.id.toolbar);
@@ -40,24 +48,33 @@ public class MainActivity extends AppCompatActivity {
         viewPager = (ViewPager) findViewById(R.id.view_pager);
         tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         recyclerView = (RecyclerView) findViewById(R.id.main_recycler_view);
+        fabIn = (FloatingActionButton) findViewById(R.id.fab_main_income);
+        fabOut = (FloatingActionButton) findViewById(R.id.fab_main_outcome);
 
         initToolbar();
         initNavigationView();
         initTabs();
-        initRecyclerView();
+        initFloatingActionMenu();
+        //initRecyclerView();
 
-    }
-
-    private void initRecyclerView() {
-        recyclerView.setHasFixedSize(true);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
     }
 
     @Override
     protected void onDestroy() {
-        DBHelperFactory.releaseHelper();
+        //DBHelperFactory.releaseHelper();
         super.onDestroy();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        BusProvider.getInstance().register(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        BusProvider.getInstance().unregister(this);
     }
 
     private void initToolbar() {
@@ -105,5 +122,33 @@ public class MainActivity extends AppCompatActivity {
         TabsPagerFragmentAdapter adapter = new TabsPagerFragmentAdapter(getSupportFragmentManager());
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
+    }
+
+    private void initRecyclerView() {
+        recyclerView.setHasFixedSize(true);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+    }
+
+    private void initFloatingActionMenu() {
+        fabIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startAddActivity(R.string.income_toolbar_name);
+            }
+        });
+
+        fabOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startAddActivity(R.string.outcome_toolbar_name);
+            }
+        });
+    }
+
+    private void startAddActivity(int headerText){
+        Intent intent = new Intent(this, AddItemActivity.class);
+        intent.putExtra("toolbar_header_text",headerText);
+        startActivity(intent);
     }
 }

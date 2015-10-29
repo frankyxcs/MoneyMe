@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.devmoroz.moneyme.R;
+import com.devmoroz.moneyme.eventBus.BusProvider;
 
 public class HistoryFragment extends Fragment {
 
@@ -19,6 +20,18 @@ public class HistoryFragment extends Fragment {
         fragment.setArguments(args);
 
         return fragment;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        BusProvider.getInstance().register(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        BusProvider.getInstance().unregister(this);
     }
 
     @Nullable
