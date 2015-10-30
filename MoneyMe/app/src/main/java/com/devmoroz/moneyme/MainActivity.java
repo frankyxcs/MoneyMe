@@ -10,8 +10,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,8 +17,7 @@ import android.widget.Toast;
 
 import com.devmoroz.moneyme.adapters.TabsPagerFragmentAdapter;
 import com.devmoroz.moneyme.eventBus.BusProvider;
-import com.devmoroz.moneyme.helpers.DBHelper;
-import com.devmoroz.moneyme.helpers.DBHelperFactory;
+
 import com.getbase.floatingactionbutton.FloatingActionButton;
 
 public class MainActivity extends AppCompatActivity {
@@ -29,25 +26,18 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private TabLayout tabLayout;
     private ViewPager viewPager;
-    private RecyclerView recyclerView;
     private FloatingActionButton fabIn;
     private FloatingActionButton fabOut;
-    private DBHelper dbHelper;
-    public static int currentItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       // DBHelperFactory.setHelper(getApplicationContext());
-      //  dbHelper = DBHelperFactory.getHelper();
-
         setContentView(R.layout.activity_main);
 
         toolbar = (Toolbar)findViewById(R.id.toolbar);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         viewPager = (ViewPager) findViewById(R.id.view_pager);
         tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        recyclerView = (RecyclerView) findViewById(R.id.main_recycler_view);
         fabIn = (FloatingActionButton) findViewById(R.id.fab_main_income);
         fabOut = (FloatingActionButton) findViewById(R.id.fab_main_outcome);
 
@@ -55,13 +45,10 @@ public class MainActivity extends AppCompatActivity {
         initNavigationView();
         initTabs();
         initFloatingActionMenu();
-        //initRecyclerView();
-
     }
 
     @Override
     protected void onDestroy() {
-        //DBHelperFactory.releaseHelper();
         super.onDestroy();
     }
 
@@ -122,12 +109,6 @@ public class MainActivity extends AppCompatActivity {
         TabsPagerFragmentAdapter adapter = new TabsPagerFragmentAdapter(getSupportFragmentManager());
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
-    }
-
-    private void initRecyclerView() {
-        recyclerView.setHasFixedSize(true);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
     }
 
     private void initFloatingActionMenu() {

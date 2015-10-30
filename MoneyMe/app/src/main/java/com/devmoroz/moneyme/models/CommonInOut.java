@@ -5,17 +5,42 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class CommonInOut {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class CommonInOut implements Parcelable{
+
+    public static final Parcelable.Creator<CommonInOut> CREATOR
+            = new Parcelable.Creator<CommonInOut>() {
+        public CommonInOut createFromParcel(Parcel in) {
+
+            return new CommonInOut(in);
+        }
+
+        public CommonInOut[] newArray(int size) {
+            return new CommonInOut[size];
+        }
+    };
 
     private DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
     int type;
     int id;
-    String amount;
+    double amount;
     String description;
     Date dateAdded;
 
-    public CommonInOut(int type, int id, String amount, String description, Date dateAdded) {
+    public CommonInOut(Parcel input) {
+        id = input.readInt();
+        type = input.readInt();
+        amount = input.readDouble();
+        description = input.readString();
+        long dateMillis=input.readLong();
+        dateAdded = (dateMillis == -1 ? null : new Date(dateMillis));
+
+    }
+
+    public CommonInOut(int type, int id, double amount, String description, Date dateAdded) {
         this.type = type;
         this.id = id;
         this.amount = amount;
@@ -31,19 +56,32 @@ public class CommonInOut {
         return id;
     }
 
-    public String getAmount() {
+    public double getAmount() {
         return amount;
     }
 
     public String getDescription() {
         return description;
     }
-    public Date getFormatedDate() {
-        try{
-            return dateFormat.parse(dateAdded.toString());
-        }
-        catch (ParseException ex){
-            return  new Date();
-        }
+    public String getFormatedDate() {
+        return dateFormat.format(dateAdded);
+    }
+
+    public Date getDateAdded() {
+        return dateAdded;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeInt(type);
+        dest.writeDouble(amount);
+        dest.writeString(description);
+        dest.writeLong(dateAdded == null ? -1 : dateAdded.getTime());
     }
 }

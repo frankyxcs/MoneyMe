@@ -8,4 +8,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         />
+
+    <TextView
+        android:id="@+id/textWalletHistoryError"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:padding="16dp"
+        android:textColor="#FF4444"
+        android:visibility="gone"
+        android:text="Добавьте вашу первую запись"/>
 </LinearLayout>

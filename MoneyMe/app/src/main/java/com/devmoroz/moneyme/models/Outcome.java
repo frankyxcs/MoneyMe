@@ -12,13 +12,13 @@ public class Outcome {
     @DatabaseField(generatedId = true)
     private int id;
 
-    @DatabaseField(canBeNull = false,dataType = DataType.STRING)
+    @DatabaseField(canBeNull = true,dataType = DataType.STRING)
     private String name;
 
     @DatabaseField(canBeNull = true)
     private String notes;
 
-    @DatabaseField(dataType = DataType.SQL_DATE)
+    @DatabaseField(dataType = DataType.DATE)
     private Date dateOfSpending;
 
     @DatabaseField(canBeNull = false,dataType = DataType.DOUBLE)
@@ -28,5 +28,37 @@ public class Outcome {
     private int currency;
 
     public Outcome() {
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public Date getDateOfSpending() {
+        return dateOfSpending;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    public int getCurrency() {
+        return currency;
+    }
+
+    public Outcome(String name, String notes, Date dateOfSpending, double amount, int currency) {
+        this.name = name;
+        this.notes = notes;
+        this.dateOfSpending = dateOfSpending;
+        this.amount = amount;
+        this.currency = currency;
     }
 }
