@@ -1,5 +1,6 @@
 package com.devmoroz.moneyme.adapters;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -10,14 +11,16 @@ import com.devmoroz.moneyme.fragments.HistoryFragment;
 
 public class TabsPagerFragmentAdapter extends FragmentPagerAdapter {
 
+    public static final int TAB_HISTORY = 0;
+    public static final int TAB_CHART = 1;
+    public static final int TAB_GOALS = 2;
+    public static final int TAB_COUNT = 3;
+
     private String[] tabs;
 
-    public TabsPagerFragmentAdapter(FragmentManager fm) {
+    public TabsPagerFragmentAdapter(FragmentManager fm, String[] tabsNames) {
         super(fm);
-
-        tabs = new String[]{
-          "История", "График", "Цели"
-        };
+        tabs = tabsNames;
     }
 
     @Override
@@ -28,11 +31,11 @@ public class TabsPagerFragmentAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         switch (position) {
-            case 0:
+            case TAB_HISTORY :
                 return HistoryFragment.getInstance();
-            case 1:
+            case TAB_CHART:
                 return ChartFragment.getInstance();
-            case 2:
+            case TAB_GOALS:
                 return GoalsFragment.getInstance();
         }
 
@@ -41,6 +44,7 @@ public class TabsPagerFragmentAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return tabs.length;
+        return TAB_COUNT;
     }
+
 }

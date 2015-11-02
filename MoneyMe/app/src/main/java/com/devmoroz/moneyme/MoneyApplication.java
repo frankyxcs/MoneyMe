@@ -6,20 +6,23 @@ import android.content.Context;
 
 import com.devmoroz.moneyme.helpers.DBHelper;
 import com.devmoroz.moneyme.helpers.DBHelperFactory;
+import com.devmoroz.moneyme.models.CommonInOut;
 import com.devmoroz.moneyme.models.Goal;
 import com.devmoroz.moneyme.models.Income;
 import com.devmoroz.moneyme.models.Outcome;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
-public class MoneyApplication extends Application{
+public class MoneyApplication extends Application {
 
     private static MoneyApplication wInstance;
 
     public static List<Goal> goals;
     public static List<Income> incomes;
     public static List<Outcome> outcomes;
+    public static ArrayList<CommonInOut> inout;
 
     private DBHelper dbHelper;
 
@@ -31,17 +34,29 @@ public class MoneyApplication extends Application{
         return wInstance.getApplicationContext();
     }
 
-    public void GetAvailableData(){
-        try{
+    public void GetAvailableData() {
+        try {
             goals = dbHelper.getGoalDAO().queryForAll();
             incomes = dbHelper.getIncomeDAO().queryForAll();
             outcomes = dbHelper.getOutcomeDAO().queryForAll();
-        }catch (SQLException ex){
+            inout = new ArrayList<>();
+
+            if (incomes != null) {
+                for (Income in : incomes) {
+                    inout.add(new CommonInOut(1, in.getId(), in.getAmount(), in.getNotes(), in.getDateOfReceipt()));
+                }
+            }
+            if (outcomes != null) {
+                for (Outcome out : outcomes) {
+                    inout.add(new CommonInOut(2, out.getId(), out.getAmount(), out.getNotes(), out.getDateOfSpending()));
+                }
+            }
+        } catch (SQLException ex) {
 
         }
     }
 
-    public DBHelper GetDBHelper(){
+    public DBHelper GetDBHelper() {
         return dbHelper;
     }
 

@@ -1,5 +1,7 @@
 package com.devmoroz.moneyme.fragments;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.devmoroz.moneyme.AddItemActivity;
 import com.devmoroz.moneyme.MoneyApplication;
 import com.devmoroz.moneyme.R;
 import com.devmoroz.moneyme.adapters.HistoryAdapter;
@@ -26,14 +29,15 @@ public class HistoryFragment extends Fragment {
 
     private static final String STATE_WALLET_ENTRIES = "state_wallet_entries";
     private ArrayList<CommonInOut> mListWalletEntries = new ArrayList<>();
-    private List<Income> incomes;
-    private List<Outcome> outcomes;
-    
+    private ArrayList<CommonInOut> inout;
+    public static int currentItem;
+
     private CommonInOutSorter sorter = new CommonInOutSorter();
 
     private RecyclerView wRecycleWalletEntries;
     private TextView mTextError;
     private View view;
+    static View.OnClickListener cardOnClickListener;
 
     private HistoryAdapter wAdapter;
 
@@ -67,30 +71,19 @@ public class HistoryFragment extends Fragment {
         wRecycleWalletEntries.setLayoutManager(layoutManager);
         wAdapter = new HistoryAdapter(getActivity());
         wRecycleWalletEntries.setAdapter(wAdapter);
+        cardOnClickListener = new CardOnClickListener(getContext());
 
-        if(savedInstanceState!=null){
+        if (savedInstanceState != null) {
             mListWalletEntries = savedInstanceState.getParcelableArrayList(STATE_WALLET_ENTRIES);
-        } else{
-            incomes = MoneyApplication.incomes;
-            outcomes = MoneyApplication.outcomes;
-
-            if(incomes!=null){
-            for (Income in:incomes) {
-                CommonInOut inout = new CommonInOut(1,in.getId(),in.getAmount(),in.getNotes(),in.getDateOfReceipt());
-                mListWalletEntries.add(inout);
-            }} if(outcomes!=null){
-            for (Outcome out:outcomes) {
-                CommonInOut inout = new CommonInOut(2,out.getId(),out.getAmount(),out.getNotes(),out.getDateOfSpending());
-                mListWalletEntries.add(inout);
-            }}
-
-            if(!mListWalletEntries.isEmpty()){
+        } else {
+            inout = MoneyApplication.inout;
+            if (inout != null && !inout.isEmpty()) {
+                mListWalletEntries = inout;
                 sorter.sortWalletEntriesByDate(mListWalletEntries);
                 wAdapter.setInOutData(mListWalletEntries);
-            }else{
+            } else {
                 mTextError.setVisibility(View.VISIBLE);
             }
-
         }
 
         return view;
@@ -101,5 +94,19 @@ public class HistoryFragment extends Fragment {
         super.onSaveInstanceState(outState);
         //save the wallet entries list to a parcelable prior to rotation or configuration change
         outState.putParcelableArrayList(STATE_WALLET_ENTRIES, mListWalletEntries);
+    }
+
+    private class CardOnClickListener implements View.OnClickListener {
+        private final Context context;
+
+        private CardOnClickListener(Context c) {
+            this.context = c;
+        }
+
+        @Override
+        public void onClick(View v) {
+            currentItem = wRecycleWalletEntries.getChildAdapterPosition(v);
+            startActivity(new Intent(getContext(), AddItemActivity.class));
+        }
     }
 }

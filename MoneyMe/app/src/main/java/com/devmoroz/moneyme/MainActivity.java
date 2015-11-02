@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.AppDefault);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -106,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initTabs() {
-        TabsPagerFragmentAdapter adapter = new TabsPagerFragmentAdapter(getSupportFragmentManager());
+        TabsPagerFragmentAdapter adapter = new TabsPagerFragmentAdapter(getSupportFragmentManager(),getTabsTitle());
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
     }
@@ -129,7 +130,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void startAddActivity(int headerText){
         Intent intent = new Intent(this, AddItemActivity.class);
-        intent.putExtra("toolbar_header_text",headerText);
+        intent.putExtra("toolbar_header_text", headerText);
         startActivity(intent);
+    }
+
+
+    private String[] getTabsTitle() {
+        return getResources().getStringArray(R.array.drawer_tabs);
     }
 }
