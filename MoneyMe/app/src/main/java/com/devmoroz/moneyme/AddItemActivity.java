@@ -16,6 +16,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.devmoroz.moneyme.eventBus.BusProvider;
+import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
 import com.devmoroz.moneyme.helpers.DBHelper;
 import com.devmoroz.moneyme.models.Income;
 import com.devmoroz.moneyme.models.Outcome;
@@ -85,16 +87,30 @@ public class AddItemActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        BusProvider.getInstance().unregister(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        BusProvider.getInstance().register(this);
+    }
+
     private void addIncome() throws java.sql.SQLException {
         Income income = new Income("", description.getText().toString(), new Date(), Double.parseDouble(amount.getText().toString()), 1);
         dbHelper = MoneyApplication.getInstance().GetDBHelper();
         dbHelper.getIncomeDAO().create(income);
+        BusProvider.getInstance().post(new WalletChangeEvent());
     }
 
     private void addOutcome() throws java.sql.SQLException {
         Outcome outcome = new Outcome("", description.getText().toString(), new Date(), Double.parseDouble(amount.getText().toString()), 1);
         dbHelper = MoneyApplication.getInstance().GetDBHelper();
         dbHelper.getOutcomeDAO().create(outcome);
+        BusProvider.getInstance().post(new WalletChangeEvent());
     }
 
     @Override

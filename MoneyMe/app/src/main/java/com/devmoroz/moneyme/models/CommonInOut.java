@@ -1,12 +1,16 @@
 package com.devmoroz.moneyme.models;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import com.devmoroz.moneyme.MoneyApplication;
 
 public class CommonInOut implements Parcelable{
 
@@ -29,6 +33,7 @@ public class CommonInOut implements Parcelable{
     double amount;
     String description;
     Date dateAdded;
+    int currency;
 
     public CommonInOut(Parcel input) {
         id = input.readInt();
@@ -37,15 +42,17 @@ public class CommonInOut implements Parcelable{
         description = input.readString();
         long dateMillis=input.readLong();
         dateAdded = (dateMillis == -1 ? null : new Date(dateMillis));
+        currency = input.readInt();
 
     }
 
-    public CommonInOut(int type, int id, double amount, String description, Date dateAdded) {
+    public CommonInOut(int type, int id, double amount, String description, Date dateAdded, int currency) {
         this.type = type;
         this.id = id;
         this.amount = amount;
         this.description = description;
         this.dateAdded = dateAdded;
+        this.currency = currency;
     }
 
     public int getType() {
@@ -71,6 +78,19 @@ public class CommonInOut implements Parcelable{
         return dateAdded;
     }
 
+    public String getFormatedAmount() {
+        String sign = MoneyApplication.MyCurrencyAll[currency].getDesc();
+
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+        symbols.setGroupingSeparator(',');
+        symbols.setDecimalSeparator('.');
+
+        DecimalFormat decimalFormat = new DecimalFormat("#,###.00 " + sign, symbols);
+        decimalFormat.setGroupingSize(3);
+
+        return decimalFormat.format(amount);
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -83,5 +103,6 @@ public class CommonInOut implements Parcelable{
         dest.writeDouble(amount);
         dest.writeString(description);
         dest.writeLong(dateAdded == null ? -1 : dateAdded.getTime());
+        dest.writeInt(currency);
     }
 }

@@ -10,15 +10,21 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.Toast;
 
 import com.devmoroz.moneyme.adapters.TabsPagerFragmentAdapter;
 import com.devmoroz.moneyme.eventBus.BusProvider;
 
+import com.devmoroz.moneyme.utils.CustomRecyclerScroll;
 import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager viewPager;
     private FloatingActionButton fabIn;
     private FloatingActionButton fabOut;
+    private FloatingActionsMenu fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         viewPager = (ViewPager) findViewById(R.id.view_pager);
         tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        fab = (FloatingActionsMenu) findViewById(R.id.fab_main);
         fabIn = (FloatingActionButton) findViewById(R.id.fab_main_income);
         fabOut = (FloatingActionButton) findViewById(R.id.fab_main_outcome);
 
@@ -107,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initTabs() {
-        TabsPagerFragmentAdapter adapter = new TabsPagerFragmentAdapter(getSupportFragmentManager(),getTabsTitle());
+        TabsPagerFragmentAdapter adapter = new TabsPagerFragmentAdapter(getSupportFragmentManager(),getTabsTitle(),fab);
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
     }
@@ -129,6 +137,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startAddActivity(int headerText){
+        fab.collapse();
         Intent intent = new Intent(this, AddItemActivity.class);
         intent.putExtra("toolbar_header_text", headerText);
         startActivity(intent);

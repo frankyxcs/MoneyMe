@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import com.devmoroz.moneyme.fragments.ChartFragment;
 import com.devmoroz.moneyme.fragments.GoalsFragment;
 import com.devmoroz.moneyme.fragments.HistoryFragment;
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 
 public class TabsPagerFragmentAdapter extends FragmentPagerAdapter {
 
@@ -17,10 +18,12 @@ public class TabsPagerFragmentAdapter extends FragmentPagerAdapter {
     public static final int TAB_COUNT = 3;
 
     private String[] tabs;
+    private FloatingActionsMenu fab;
 
-    public TabsPagerFragmentAdapter(FragmentManager fm, String[] tabsNames) {
+    public TabsPagerFragmentAdapter(FragmentManager fm, String[] tabsNames,FloatingActionsMenu fab) {
         super(fm);
         tabs = tabsNames;
+        this.fab = fab;
     }
 
     @Override
@@ -32,7 +35,7 @@ public class TabsPagerFragmentAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case TAB_HISTORY :
-                return HistoryFragment.getInstance();
+                return HistoryFragment.getInstance(fab);
             case TAB_CHART:
                 return ChartFragment.getInstance();
             case TAB_GOALS:

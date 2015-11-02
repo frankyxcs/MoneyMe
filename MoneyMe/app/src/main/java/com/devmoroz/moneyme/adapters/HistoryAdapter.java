@@ -51,7 +51,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
         LinearLayout linearLayout = holder.linearLayout;
 
         linearLayout.setBackgroundColor(wData.getType()== 1 ? Color.parseColor("#80CBC4") : Color.parseColor("#FFAB91"));
-        textAmount.setText(String.valueOf(wData.getAmount()));
+        textAmount.setText(wData.getFormatedAmount());
         textDescription.setText(wData.getDescription());
         textDateAdded.setText(wData.getFormatedDate());
     }
