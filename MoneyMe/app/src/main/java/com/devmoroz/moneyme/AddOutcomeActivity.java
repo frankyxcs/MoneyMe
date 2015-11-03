@@ -9,13 +9,20 @@ import android.provider.MediaStore;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.codetroopers.betterpickers.datepicker.DatePickerBuilder;
+import com.codetroopers.betterpickers.datepicker.DatePickerDialogFragment;
+import com.codetroopers.betterpickers.numberpicker.NumberPickerBuilder;
+import com.codetroopers.betterpickers.numberpicker.NumberPickerDialogFragment;
 import com.devmoroz.moneyme.eventBus.BusProvider;
 import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
 import com.devmoroz.moneyme.helpers.DBHelper;
@@ -28,7 +35,7 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class AddItemActivity extends AppCompatActivity {
+public class AddOutcomeActivity extends AppCompatActivity implements DatePickerDialogFragment.DatePickerDialogHandler,NumberPickerDialogFragment.NumberPickerDialogHandler {
 
     private static final int PREVIEW_REQUEST_CODE = 1;
     private static final int SAVE_REQUEST_CODE = 2;
@@ -36,8 +43,10 @@ public class AddItemActivity extends AppCompatActivity {
     private File photoFile;
 
     private EditText amount;
-    private EditText description;
+    private EditText name;
+    private AutoCompleteTextView description;
     private Button buttonAdd;
+    private EditText date;
     private Toolbar toolbar;
     private ImageView chequeImage;
     private DBHelper dbHelper;
@@ -47,9 +56,9 @@ public class AddItemActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_item);
+        setContentView(R.layout.activity_add_outcome);
 
-        toolbar = (Toolbar) findViewById(R.id.add_activity_toolbar);
+        toolbar = (Toolbar) findViewById(R.id.add_outcome_toolbar);
         actionType = getIntent().getIntExtra("toolbar_header_text", 1);
         if (toolbar != null) {
             toolbar.setTitle(getIntent().getIntExtra("toolbar_header_text", R.string.default_add_toolbar_name));
@@ -57,9 +66,11 @@ public class AddItemActivity extends AppCompatActivity {
             getSupportActionBar().setHomeButtonEnabled(true);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-        amount = (EditText) findViewById(R.id.add_activity_amount);
-        description = (EditText) findViewById(R.id.add_activity_description);
-        buttonAdd = (Button) findViewById(R.id.add_activity_save);
+        name = (EditText) findViewById(R.id.add_outcome_name);
+        amount = (EditText) findViewById(R.id.add_outcome_amount);
+        description = (AutoCompleteTextView) findViewById(R.id.add_outcome_note);
+        date = (EditText) findViewById(R.id.add_outcome_date);
+        buttonAdd = (Button) findViewById(R.id.add_outcome_save);
 
         buttonAdd.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,7 +83,8 @@ public class AddItemActivity extends AppCompatActivity {
                         } catch (SQLException ex) {
                         }
                         intent = new Intent(getApplicationContext(), MainActivity.class);
-                        startActivity(intent);
+                        setResult(RESULT_OK, intent);
+                        finish();
                         return;
                     case R.string.outcome_toolbar_name:
                         try {
@@ -80,23 +92,69 @@ public class AddItemActivity extends AppCompatActivity {
                         } catch (SQLException ex) {
                         }
                         intent = new Intent(getApplicationContext(), MainActivity.class);
-                        startActivity(intent);
+                        setResult(RESULT_OK, intent);
+                        finish();
                         return;
                 }
             }
         });
+
+        initEditText();
+    }
+
+    private void initEditText() {
+        amount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NumberPickerBuilder npb = new NumberPickerBuilder()
+                        .setFragmentManager(getSupportFragmentManager());
+                npb.show();
+            }
+        });
+
+        date.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatePickerBuilder dpb = new DatePickerBuilder()
+                        .setFragmentManager(getSupportFragmentManager());
+                dpb.show();
+            }
+        });
+
+        amount.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                EditText edittext = (EditText) v;
+                int inType = edittext.getInputType();
+                edittext.setInputType(InputType.TYPE_NULL);
+                edittext.onTouchEvent(event);
+                edittext.setInputType(inType);
+                return true;
+            }
+        });
+
+        date.setOnTouchListener(new View.OnTouchListener() {
+            @Override public boolean onTouch(View v, MotionEvent event) {
+                EditText edittext = (EditText) v;
+                int inType = edittext.getInputType();
+                edittext.setInputType(InputType.TYPE_NULL);
+                edittext.onTouchEvent(event);
+                edittext.setInputType(inType);
+                return true;
+            }
+        });
+        date.setInputType(date.getInputType() | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+        amount.setInputType(amount.getInputType() | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS );
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        BusProvider.getInstance().unregister(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        BusProvider.getInstance().register(this);
     }
 
     private void addIncome() throws java.sql.SQLException {
@@ -107,10 +165,9 @@ public class AddItemActivity extends AppCompatActivity {
     }
 
     private void addOutcome() throws java.sql.SQLException {
-        Outcome outcome = new Outcome("", description.getText().toString(), new Date(), Double.parseDouble(amount.getText().toString()), 1);
+        Outcome outcome = new Outcome(name.getText().toString(), description.getText().toString(), new Date(), Double.parseDouble(amount.getText().toString()), 1);
         dbHelper = MoneyApplication.getInstance().GetDBHelper();
         dbHelper.getOutcomeDAO().create(outcome);
-        BusProvider.getInstance().post(new WalletChangeEvent());
     }
 
     @Override
@@ -170,6 +227,16 @@ public class AddItemActivity extends AppCompatActivity {
         File image = File.createTempFile(file, ".jpg", dir);
         photoPath = "file:" + image.getAbsolutePath();
         return image;
+    }
+
+    @Override
+    public void onDialogDateSet(int reference, int year, int monthOfYear, int dayOfMonth) {
+        date.setText(dayOfMonth+"-"+monthOfYear+"-"+year);
+    }
+
+    @Override
+    public void onDialogNumberSet(int reference, int number, double decimal, boolean isNegative, double fullNumber) {
+        amount.setText(String.valueOf(fullNumber));
     }
 
 }

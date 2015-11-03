@@ -4,6 +4,7 @@ package com.devmoroz.moneyme;
 import android.app.Application;
 import android.content.Context;
 
+import com.devmoroz.moneyme.eventBus.BusProvider;
 import com.devmoroz.moneyme.helpers.DBHelper;
 import com.devmoroz.moneyme.helpers.DBHelperFactory;
 import com.devmoroz.moneyme.models.CommonInOut;
@@ -71,6 +72,7 @@ public class MoneyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        BusProvider.getInstance().register(this);
         wInstance = this;
         DBHelperFactory.setHelper(getApplicationContext());
         dbHelper = DBHelperFactory.getHelper();
@@ -80,6 +82,9 @@ public class MoneyApplication extends Application {
     @Override
     public void onTerminate() {
         DBHelperFactory.releaseHelper();
+        BusProvider.getInstance().unregister(this);
         super.onTerminate();
     }
+
+
 }

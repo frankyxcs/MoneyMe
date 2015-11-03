@@ -4,29 +4,27 @@ package com.devmoroz.moneyme;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.Toast;
 
 import com.devmoroz.moneyme.adapters.TabsPagerFragmentAdapter;
 import com.devmoroz.moneyme.eventBus.BusProvider;
 
-import com.devmoroz.moneyme.utils.CustomRecyclerScroll;
+import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 
 public class MainActivity extends AppCompatActivity {
+
+    final int REQUEST_CODE_INCOME = 918;
+    final int REQUEST_CODE_OUTCOME = 1218;
 
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
@@ -138,9 +136,26 @@ public class MainActivity extends AppCompatActivity {
 
     private void startAddActivity(int headerText){
         fab.collapse();
-        Intent intent = new Intent(this, AddItemActivity.class);
+        Intent intent = new Intent(this, AddOutcomeActivity.class);
         intent.putExtra("toolbar_header_text", headerText);
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_CODE_OUTCOME);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // если пришло ОК
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case REQUEST_CODE_INCOME:
+
+                    break;
+                case REQUEST_CODE_OUTCOME:
+                    BusProvider.getInstance().post(new WalletChangeEvent());
+                    break;
+            }
+        } else {
+            Toast.makeText(this, "Wrong result", Toast.LENGTH_SHORT).show();
+        }
     }
 
 

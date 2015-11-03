@@ -15,22 +15,20 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.TextView;
 
-import com.devmoroz.moneyme.AddItemActivity;
+import com.devmoroz.moneyme.AddOutcomeActivity;
 import com.devmoroz.moneyme.MoneyApplication;
 import com.devmoroz.moneyme.R;
 import com.devmoroz.moneyme.adapters.HistoryAdapter;
 import com.devmoroz.moneyme.eventBus.BusProvider;
 import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
 import com.devmoroz.moneyme.models.CommonInOut;
-import com.devmoroz.moneyme.models.Income;
-import com.devmoroz.moneyme.models.Outcome;
 import com.devmoroz.moneyme.utils.CommonInOutSorter;
 import com.devmoroz.moneyme.utils.CustomRecyclerScroll;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.squareup.otto.Subscribe;
 
+
 import java.util.ArrayList;
-import java.util.List;
 
 public class HistoryFragment extends Fragment {
 
@@ -49,13 +47,14 @@ public class HistoryFragment extends Fragment {
 
     private HistoryAdapter wAdapter;
 
-    public HistoryFragment(FloatingActionsMenu fab) {
+    public void setFab(FloatingActionsMenu fab) {
         this.fab = fab;
     }
 
     public static HistoryFragment getInstance(FloatingActionsMenu fab) {
         Bundle args = new Bundle();
-        HistoryFragment fragment = new HistoryFragment(fab);
+        HistoryFragment fragment = new HistoryFragment();
+        fragment.setFab(fab);
         fragment.setArguments(args);
 
         return fragment;
@@ -131,7 +130,7 @@ public class HistoryFragment extends Fragment {
         @Override
         public void onClick(View v) {
             currentItem = wRecycleWalletEntries.getChildAdapterPosition(v);
-            startActivity(new Intent(getContext(), AddItemActivity.class));
+            startActivity(new Intent(getContext(), AddOutcomeActivity.class));
         }
     }
 
@@ -140,6 +139,8 @@ public class HistoryFragment extends Fragment {
         MoneyApplication.getInstance().GetCommonData();
         mListWalletEntries = MoneyApplication.inout;
         sorter.sortWalletEntriesByDate(mListWalletEntries);
-        wAdapter.setInOutData(mListWalletEntries);
+        if(wAdapter != null){
+            wAdapter.notifyDataSetChanged();
+        }
     }
 }

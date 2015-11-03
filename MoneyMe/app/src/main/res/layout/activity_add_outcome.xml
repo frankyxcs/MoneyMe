@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ScrollView01"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/add_outcome_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"/>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:isScrollContainer="true"
+        android:orientation="vertical"
+        android:padding="4dp" >
+
+        <TextView
+            android:id="@+id/TextView01"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Название:" >
+        </TextView>
+
+        <EditText
+            android:id="@+id/add_outcome_name"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/TextView01"
+            android:layout_toRightOf="@+id/TextView03"
+            android:inputType="text" >
+        </EditText>
+
+        <TextView
+            android:id="@+id/TextView02"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/add_outcome_name"
+            android:text="Сумма:" >
+        </TextView>
+
+        <EditText
+            android:id="@+id/add_outcome_amount"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/TextView02"
+            android:layout_toRightOf="@+id/TextView03"
+            android:digits="1234567890."
+            android:imeOptions="actionNext"
+            android:inputType="numberDecimal" >
+        </EditText>
+
+        <TextView
+            android:id="@+id/TextView03"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/add_outcome_amount"
+            android:text="Категория:" />
+
+        <Spinner
+            android:id="@+id/add_outcome_category"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/TextView03"
+            android:layout_toRightOf="@+id/TextView03"
+            android:entries="@array/transaction_category"/>
+
+        <TextView
+            android:id="@+id/TextView06"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/add_outcome_category"
+            android:text="Заметка:" >
+        </TextView>
+
+        <AutoCompleteTextView
+            android:id="@+id/add_outcome_note"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/TextView06"
+            android:layout_toRightOf="@+id/TextView03"
+            android:inputType="textShortMessage|textAutoCorrect|textCapSentences|textMultiLine|textAutoComplete"
+            android:maxLength="200"
+            android:maxLines="2" >
+        </AutoCompleteTextView>
+
+        <TextView
+            android:id="@+id/TextView07"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/add_outcome_note"
+            android:text="Дата:" >
+        </TextView>
+
+        <EditText
+            android:id="@+id/add_outcome_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/TextView07"
+            android:layout_toRightOf="@+id/TextView03"
+            android:onClick="showDatePickerDialog"
+            android:text="12-12-12" >
+        </EditText>
+
+    </RelativeLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Сохранить"
+        android:id="@+id/add_outcome_save"
+        android:layout_gravity="center_horizontal" />
+</LinearLayout>

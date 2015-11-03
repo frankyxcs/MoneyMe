@@ -9,4 +9,20 @@
     <string name="income_toolbar_name">Доход</string>
     <string name="outcome_toolbar_name">Расход</string>
     <string name="default_add_toolbar_name">Кошелек</string>
+
+    <string-array name="transaction_category">
+        <item>Одежда</item>
+        <item>Здоровье</item>
+        <item>Связь</item>
+        <item>Еда</item>
+        <item>Машина</item>
+        <item>Подарки</item>
+        <item>Еда вне дома</item>
+        <item>Ипотека</item>
+        <item>Кредит</item>
+        <item>Аренда</item>
+        <item>Транспорт</item>
+        <item>Развлечения</item>
+        <item>Другое</item>
+    </string-array>
 </resources>
