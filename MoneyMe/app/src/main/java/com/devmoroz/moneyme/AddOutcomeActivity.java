@@ -2,6 +2,7 @@ package com.devmoroz.moneyme;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -62,6 +63,7 @@ public class AddOutcomeActivity extends AppCompatActivity implements DatePickerD
         actionType = getIntent().getIntExtra("toolbar_header_text", 1);
         if (toolbar != null) {
             toolbar.setTitle(getIntent().getIntExtra("toolbar_header_text", R.string.default_add_toolbar_name));
+            toolbar.setTitleTextColor(Color.WHITE);
             setSupportActionBar(toolbar);
             getSupportActionBar().setHomeButtonEnabled(true);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -99,7 +101,7 @@ public class AddOutcomeActivity extends AppCompatActivity implements DatePickerD
             }
         });
 
-        initEditText();
+        //initEditText();
     }
 
     private void initEditText() {
@@ -107,7 +109,8 @@ public class AddOutcomeActivity extends AppCompatActivity implements DatePickerD
             @Override
             public void onClick(View v) {
                 NumberPickerBuilder npb = new NumberPickerBuilder()
-                        .setFragmentManager(getSupportFragmentManager());
+                        .setFragmentManager(getSupportFragmentManager())
+                        .setStyleResId(R.style.BetterPickersDialogFragment);
                 npb.show();
             }
         });
@@ -116,7 +119,8 @@ public class AddOutcomeActivity extends AppCompatActivity implements DatePickerD
             @Override
             public void onClick(View v) {
                 DatePickerBuilder dpb = new DatePickerBuilder()
-                        .setFragmentManager(getSupportFragmentManager());
+                        .setFragmentManager(getSupportFragmentManager())
+                        .setStyleResId(R.style.BetterPickersDialogFragment);
                 dpb.show();
             }
         });

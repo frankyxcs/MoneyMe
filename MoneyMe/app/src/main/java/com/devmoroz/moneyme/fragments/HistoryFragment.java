@@ -64,6 +64,7 @@ public class HistoryFragment extends Fragment {
     public void onResume() {
         super.onResume();
         BusProvider.getInstance().register(this);
+        CheckWallet();
     }
 
     @Override
@@ -134,9 +135,7 @@ public class HistoryFragment extends Fragment {
         }
     }
 
-    @Subscribe
-    public void OnWalletChange(WalletChangeEvent event){
-        MoneyApplication.getInstance().GetCommonData();
+    public void CheckWallet(){
         mListWalletEntries = MoneyApplication.inout;
         sorter.sortWalletEntriesByDate(mListWalletEntries);
         if(wAdapter != null){

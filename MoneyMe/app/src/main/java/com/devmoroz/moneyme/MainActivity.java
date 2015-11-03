@@ -2,6 +2,7 @@ package com.devmoroz.moneyme;
 
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -73,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initToolbar() {
         toolbar.setTitle(R.string.app_name);
+        toolbar.setTitleTextColor(Color.WHITE);
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -150,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
 
                     break;
                 case REQUEST_CODE_OUTCOME:
-                    BusProvider.getInstance().post(new WalletChangeEvent());
+                    BusProvider.postOnMain(new WalletChangeEvent());
                     break;
             }
         } else {

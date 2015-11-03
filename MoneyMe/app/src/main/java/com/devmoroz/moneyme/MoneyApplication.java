@@ -5,6 +5,7 @@ import android.app.Application;
 import android.content.Context;
 
 import com.devmoroz.moneyme.eventBus.BusProvider;
+import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
 import com.devmoroz.moneyme.helpers.DBHelper;
 import com.devmoroz.moneyme.helpers.DBHelperFactory;
 import com.devmoroz.moneyme.models.CommonInOut;
@@ -12,6 +13,7 @@ import com.devmoroz.moneyme.models.Goal;
 import com.devmoroz.moneyme.models.Income;
 import com.devmoroz.moneyme.models.MyCurrency;
 import com.devmoroz.moneyme.models.Outcome;
+import com.squareup.otto.Subscribe;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -84,6 +86,11 @@ public class MoneyApplication extends Application {
         DBHelperFactory.releaseHelper();
         BusProvider.getInstance().unregister(this);
         super.onTerminate();
+    }
+
+    @Subscribe
+    public void OnWalletChange(WalletChangeEvent event){
+        getInstance().GetCommonData();
     }
 
 
