@@ -48,12 +48,12 @@ public class MoneyApplication extends Application {
 
             if (incomes != null) {
                 for (Income in : incomes) {
-                    inout.add(new CommonInOut(1, in.getId(), in.getAmount(), in.getNotes(),in.getIncomeType(),in.getName(), in.getDateOfReceipt(), in.getCurrency()));
+                    inout.add(new CommonInOut(1, in.getId(), in.getAmount(), in.getNotes(),in.getCategory(), in.getDateOfReceipt(), in.getCurrency()));
                 }
             }
             if (outcomes != null) {
                 for (Outcome out : outcomes) {
-                    inout.add(new CommonInOut(2, out.getId(), out.getAmount(), out.getNotes(),out.getCategory(),out.getName(), out.getDateOfSpending(), out.getCurrency()));
+                    inout.add(new CommonInOut(2, out.getId(), out.getAmount(), out.getNotes(),out.getCategory(), out.getDateOfSpending(), out.getCurrency()));
                 }
             }
         } catch (SQLException ex) {

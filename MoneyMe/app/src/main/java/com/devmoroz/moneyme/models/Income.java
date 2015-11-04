@@ -12,14 +12,11 @@ public class Income {
     @DatabaseField(generatedId = true)
     private int id;
 
-    @DatabaseField(canBeNull = true,dataType = DataType.STRING)
-    private String name;
-
     @DatabaseField(canBeNull = true)
     private String notes;
 
     @DatabaseField(canBeNull = true)
-    private String type;
+    private String category;
 
     @DatabaseField(dataType = DataType.DATE)
     private Date dateOfReceipt;
@@ -33,16 +30,8 @@ public class Income {
     public Income() {
     }
 
-    public String getIncomeType() {
-        return type;
-    }
-
     public int getId() {
         return id;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public String getNotes() {
@@ -61,10 +50,14 @@ public class Income {
         return currency;
     }
 
-    public Income(String name, String notes, String type, Date dateOfReceipt, double amount, int currency) {
-        this.name = name;
+    public String getCategory() {
+        return category;
+    }
+
+    public Income(int id, String notes, String category, Date dateOfReceipt, double amount, int currency) {
+        this.id = id;
         this.notes = notes;
-        this.type = type;
+        this.category = category;
         this.dateOfReceipt = dateOfReceipt;
         this.amount = amount;
         this.currency = currency;

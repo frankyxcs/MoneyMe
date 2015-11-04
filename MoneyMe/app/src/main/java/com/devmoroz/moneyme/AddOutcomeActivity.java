@@ -56,7 +56,6 @@ public class AddOutcomeActivity extends AppCompatActivity {
 
 
     private EditText amount;
-    private EditText name;
     private EditText description;
     private Button buttonAdd;
     private TextView date;
@@ -83,7 +82,6 @@ public class AddOutcomeActivity extends AppCompatActivity {
             getSupportActionBar().setHomeButtonEnabled(true);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-        name = (EditText) findViewById(R.id.add_outcome_name);
         amount = (EditText) findViewById(R.id.add_outcome_amount);
         description = (EditText) findViewById(R.id.add_outcome_note);
         date = (TextView) findViewById(R.id.add_outcome_date);
@@ -133,7 +131,6 @@ public class AddOutcomeActivity extends AppCompatActivity {
 
     private void addOutcome() throws java.sql.SQLException {
         Date dateAdded;
-        String outcomeName = name.getText().toString();
         String outcomeNote = description.getText().toString();
         double outcomeAmount = Double.parseDouble(amount.getText().toString());
         String selectedCategory = categorySpin.getSelectedItem().toString();
@@ -144,7 +141,7 @@ public class AddOutcomeActivity extends AppCompatActivity {
             dateAdded = new Date();
         }
 
-        Outcome outcome = new Outcome(outcomeName, outcomeNote, dateAdded, outcomeAmount,selectedCategory, currency);
+        Outcome outcome = new Outcome(outcomeNote, dateAdded, outcomeAmount,selectedCategory, currency);
         dbHelper = MoneyApplication.getInstance().GetDBHelper();
         dbHelper.getOutcomeDAO().create(outcome);
     }
