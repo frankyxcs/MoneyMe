@@ -1,5 +1,7 @@
 package com.devmoroz.moneyme;
 
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -7,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -14,16 +17,19 @@ import android.text.InputType;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.codetroopers.betterpickers.datepicker.DatePickerBuilder;
-import com.codetroopers.betterpickers.datepicker.DatePickerDialogFragment;
 import com.codetroopers.betterpickers.numberpicker.NumberPickerBuilder;
-import com.codetroopers.betterpickers.numberpicker.NumberPickerDialogFragment;
 import com.devmoroz.moneyme.eventBus.BusProvider;
 import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
 import com.devmoroz.moneyme.helpers.DBHelper;
@@ -33,36 +39,45 @@ import com.devmoroz.moneyme.models.Outcome;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
-public class AddOutcomeActivity extends AppCompatActivity implements DatePickerDialogFragment.DatePickerDialogHandler,NumberPickerDialogFragment.NumberPickerDialogHandler {
+public class AddOutcomeActivity extends AppCompatActivity {
 
     private static final int PREVIEW_REQUEST_CODE = 1;
     private static final int SAVE_REQUEST_CODE = 2;
+    private DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
     private String photoPath;
     private File photoFile;
 
+
     private EditText amount;
     private EditText name;
-    private AutoCompleteTextView description;
+    private EditText description;
     private Button buttonAdd;
-    private EditText date;
+    private TextView date;
+    private Spinner categorySpin;
+    private Spinner currencySpin;
     private Toolbar toolbar;
     private ImageView chequeImage;
+
+
     private DBHelper dbHelper;
 
-    private int actionType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.AppDefaultOutcome);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_outcome);
 
         toolbar = (Toolbar) findViewById(R.id.add_outcome_toolbar);
-        actionType = getIntent().getIntExtra("toolbar_header_text", 1);
         if (toolbar != null) {
-            toolbar.setTitle(getIntent().getIntExtra("toolbar_header_text", R.string.default_add_toolbar_name));
+            toolbar.setTitle(R.string.outcome_toolbar_name);
             toolbar.setTitleTextColor(Color.WHITE);
             setSupportActionBar(toolbar);
             getSupportActionBar().setHomeButtonEnabled(true);
@@ -70,85 +85,34 @@ public class AddOutcomeActivity extends AppCompatActivity implements DatePickerD
         }
         name = (EditText) findViewById(R.id.add_outcome_name);
         amount = (EditText) findViewById(R.id.add_outcome_amount);
-        description = (AutoCompleteTextView) findViewById(R.id.add_outcome_note);
-        date = (EditText) findViewById(R.id.add_outcome_date);
+        description = (EditText) findViewById(R.id.add_outcome_note);
+        date = (TextView) findViewById(R.id.add_outcome_date);
+        categorySpin = (Spinner) findViewById(R.id.add_outcome_category);
+        currencySpin = (Spinner) findViewById(R.id.add_outcome_currency);
+        date.setText(dateFormat.format(new Date()));
         buttonAdd = (Button) findViewById(R.id.add_outcome_save);
 
         buttonAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent;
-                switch (actionType) {
-                    case R.string.income_toolbar_name:
-                        try {
-                            addIncome();
-                        } catch (SQLException ex) {
-                        }
-                        intent = new Intent(getApplicationContext(), MainActivity.class);
-                        setResult(RESULT_OK, intent);
-                        finish();
-                        return;
-                    case R.string.outcome_toolbar_name:
-                        try {
-                            addOutcome();
-                        } catch (SQLException ex) {
-                        }
-                        intent = new Intent(getApplicationContext(), MainActivity.class);
-                        setResult(RESULT_OK, intent);
-                        finish();
-                        return;
+                try {
+                    addOutcome();
+                } catch (SQLException ex) {
                 }
+                intent = new Intent(getApplicationContext(), MainActivity.class);
+                setResult(RESULT_OK, intent);
+                finish();
             }
         });
 
-        //initEditText();
+        initCategorySpinner();
     }
 
-    private void initEditText() {
-        amount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                NumberPickerBuilder npb = new NumberPickerBuilder()
-                        .setFragmentManager(getSupportFragmentManager())
-                        .setStyleResId(R.style.BetterPickersDialogFragment);
-                npb.show();
-            }
-        });
-
-        date.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DatePickerBuilder dpb = new DatePickerBuilder()
-                        .setFragmentManager(getSupportFragmentManager())
-                        .setStyleResId(R.style.BetterPickersDialogFragment);
-                dpb.show();
-            }
-        });
-
-        amount.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                EditText edittext = (EditText) v;
-                int inType = edittext.getInputType();
-                edittext.setInputType(InputType.TYPE_NULL);
-                edittext.onTouchEvent(event);
-                edittext.setInputType(inType);
-                return true;
-            }
-        });
-
-        date.setOnTouchListener(new View.OnTouchListener() {
-            @Override public boolean onTouch(View v, MotionEvent event) {
-                EditText edittext = (EditText) v;
-                int inType = edittext.getInputType();
-                edittext.setInputType(InputType.TYPE_NULL);
-                edittext.onTouchEvent(event);
-                edittext.setInputType(inType);
-                return true;
-            }
-        });
-        date.setInputType(date.getInputType() | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
-        amount.setInputType(amount.getInputType() | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS );
+    private void initCategorySpinner() {
+        final String[] categories = getResources().getStringArray(R.array.transaction_category);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,android.R.layout.simple_spinner_dropdown_item,categories);
+        categorySpin.setAdapter(adapter);
     }
 
     @Override
@@ -161,15 +125,26 @@ public class AddOutcomeActivity extends AppCompatActivity implements DatePickerD
         super.onResume();
     }
 
-    private void addIncome() throws java.sql.SQLException {
-        Income income = new Income("", description.getText().toString(), new Date(), Double.parseDouble(amount.getText().toString()), 1);
-        dbHelper = MoneyApplication.getInstance().GetDBHelper();
-        dbHelper.getIncomeDAO().create(income);
-        BusProvider.getInstance().post(new WalletChangeEvent());
+    public void showDatePickerDialog(View v) {
+        DatePickerFragment newFragment = new DatePickerFragment();
+        newFragment.setDate(date);
+        newFragment.show(getSupportFragmentManager(), "datePicker");
     }
 
     private void addOutcome() throws java.sql.SQLException {
-        Outcome outcome = new Outcome(name.getText().toString(), description.getText().toString(), new Date(), Double.parseDouble(amount.getText().toString()), 1);
+        Date dateAdded;
+        String outcomeName = name.getText().toString();
+        String outcomeNote = description.getText().toString();
+        double outcomeAmount = Double.parseDouble(amount.getText().toString());
+        String selectedCategory = categorySpin.getSelectedItem().toString();
+        int currency = currencySpin.getSelectedItemPosition();
+        try {
+            dateAdded = dateFormat.parse(date.getText().toString());
+        } catch (ParseException ex) {
+            dateAdded = new Date();
+        }
+
+        Outcome outcome = new Outcome(outcomeName, outcomeNote, dateAdded, outcomeAmount,selectedCategory, currency);
         dbHelper = MoneyApplication.getInstance().GetDBHelper();
         dbHelper.getOutcomeDAO().create(outcome);
     }
@@ -186,8 +161,7 @@ public class AddOutcomeActivity extends AppCompatActivity implements DatePickerD
 
 
     @Override
-    protected void onActivityResult(int requestCode,
-                                    int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PREVIEW_REQUEST_CODE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
@@ -233,14 +207,29 @@ public class AddOutcomeActivity extends AppCompatActivity implements DatePickerD
         return image;
     }
 
-    @Override
-    public void onDialogDateSet(int reference, int year, int monthOfYear, int dayOfMonth) {
-        date.setText(dayOfMonth+"-"+monthOfYear+"-"+year);
-    }
+    public static class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 
-    @Override
-    public void onDialogNumberSet(int reference, int number, double decimal, boolean isNegative, double fullNumber) {
-        amount.setText(String.valueOf(fullNumber));
+        private TextView date;
+
+        public void setDate(TextView date) {
+            this.date = date;
+        }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+
+            final Calendar c = Calendar.getInstance();
+            int year = c.get(Calendar.YEAR);
+            int month = c.get(Calendar.MONTH);
+            int day = c.get(Calendar.DAY_OF_MONTH);
+
+            return new DatePickerDialog(getActivity(), this, year, month, day);
+        }
+
+        public void onDateSet(DatePicker view, int year, int month, int day) {
+            month+=1;
+            date.setText(day + "-" + month + "-" + year);
+        }
     }
 
 }

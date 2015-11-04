@@ -7,7 +7,7 @@
 
 <android.support.v7.widget.CardView
     android:layout_width="match_parent"
-    android:layout_height="100dp"
+    android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:id="@+id/card_view_main"
     card_view:cardCornerRadius="2dp"
@@ -24,7 +24,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Sed a euismod dui"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="14sp"
+        android:textStyle="bold"
         android:id="@+id/card_main_amount"/>
 
     <TextView
@@ -32,7 +33,7 @@
         android:layout_height="wrap_content"
         android:text="fasdfsdf"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:id="@+id/card_main_description"/>
+        android:id="@+id/card_main_category"/>
 
        <TextView
            android:layout_width="wrap_content"

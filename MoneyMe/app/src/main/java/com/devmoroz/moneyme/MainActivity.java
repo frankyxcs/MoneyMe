@@ -145,7 +145,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // если пришло ОК
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case REQUEST_CODE_INCOME:

@@ -2,19 +2,17 @@ package com.devmoroz.moneyme.models;
 
 public class MyCurrency {
 
-    private String symbol;
     private String desc;
-    private int pos;
+    private int id;
 
-    public MyCurrency(String symbol, String desc) {
-        this.symbol = symbol;
+    public MyCurrency(int id, String desc) {
+        this.id = id;
         this.desc = desc;
     }
 
-    public String getSymbol() {
-        return this.symbol;
+    public int getId() {
+        return this.id;
     }
-
     public String getDesc() {
         return this.desc;
     }

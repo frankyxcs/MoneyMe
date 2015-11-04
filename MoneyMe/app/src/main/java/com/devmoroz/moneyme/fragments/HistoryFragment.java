@@ -87,12 +87,18 @@ public class HistoryFragment extends Fragment {
         wRecycleWalletEntries.addOnScrollListener(new CustomRecyclerScroll() {
             @Override
             public void show() {
-                fab.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2)).start();
+                if (fab != null) {
+                    fab.collapse();
+                    fab.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2)).start();
+                }
             }
 
             @Override
             public void hide() {
-                fab.animate().translationY(fab.getHeight() + TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics())).setInterpolator(new AccelerateInterpolator(2)).start();
+                if (fab != null) {
+                    fab.collapse();
+                    fab.animate().translationY(fab.getHeight() + TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics())).setInterpolator(new AccelerateInterpolator(2)).start();
+                }
             }
         });
 
@@ -135,10 +141,10 @@ public class HistoryFragment extends Fragment {
         }
     }
 
-    public void CheckWallet(){
+    public void CheckWallet() {
         mListWalletEntries = MoneyApplication.inout;
         sorter.sortWalletEntriesByDate(mListWalletEntries);
-        if(wAdapter != null){
+        if (wAdapter != null) {
             wAdapter.notifyDataSetChanged();
         }
     }

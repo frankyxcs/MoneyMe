@@ -18,11 +18,18 @@ public class Outcome {
     @DatabaseField(canBeNull = true)
     private String notes;
 
+    @DatabaseField(canBeNull = false)
+    private String category;
+
     @DatabaseField(dataType = DataType.DATE)
     private Date dateOfSpending;
 
     @DatabaseField(canBeNull = false,dataType = DataType.DOUBLE)
     private double amount;
+
+    public String getCategory() {
+        return category;
+    }
 
     @DatabaseField(canBeNull = false)
     private int currency;
@@ -54,11 +61,12 @@ public class Outcome {
         return currency;
     }
 
-    public Outcome(String name, String notes, Date dateOfSpending, double amount, int currency) {
+    public Outcome(String name, String notes, Date dateOfSpending, double amount, String category,int currency) {
         this.name = name;
         this.notes = notes;
         this.dateOfSpending = dateOfSpending;
         this.amount = amount;
+        this.category = category;
         this.currency = currency;
     }
 }

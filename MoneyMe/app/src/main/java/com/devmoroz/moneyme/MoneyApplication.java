@@ -21,13 +21,7 @@ import java.util.List;
 
 public class MoneyApplication extends Application {
 
-    public final static MyCurrency[] MyCurrencyAll = {
-            new MyCurrency("$", "USD"),
-            new MyCurrency("€", "EUR"),
-            new MyCurrency("₴", "UAH"),
-            new MyCurrency("\u20BD", "RUB"),
-            new MyCurrency("£", "GBP")
-    };
+    public static String[] MyCurrencies;
 
     private static MoneyApplication wInstance;
 
@@ -54,12 +48,12 @@ public class MoneyApplication extends Application {
 
             if (incomes != null) {
                 for (Income in : incomes) {
-                    inout.add(new CommonInOut(1, in.getId(), in.getAmount(), in.getNotes(), in.getDateOfReceipt(), in.getCurrency()));
+                    inout.add(new CommonInOut(1, in.getId(), in.getAmount(), in.getNotes(),in.getIncomeType(),in.getName(), in.getDateOfReceipt(), in.getCurrency()));
                 }
             }
             if (outcomes != null) {
                 for (Outcome out : outcomes) {
-                    inout.add(new CommonInOut(2, out.getId(), out.getAmount(), out.getNotes(), out.getDateOfSpending(), out.getCurrency()));
+                    inout.add(new CommonInOut(2, out.getId(), out.getAmount(), out.getNotes(),out.getCategory(),out.getName(), out.getDateOfSpending(), out.getCurrency()));
                 }
             }
         } catch (SQLException ex) {
@@ -78,6 +72,7 @@ public class MoneyApplication extends Application {
         wInstance = this;
         DBHelperFactory.setHelper(getApplicationContext());
         dbHelper = DBHelperFactory.getHelper();
+        MyCurrencies = getResources().getStringArray(R.array.currency_names);
         GetCommonData();
     }
 

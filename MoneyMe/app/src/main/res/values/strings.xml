@@ -25,4 +25,11 @@
         <item>Развлечения</item>
         <item>Другое</item>
     </string-array>
+
+    <string-array name="currency_names">
+        <item>EUR</item>
+        <item>RUB</item>
+        <item>UAH</item>
+        <item>USD</item>
+    </string-array>
 </resources>

@@ -46,13 +46,13 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
 
 
         TextView textAmount = holder.textAmount;
-        TextView textDescription = holder.textDescription;
+        TextView textCategory = holder.textCategory;
         TextView textDateAdded = holder.textDateAdded;
         LinearLayout linearLayout = holder.linearLayout;
 
         linearLayout.setBackgroundColor(wData.getType()== 1 ? Color.parseColor("#80CBC4") : Color.parseColor("#FFAB91"));
         textAmount.setText(wData.getFormatedAmount());
-        textDescription.setText(wData.getDescription());
+        textCategory.setText(wData.getCategory());
         textDateAdded.setText(wData.getFormatedDate());
     }
 
@@ -64,7 +64,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
     public static class MainViewHolder extends RecyclerView.ViewHolder {
 
         TextView textAmount;
-        TextView textDescription;
+        TextView textCategory;
         TextView textDateAdded;
         LinearLayout linearLayout;
 
@@ -72,7 +72,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
             super(v);
             this.linearLayout = (LinearLayout) v.findViewById(R.id.card_view_main_color);
             this.textAmount = (TextView)v.findViewById(R.id.card_main_amount);
-            this.textDescription = (TextView)v.findViewById(R.id.card_main_description);
+            this.textCategory = (TextView)v.findViewById(R.id.card_main_category);
             this.textDateAdded = (TextView)v.findViewById(R.id.card_main_date);
         }
 

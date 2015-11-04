@@ -32,6 +32,8 @@ public class CommonInOut implements Parcelable{
     int id;
     double amount;
     String description;
+    String name;
+    String category;
     Date dateAdded;
     int currency;
 
@@ -40,19 +42,23 @@ public class CommonInOut implements Parcelable{
         type = input.readInt();
         amount = input.readDouble();
         description = input.readString();
+        name = input.readString();
+        category = input.readString();
         long dateMillis=input.readLong();
         dateAdded = (dateMillis == -1 ? null : new Date(dateMillis));
         currency = input.readInt();
 
     }
 
-    public CommonInOut(int type, int id, double amount, String description, Date dateAdded, int currency) {
+    public CommonInOut(int type, int id, double amount, String description, String category, String name, Date dateAdded, int currency) {
         this.type = type;
         this.id = id;
         this.amount = amount;
         this.description = description;
         this.dateAdded = dateAdded;
         this.currency = currency;
+        this.category = category;
+        this.name = name;
     }
 
     public int getType() {
@@ -61,6 +67,14 @@ public class CommonInOut implements Parcelable{
 
     public int getId() {
         return id;
+    }
+
+    public String getItemName() {
+        return name;
+    }
+
+    public String getCategory() {
+        return category;
     }
 
     public double getAmount() {
@@ -79,7 +93,7 @@ public class CommonInOut implements Parcelable{
     }
 
     public String getFormatedAmount() {
-        String sign = MoneyApplication.MyCurrencyAll[currency].getDesc();
+        String sign = MoneyApplication.MyCurrencies[currency];
 
         DecimalFormatSymbols symbols = new DecimalFormatSymbols();
         symbols.setGroupingSeparator(',');
@@ -102,6 +116,8 @@ public class CommonInOut implements Parcelable{
         dest.writeInt(type);
         dest.writeDouble(amount);
         dest.writeString(description);
+        dest.writeString(name);
+        dest.writeString(category);
         dest.writeLong(dateAdded == null ? -1 : dateAdded.getTime());
         dest.writeInt(currency);
     }

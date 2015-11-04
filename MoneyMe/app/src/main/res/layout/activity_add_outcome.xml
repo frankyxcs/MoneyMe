@@ -1,116 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/ScrollView01"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/mainBackground"
     android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/add_outcome_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/colorPrimary"/>
+        android:background="@color/colorPrimary" />
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:isScrollContainer="true"
         android:orientation="vertical"
-        android:padding="4dp" >
+        android:padding="4dp">
 
-        <TextView
-            android:id="@+id/TextView01"
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/text_input_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/add_outcome_name"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:hint="Название:"
+                android:inputType="text"/>
+        </android.support.design.widget.TextInputLayout>
+
+        <LinearLayout android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/text_input_layout1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Название:" >
-        </TextView>
+            android:layout_weight="3">
 
-        <EditText
-            android:id="@+id/add_outcome_name"
-            android:layout_width="fill_parent"
+            <EditText
+                android:id="@+id/add_outcome_amount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/add_outcome_name"
+                android:digits="1234567890."
+                android:hint="Сумма:"
+                android:imeOptions="actionNext"
+                android:inputType="numberDecimal"/>
+
+        </android.support.design.widget.TextInputLayout>
+            <Spinner
+                android:id="@+id/add_outcome_currency"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:entries="@array/currency_names" />
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/TextView01"
-            android:layout_toRightOf="@+id/TextView03"
-            android:inputType="text" >
-        </EditText>
+            android:paddingTop="10dp">
 
-        <TextView
-            android:id="@+id/TextView02"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/add_outcome_name"
-            android:text="Сумма:" >
-        </TextView>
+            <TextView
+                android:id="@+id/TextView03"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:text="Категория:" />
 
-        <EditText
-            android:id="@+id/add_outcome_amount"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/TextView02"
-            android:layout_toRightOf="@+id/TextView03"
-            android:digits="1234567890."
-            android:imeOptions="actionNext"
-            android:inputType="numberDecimal" >
-        </EditText>
+            <Spinner
+                android:id="@+id/add_outcome_category"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/TextView03"
+                android:entries="@array/transaction_category" />
 
-        <TextView
-            android:id="@+id/TextView03"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/add_outcome_amount"
-            android:text="Категория:" />
+            <TextView
+                android:id="@+id/TextView07"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/add_outcome_category"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="10dp"
+                android:text="Дата:"/>
 
-        <Spinner
-            android:id="@+id/add_outcome_category"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/TextView03"
-            android:layout_toRightOf="@+id/TextView03"
-            android:entries="@array/transaction_category"/>
+            <TextView
+                android:id="@+id/add_outcome_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/TextView07"
+                android:layout_toRightOf="@+id/TextView03"
+                android:onClick="showDatePickerDialog"
+                android:text="12-12-12">
 
-        <TextView
-            android:id="@+id/TextView06"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/add_outcome_category"
-            android:text="Заметка:" >
-        </TextView>
+            </TextView>
 
-        <AutoCompleteTextView
-            android:id="@+id/add_outcome_note"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/TextView06"
-            android:layout_toRightOf="@+id/TextView03"
-            android:inputType="textShortMessage|textAutoCorrect|textCapSentences|textMultiLine|textAutoComplete"
-            android:maxLength="200"
-            android:maxLines="2" >
-        </AutoCompleteTextView>
+            <TextView
+                android:id="@+id/TextView06"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/add_outcome_date"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="10dp"
+                android:text="Заметка:"/>
 
-        <TextView
-            android:id="@+id/TextView07"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/add_outcome_note"
-            android:text="Дата:" >
-        </TextView>
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/TextView06"
+                android:layout_toRightOf="@+id/TextView03"
+                app:counterEnabled="true"
+                app:counterMaxLength="200">
 
-        <EditText
-            android:id="@+id/add_outcome_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/TextView07"
-            android:layout_toRightOf="@+id/TextView03"
-            android:onClick="showDatePickerDialog"
-            android:text="12-12-12" >
-        </EditText>
+                <EditText
+                    android:id="@+id/add_outcome_note"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textShortMessage|textAutoCorrect|textCapSentences|textMultiLine|textAutoComplete"
+                    android:maxLength="200"
+                    android:maxLines="2"/>
+            </android.support.design.widget.TextInputLayout>
 
-    </RelativeLayout>
+
+        </RelativeLayout>
+
+    </LinearLayout>
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Сохранить"
         android:id="@+id/add_outcome_save"
-        android:layout_gravity="center_horizontal" />
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:layout_gravity="bottom|right|end"
+        android:layout_margin="8dp"
+        android:background="@color/colorPrimary"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:text="Сохранить"
+        android:textColor="@color/colorWhite" />
 </LinearLayout>
