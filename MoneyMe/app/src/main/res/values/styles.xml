@@ -13,5 +13,6 @@
 
     <style name="AppDefaultOutcome" parent="AppTheme">
         <item name="colorControlActivated">@color/colorPrimaryDark</item>
+        <item name="android:windowActionBar">false</item>
     </style>
 </resources>

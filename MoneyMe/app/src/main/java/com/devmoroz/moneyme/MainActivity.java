@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -19,13 +20,19 @@ import com.devmoroz.moneyme.adapters.TabsPagerFragmentAdapter;
 import com.devmoroz.moneyme.eventBus.BusProvider;
 
 import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
+import com.devmoroz.moneyme.logging.L;
+import com.devmoroz.moneyme.utils.Constants;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
+
+import java.sql.SQLException;
 
 public class MainActivity extends AppCompatActivity {
 
     final int REQUEST_CODE_INCOME = 918;
     final int REQUEST_CODE_OUTCOME = 1218;
+    private int createdOutcomeId = -1;
+    private int createdIncomeId = -1;
 
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
@@ -34,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton fabIn;
     private FloatingActionButton fabOut;
     private FloatingActionsMenu fab;
+    private View coordinator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,13 +49,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        toolbar = (Toolbar)findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         viewPager = (ViewPager) findViewById(R.id.view_pager);
         tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         fab = (FloatingActionsMenu) findViewById(R.id.fab_main);
         fabIn = (FloatingActionButton) findViewById(R.id.fab_main_income);
         fabOut = (FloatingActionButton) findViewById(R.id.fab_main_outcome);
+        coordinator = findViewById(R.id.coordinator);
 
         initToolbar();
         initNavigationView();
@@ -115,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initTabs() {
-        TabsPagerFragmentAdapter adapter = new TabsPagerFragmentAdapter(getSupportFragmentManager(),getTabsTitle(),fab);
+        TabsPagerFragmentAdapter adapter = new TabsPagerFragmentAdapter(getSupportFragmentManager(), getTabsTitle(), fab);
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
     }
@@ -124,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
         fabIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startAddActivity(R.string.income_toolbar_name);
+                Snackbar.make(coordinator, "Added", Snackbar.LENGTH_LONG).show();
             }
         });
 
@@ -136,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void startAddActivity(int headerText){
+    private void startAddActivity(int headerText) {
         fab.collapse();
         Intent intent = new Intent(this, AddOutcomeActivity.class);
         intent.putExtra("toolbar_header_text", headerText);
@@ -151,11 +160,38 @@ public class MainActivity extends AppCompatActivity {
 
                     break;
                 case REQUEST_CODE_OUTCOME:
-                    BusProvider.postOnMain(new WalletChangeEvent());
+                    Bundle extras = data.getExtras();
+                    createdOutcomeId = extras.getInt(Constants.CREATED_ITEM_ID);
+                    if (createdOutcomeId != -1) {
+                        Snackbar.make(coordinator, R.string.added_outcome_record, Snackbar.LENGTH_LONG)
+                                .setCallback(new Snackbar.Callback() {
+                                    @Override
+                                    public void onDismissed(Snackbar snackbar, int event) {
+                                        if(event == Snackbar.Callback.DISMISS_EVENT_TIMEOUT || event == Snackbar.Callback.DISMISS_EVENT_SWIPE ){
+                                                BusProvider.postOnMain(new WalletChangeEvent());
+                                        }
+                                    }
+                                })
+                                .setAction(R.string.text_undo, new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        try {
+                                            MoneyApplication.getInstance().GetDBHelper().getOutcomeDAO().deleteById(createdOutcomeId);
+                                            BusProvider.postOnMain(new WalletChangeEvent());
+                                        } catch (SQLException ex) {
+
+                                        }
+                                    }
+                                })
+                                .setActionTextColor(Color.RED)
+                                .show();
+                    }else{
+                        L.t(this,"Something went wrong.Please,try again.");
+                    }
                     break;
             }
         } else {
-            Toast.makeText(this, "Wrong result", Toast.LENGTH_SHORT).show();
+            L.t(this,"Something went wrong.Please,try again.");
         }
     }
 
@@ -163,4 +199,6 @@ public class MainActivity extends AppCompatActivity {
     private String[] getTabsTitle() {
         return getResources().getStringArray(R.array.drawer_tabs);
     }
+
+
 }

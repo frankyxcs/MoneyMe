@@ -6,11 +6,17 @@
     android:background="@color/mainBackground"
     android:orientation="vertical">
 
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
     <android.support.v7.widget.Toolbar
         android:id="@+id/add_outcome_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/colorPrimary" />
+
+    </android.support.design.widget.AppBarLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -82,10 +88,18 @@
                 android:layout_height="wrap_content"
                 android:layout_alignTop="@+id/TextView07"
                 android:layout_toRightOf="@+id/TextView03"
-                android:onClick="showDatePickerDialog"
                 android:text="12-12-12">
 
             </TextView>
+
+            <ImageView android:id="@+id/add_outcome_calendar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/TextView07"
+                android:layout_toRightOf="@+id/add_outcome_date"
+                android:layout_marginLeft="15dp"
+                android:onClick="showDatePickerDialog"
+                android:src="@drawable/ic_calendar_dark"/>
 
             <TextView
                 android:id="@+id/TextView06"

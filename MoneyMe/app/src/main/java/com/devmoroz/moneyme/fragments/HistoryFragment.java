@@ -78,9 +78,10 @@ public class HistoryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.history_fragment, container, false);
         mTextError = (TextView) view.findViewById(R.id.textWalletHistoryError);
+
         wRecycleWalletEntries = (RecyclerView) view.findViewById(R.id.main_recycler_view);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        wRecycleWalletEntries.setLayoutManager(layoutManager);
+
+        wRecycleWalletEntries.setLayoutManager(new LinearLayoutManager(getActivity()));
         wAdapter = new HistoryAdapter(getActivity());
         wRecycleWalletEntries.setAdapter(wAdapter);
 
@@ -144,8 +145,11 @@ public class HistoryFragment extends Fragment {
     public void CheckWallet() {
         mListWalletEntries = MoneyApplication.inout;
         sorter.sortWalletEntriesByDate(mListWalletEntries);
-        if (wAdapter != null) {
-            wAdapter.notifyDataSetChanged();
-        }
+        wAdapter.setInOutData(mListWalletEntries);
+    }
+
+    @Subscribe
+    public void OnWalletChange(WalletChangeEvent event){
+        CheckWallet();
     }
 }

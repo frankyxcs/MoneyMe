@@ -13,13 +13,10 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.InputType;
+import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -28,13 +25,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.codetroopers.betterpickers.datepicker.DatePickerBuilder;
-import com.codetroopers.betterpickers.numberpicker.NumberPickerBuilder;
-import com.devmoroz.moneyme.eventBus.BusProvider;
-import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
 import com.devmoroz.moneyme.helpers.DBHelper;
-import com.devmoroz.moneyme.models.Income;
 import com.devmoroz.moneyme.models.Outcome;
+import com.devmoroz.moneyme.utils.Constants;
 
 import java.io.File;
 import java.io.IOException;
@@ -94,11 +87,13 @@ public class AddOutcomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent;
+                int newId = -1;
                 try {
-                    addOutcome();
+                  newId = addOutcome();
                 } catch (SQLException ex) {
                 }
                 intent = new Intent(getApplicationContext(), MainActivity.class);
+                intent.putExtra(Constants.CREATED_ITEM_ID, newId);
                 setResult(RESULT_OK, intent);
                 finish();
             }
@@ -129,7 +124,7 @@ public class AddOutcomeActivity extends AppCompatActivity {
         newFragment.show(getSupportFragmentManager(), "datePicker");
     }
 
-    private void addOutcome() throws java.sql.SQLException {
+    private int addOutcome() throws java.sql.SQLException {
         Date dateAdded;
         String outcomeNote = description.getText().toString();
         double outcomeAmount = Double.parseDouble(amount.getText().toString());
@@ -144,6 +139,8 @@ public class AddOutcomeActivity extends AppCompatActivity {
         Outcome outcome = new Outcome(outcomeNote, dateAdded, outcomeAmount,selectedCategory, currency);
         dbHelper = MoneyApplication.getInstance().GetDBHelper();
         dbHelper.getOutcomeDAO().create(outcome);
+
+        return outcome.getId();
     }
 
     @Override

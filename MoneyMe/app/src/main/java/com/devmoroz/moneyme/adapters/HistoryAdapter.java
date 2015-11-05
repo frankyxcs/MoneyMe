@@ -3,7 +3,6 @@ package com.devmoroz.moneyme.adapters;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,11 +30,13 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
 
     public void setInOutData(ArrayList<CommonInOut> inOutData){
         this.inOutData = inOutData;
+
+        notifyDataSetChanged();
     }
 
     @Override
     public MainViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_main, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_history, parent, false);
 
         return new MainViewHolder(v);
     }

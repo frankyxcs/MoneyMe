@@ -51,7 +51,8 @@
         android:layout_gravity="bottom|right|end"
         app:fab_addButtonColorNormal="#fafafa"
         app:fab_addButtonColorPressed="#f1f1f1"
-        app:fab_addButtonPlusIconColor="#808080">
+        app:fab_addButtonPlusIconColor="#808080"
+        app:layout_behavior="com.devmoroz.moneyme.utils.FloatingActionMenuBehavior">
 
         <com.getbase.floatingactionbutton.FloatingActionButton
             android:layout_width="wrap_content"
@@ -83,7 +84,6 @@
         android:layout_gravity="start"
         app:menu="@menu/menu_navigation"
         app:headerLayout="@layout/navigation_header" />
-
 
 
 </android.support.v4.widget.DrawerLayout>
