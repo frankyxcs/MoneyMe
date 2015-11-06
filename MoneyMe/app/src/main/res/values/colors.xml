@@ -6,4 +6,5 @@
     <color name="colorWhite">#ffffff</color>
     <color name="colorIncomeItem">#80CBC4</color>
     <color name="colorOutcomeItem">#FFAB91</color>
+    <color name="colorGreen">#009688</color>
 </resources>

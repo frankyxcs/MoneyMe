@@ -1,6 +1,7 @@
 package com.devmoroz.moneyme.fragments;
 
 import android.graphics.Color;
+import android.graphics.PointF;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,17 +12,20 @@ import android.text.style.RelativeSizeSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.devmoroz.moneyme.MoneyApplication;
 import com.devmoroz.moneyme.R;
 import com.devmoroz.moneyme.models.Outcome;
 import com.devmoroz.moneyme.utils.PieMarkerView;
+import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
@@ -30,13 +34,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class ChartFragment extends Fragment {
+public class ChartFragment extends Fragment implements OnChartValueSelectedListener {
 
     private View view;
     private PieChart chart;
     private Typeface tf;
     private List<Outcome> outs;
     private String total;
+
 
     public static ChartFragment getInstance() {
         Bundle args = new Bundle();
@@ -52,9 +57,8 @@ public class ChartFragment extends Fragment {
         view = inflater.inflate(R.layout.chart_fragment, container, false);
        // tf = Typeface.createFromAsset(getActivity().getAssets(), "OpenSans-Regular.ttf");
         chart = (PieChart) view.findViewById(R.id.walletPieChart);
-        PieMarkerView pv = new PieMarkerView(getContext(),R.layout.pie_marker_view);
 
-        chart.setHoleRadius(45f);
+        chart.setHoleRadius(40f);
         chart.setTransparentCircleRadius(50f);
 
         Legend l = chart.getLegend();
@@ -68,10 +72,13 @@ public class ChartFragment extends Fragment {
         chart.setCenterTextSize(24f);
         chart.setCenterTextColor(Color.RED);
         chart.setDescription("");
-        chart.setMarkerView(pv);
+        chart.setOnChartValueSelectedListener(this);
         chart.invalidate();
+
         return view;
     }
+
+
 
     private SpannableString generateCenterText() {
         SpannableString s = new SpannableString(total);
@@ -119,8 +126,28 @@ public class ChartFragment extends Fragment {
         ds1.setValueTextSize(12f);
 
         PieData d = new PieData(xVals, ds1);
-        //d.setValueTypeface(tf);
 
         return d;
+    }
+
+    @Override
+    public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
+        float rotationAngle = chart.getRotationAngle();
+        float[] mAbsoluteAngles =  chart.getAbsoluteAngles();
+        float[] mDrawAngles =  chart.getDrawAngles();
+        int i = e.getXIndex();
+
+        float offset = mDrawAngles[i] / 2;
+
+        // calculate the next position
+        float end = 270f-(mAbsoluteAngles[i]-offset);
+
+        //rotate to slice center
+        chart.spin(1000,rotationAngle,end,Easing.EasingOption.EaseInOutQuad);
+    }
+
+    @Override
+    public void onNothingSelected() {
+
     }
 }

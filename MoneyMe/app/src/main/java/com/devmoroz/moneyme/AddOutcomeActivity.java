@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
@@ -50,7 +51,7 @@ public class AddOutcomeActivity extends AppCompatActivity {
 
     private EditText amount;
     private EditText description;
-    private Button buttonAdd;
+    private FloatingActionButton buttonAdd;
     private TextView date;
     private Spinner categorySpin;
     private Spinner currencySpin;
@@ -81,7 +82,7 @@ public class AddOutcomeActivity extends AppCompatActivity {
         categorySpin = (Spinner) findViewById(R.id.add_outcome_category);
         currencySpin = (Spinner) findViewById(R.id.add_outcome_currency);
         date.setText(dateFormat.format(new Date()));
-        buttonAdd = (Button) findViewById(R.id.add_outcome_save);
+        buttonAdd = (FloatingActionButton) findViewById(R.id.add_outcome_save);
 
         buttonAdd.setOnClickListener(new View.OnClickListener() {
             @Override
