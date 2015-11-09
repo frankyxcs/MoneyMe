@@ -10,13 +10,18 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -27,6 +32,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.devmoroz.moneyme.helpers.DBHelper;
+import com.devmoroz.moneyme.models.CreatedItemInfo;
 import com.devmoroz.moneyme.models.Outcome;
 import com.devmoroz.moneyme.utils.Constants;
 
@@ -52,9 +58,10 @@ public class AddOutcomeActivity extends AppCompatActivity {
     private EditText amount;
     private EditText description;
     private FloatingActionButton buttonAdd;
+    private TextInputLayout floatingAmountLabel;
     private TextView date;
     private Spinner categorySpin;
-    private Spinner currencySpin;
+    private TextView currencyText;
     private Toolbar toolbar;
     private ImageView chequeImage;
 
@@ -67,6 +74,7 @@ public class AddOutcomeActivity extends AppCompatActivity {
         setTheme(R.style.AppDefaultOutcome);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_outcome);
+        Animation animation = AnimationUtils.loadAnimation(this, R.anim.fab_grow);
 
         toolbar = (Toolbar) findViewById(R.id.add_outcome_toolbar);
         if (toolbar != null) {
@@ -80,31 +88,41 @@ public class AddOutcomeActivity extends AppCompatActivity {
         description = (EditText) findViewById(R.id.add_outcome_note);
         date = (TextView) findViewById(R.id.add_outcome_date);
         categorySpin = (Spinner) findViewById(R.id.add_outcome_category);
-        currencySpin = (Spinner) findViewById(R.id.add_outcome_currency);
+        currencyText = (TextView) findViewById(R.id.add_outcome_currency);
         date.setText(dateFormat.format(new Date()));
         buttonAdd = (FloatingActionButton) findViewById(R.id.add_outcome_save);
+        floatingAmountLabel = (TextInputLayout) findViewById(R.id.text_input_layout_out_amount);
 
         buttonAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(amount.getText().toString().isEmpty()){
+                    floatingAmountLabel.setError(getString(R.string.outcome_amount_required));
+                    floatingAmountLabel.setErrorEnabled(true);
+                    return;
+                }
                 Intent intent;
-                int newId = -1;
+                CreatedItemInfo info = new CreatedItemInfo(-1,"",0);
                 try {
-                  newId = addOutcome();
+                    info = addOutcome();
                 } catch (SQLException ex) {
                 }
                 intent = new Intent(getApplicationContext(), MainActivity.class);
-                intent.putExtra(Constants.CREATED_ITEM_ID, newId);
+                intent.putExtra(Constants.CREATED_ITEM_ID, info.getItemId());
+                intent.putExtra(Constants.CREATED_ITEM_CATEGORY, info.getCategory());
+                intent.putExtra(Constants.CREATED_ITEM_AMOUNT, info.getAmount());
                 setResult(RESULT_OK, intent);
                 finish();
             }
         });
 
         initCategorySpinner();
+        setupFloatingLabelError();
+        buttonAdd.startAnimation(animation);
     }
 
     private void initCategorySpinner() {
-        final String[] categories = getResources().getStringArray(R.array.transaction_category);
+        final String[] categories = getResources().getStringArray(R.array.transaction_categories);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,android.R.layout.simple_spinner_dropdown_item,categories);
         categorySpin.setAdapter(adapter);
     }
@@ -125,23 +143,23 @@ public class AddOutcomeActivity extends AppCompatActivity {
         newFragment.show(getSupportFragmentManager(), "datePicker");
     }
 
-    private int addOutcome() throws java.sql.SQLException {
+    private CreatedItemInfo addOutcome() throws java.sql.SQLException {
         Date dateAdded;
         String outcomeNote = description.getText().toString();
         double outcomeAmount = Double.parseDouble(amount.getText().toString());
         String selectedCategory = categorySpin.getSelectedItem().toString();
-        int currency = currencySpin.getSelectedItemPosition();
+        String account = "Наличные";
         try {
             dateAdded = dateFormat.parse(date.getText().toString());
         } catch (ParseException ex) {
             dateAdded = new Date();
         }
 
-        Outcome outcome = new Outcome(outcomeNote, dateAdded, outcomeAmount,selectedCategory, currency);
+        Outcome outcome = new Outcome(outcomeNote, dateAdded, outcomeAmount,selectedCategory, account);
         dbHelper = MoneyApplication.getInstance().GetDBHelper();
         dbHelper.getOutcomeDAO().create(outcome);
 
-        return outcome.getId();
+        return new CreatedItemInfo(outcome.getId(),selectedCategory,outcomeAmount);
     }
 
     @Override
@@ -225,6 +243,33 @@ public class AddOutcomeActivity extends AppCompatActivity {
             month+=1;
             date.setText(day + "-" + month + "-" + year);
         }
+    }
+
+    private void setupFloatingLabelError() {
+        floatingAmountLabel.getEditText().addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence text, int start, int count, int after) {
+                if (text.length() > 0) {
+                    floatingAmountLabel.setErrorEnabled(false);
+                } else {
+                    floatingAmountLabel.setError(getString(R.string.outcome_amount_required));
+                    floatingAmountLabel.setErrorEnabled(true);
+                }
+            }
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count,
+                                          int after) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(s.toString().length()==0){
+                    floatingAmountLabel.setError(getString(R.string.outcome_amount_required));
+                    floatingAmountLabel.setErrorEnabled(true);
+                }
+            }
+        });
     }
 
 }

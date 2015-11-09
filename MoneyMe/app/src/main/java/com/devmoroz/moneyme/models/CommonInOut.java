@@ -34,7 +34,7 @@ public class CommonInOut implements Parcelable{
     String description;
     String category;
     Date dateAdded;
-    int currency;
+    String account;
 
     public CommonInOut(Parcel input) {
         id = input.readInt();
@@ -44,17 +44,17 @@ public class CommonInOut implements Parcelable{
         category = input.readString();
         long dateMillis=input.readLong();
         dateAdded = (dateMillis == -1 ? null : new Date(dateMillis));
-        currency = input.readInt();
+        account = input.readString();
 
     }
 
-    public CommonInOut(int type, int id, double amount, String description, String category, Date dateAdded, int currency) {
+    public CommonInOut(int type, int id, double amount, String description, String category, Date dateAdded, String account) {
         this.type = type;
         this.id = id;
         this.amount = amount;
         this.description = description;
         this.dateAdded = dateAdded;
-        this.currency = currency;
+        this.account = account;
         this.category = category;
     }
 
@@ -87,7 +87,7 @@ public class CommonInOut implements Parcelable{
     }
 
     public String getFormatedAmount() {
-        String sign = MoneyApplication.MyCurrencies[currency];
+        String sign = MoneyApplication.currentCurrency.getSymbol();
 
         DecimalFormatSymbols symbols = new DecimalFormatSymbols();
         symbols.setGroupingSeparator(',');
@@ -112,6 +112,6 @@ public class CommonInOut implements Parcelable{
         dest.writeString(description);
         dest.writeString(category);
         dest.writeLong(dateAdded == null ? -1 : dateAdded.getTime());
-        dest.writeInt(currency);
+        dest.writeString(account);
     }
 }

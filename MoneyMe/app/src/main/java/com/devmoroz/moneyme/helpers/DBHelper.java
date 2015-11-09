@@ -4,9 +4,11 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.devmoroz.moneyme.dao.CurrencyDAO;
 import com.devmoroz.moneyme.dao.GoalDAO;
 import com.devmoroz.moneyme.dao.IncomeDAO;
 import com.devmoroz.moneyme.dao.OutcomeDAO;
+import com.devmoroz.moneyme.models.Currency;
 import com.devmoroz.moneyme.models.Goal;
 import com.devmoroz.moneyme.models.Income;
 import com.devmoroz.moneyme.models.Outcome;
@@ -28,6 +30,7 @@ public class DBHelper extends OrmLiteSqliteOpenHelper {
     private GoalDAO goalDao = null;
     private IncomeDAO incomeDAO = null;
     private OutcomeDAO outcomeDAO = null;
+    private CurrencyDAO currencyDAO = null;
 
     public DBHelper(Context context) {
         super(context,DATABASE_NAME,null,DATABASE_VERSION);
@@ -40,6 +43,7 @@ public class DBHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTable(connectionSource, Goal.class);
             TableUtils.createTable(connectionSource, Income.class);
             TableUtils.createTable(connectionSource, Outcome.class);
+            TableUtils.createTable(connectionSource, Currency.class);
         }
         catch (SQLException e){
             Log.e(TAG,"error creating DB " + DATABASE_NAME);
@@ -54,6 +58,7 @@ public class DBHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.dropTable(connectionSource, Goal.class, true);
             TableUtils.dropTable(connectionSource, Income.class, true);
             TableUtils.dropTable(connectionSource, Outcome.class, true);
+            TableUtils.dropTable(connectionSource, Currency.class, true);
             onCreate(db, connectionSource);
         }
         catch (SQLException e){
@@ -68,6 +73,7 @@ public class DBHelper extends OrmLiteSqliteOpenHelper {
         goalDao = null;
         incomeDAO = null;
         outcomeDAO = null;
+        currencyDAO = null;
     }
 
     public GoalDAO getGoalDAO() throws SQLException{
@@ -87,5 +93,12 @@ public class DBHelper extends OrmLiteSqliteOpenHelper {
             outcomeDAO = new OutcomeDAO(getConnectionSource(), Outcome.class);
         }
         return outcomeDAO;
+    }
+
+    public CurrencyDAO getCurrencyDAO() throws SQLException{
+        if(currencyDAO == null){
+            currencyDAO = new CurrencyDAO(getConnectionSource(), Currency.class);
+        }
+        return currencyDAO;
     }
 }

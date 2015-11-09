@@ -20,6 +20,7 @@ import com.devmoroz.moneyme.adapters.TabsPagerFragmentAdapter;
 import com.devmoroz.moneyme.eventBus.BusProvider;
 
 import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
+import com.devmoroz.moneyme.helpers.CurrencyHelper;
 import com.devmoroz.moneyme.logging.L;
 import com.devmoroz.moneyme.utils.Constants;
 import com.getbase.floatingactionbutton.FloatingActionButton;
@@ -62,6 +63,13 @@ public class MainActivity extends AppCompatActivity {
         initNavigationView();
         initTabs();
         initFloatingActionMenu();
+
+        selectCurrency();
+    }
+
+    private void selectCurrency() {
+        CurrencyHelper ch = new CurrencyHelper(getApplicationContext());
+        ch.show();
     }
 
     @Override
@@ -155,15 +163,47 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
             switch (requestCode) {
                 case REQUEST_CODE_INCOME:
+                    createdIncomeId = extras.getInt(Constants.CREATED_ITEM_ID);
+                    if (createdIncomeId != -1) {
+                        String account = extras.getString(Constants.CREATED_ITEM_CATEGORY);
+                        double amount = extras.getDouble(Constants.CREATED_ITEM_AMOUNT);
+                        String info = String.format("%s: %s %10.2f ",account,getString(R.string.added_income),amount);
+                        Snackbar.make(coordinator, info, Snackbar.LENGTH_LONG)
+                                .setCallback(new Snackbar.Callback() {
+                                    @Override
+                                    public void onDismissed(Snackbar snackbar, int event) {
+                                        if(event == Snackbar.Callback.DISMISS_EVENT_TIMEOUT || event == Snackbar.Callback.DISMISS_EVENT_SWIPE ){
+                                            BusProvider.postOnMain(new WalletChangeEvent());
+                                        }
+                                    }
+                                })
+                                .setAction(R.string.text_undo, new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        try {
+                                            MoneyApplication.getInstance().GetDBHelper().getIncomeDAO().deleteById(createdIncomeId);
+                                            BusProvider.postOnMain(new WalletChangeEvent());
+                                        } catch (SQLException ex) {
 
+                                        }
+                                    }
+                                })
+                                .setActionTextColor(Color.RED)
+                                .show();
+                    }else{
+                        L.t(this,"Something went wrong.Please,try again.");
+                    }
                     break;
                 case REQUEST_CODE_OUTCOME:
-                    Bundle extras = data.getExtras();
                     createdOutcomeId = extras.getInt(Constants.CREATED_ITEM_ID);
                     if (createdOutcomeId != -1) {
-                        Snackbar.make(coordinator, R.string.added_outcome_record, Snackbar.LENGTH_LONG)
+                        String account = extras.getString(Constants.CREATED_ITEM_CATEGORY);
+                        double amount = extras.getDouble(Constants.CREATED_ITEM_AMOUNT);
+                        String info = String.format("%s: %s %10.2f ",account,getString(R.string.added_outcome),amount);
+                        Snackbar.make(coordinator, info, Snackbar.LENGTH_LONG)
                                 .setCallback(new Snackbar.Callback() {
                                     @Override
                                     public void onDismissed(Snackbar snackbar, int event) {

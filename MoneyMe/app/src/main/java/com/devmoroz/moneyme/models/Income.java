@@ -16,7 +16,7 @@ public class Income {
     private String notes;
 
     @DatabaseField(canBeNull = true)
-    private String category;
+    private String account;
 
     @DatabaseField(dataType = DataType.DATE)
     private Date dateOfReceipt;
@@ -50,14 +50,13 @@ public class Income {
         return currency;
     }
 
-    public String getCategory() {
-        return category;
+    public String getAccount() {
+        return account;
     }
 
-    public Income(int id, String notes, String category, Date dateOfReceipt, double amount, int currency) {
-        this.id = id;
+    public Income(String notes, String account, Date dateOfReceipt, double amount, int currency) {
         this.notes = notes;
-        this.category = category;
+        this.account = account;
         this.dateOfReceipt = dateOfReceipt;
         this.amount = amount;
         this.currency = currency;

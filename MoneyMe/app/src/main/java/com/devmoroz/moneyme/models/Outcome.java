@@ -29,7 +29,7 @@ public class Outcome {
     }
 
     @DatabaseField(canBeNull = false)
-    private int currency;
+    private String account;
 
     public Outcome() {
     }
@@ -50,15 +50,15 @@ public class Outcome {
         return amount;
     }
 
-    public int getCurrency() {
-        return currency;
+    public String getAccount() {
+        return account;
     }
 
-    public Outcome(String notes, Date dateOfSpending, double amount, String category,int currency) {
+    public Outcome(String notes, Date dateOfSpending, double amount, String category,String account) {
         this.notes = notes;
         this.dateOfSpending = dateOfSpending;
         this.amount = amount;
         this.category = category;
-        this.currency = currency;
+        this.account = account;
     }
 }

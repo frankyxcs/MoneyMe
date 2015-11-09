@@ -10,9 +10,14 @@
     <string name="outcome_toolbar_name">Расход</string>
     <string name="default_add_toolbar_name">Кошелек</string>
     <string name="text_undo">Отмена</string>
-    <string name="added_outcome_record">Добавлена запись в расходы</string>
+    <string name="added_income">добавлено</string>
+    <string name="added_outcome">потрачено</string>
+    <string name="outcome_amount_required">Пожалуйста, укажите сумму</string>
+    <string name="currencies">Валюты</string>
+    <string name="currency">Валюта</string>
+    <string name="ok">OK</string>
 
-    <string-array name="transaction_category">
+    <string-array name="transaction_categories">
         <item>Одежда</item>
         <item>Здоровье</item>
         <item>Связь</item>
@@ -20,7 +25,6 @@
         <item>Машина</item>
         <item>Подарки</item>
         <item>Еда вне дома</item>
-        <item>Ипотека</item>
         <item>Кредит</item>
         <item>Аренда</item>
         <item>Транспорт</item>
@@ -33,5 +37,11 @@
         <item>RUB</item>
         <item>UAH</item>
         <item>USD</item>
+    </string-array>
+
+    <string-array name="account_categories">
+        <item>Наличные</item>
+        <item>Кредитная карта</item>
+        <item>Банк</item>
     </string-array>
 </resources>

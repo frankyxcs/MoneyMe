@@ -27,7 +27,7 @@
             android:orientation="horizontal">
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/text_input_layout1"
+            android:id="@+id/text_input_layout_out_amount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="3">
@@ -42,12 +42,12 @@
                 android:inputType="numberDecimal"/>
 
         </android.support.design.widget.TextInputLayout>
-            <Spinner
+            <TextView
                 android:id="@+id/add_outcome_currency"
                 android:layout_width="0dp"
-                android:layout_height="fill_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:entries="@array/currency_names" />
+                android:text="UAH" />
 
         </LinearLayout>
 
@@ -68,7 +68,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@+id/TextView03"
-                android:entries="@array/transaction_category" />
+                android:entries="@array/transaction_categories" />
 
             <TextView
                 android:id="@+id/TextView07"

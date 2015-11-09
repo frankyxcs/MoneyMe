@@ -9,9 +9,9 @@ import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
 import com.devmoroz.moneyme.helpers.DBHelper;
 import com.devmoroz.moneyme.helpers.DBHelperFactory;
 import com.devmoroz.moneyme.models.CommonInOut;
+import com.devmoroz.moneyme.models.Currency;
 import com.devmoroz.moneyme.models.Goal;
 import com.devmoroz.moneyme.models.Income;
-import com.devmoroz.moneyme.models.MyCurrency;
 import com.devmoroz.moneyme.models.Outcome;
 import com.squareup.otto.Subscribe;
 
@@ -21,7 +21,7 @@ import java.util.List;
 
 public class MoneyApplication extends Application {
 
-    public static String[] MyCurrencies;
+    public static Currency currentCurrency;
 
     private static MoneyApplication wInstance;
 
@@ -42,19 +42,28 @@ public class MoneyApplication extends Application {
 
     public void GetCommonData() {
         try {
+            List<Currency> currencies;
             incomes = dbHelper.getIncomeDAO().queryForAll();
             outcomes = dbHelper.getOutcomeDAO().queryForAll();
+            currencies = dbHelper.getCurrencyDAO().queryForAll();
+
             inout = new ArrayList<>();
 
             if (incomes != null) {
                 for (Income in : incomes) {
-                    inout.add(new CommonInOut(1, in.getId(), in.getAmount(), in.getNotes(),in.getCategory(), in.getDateOfReceipt(), in.getCurrency()));
+                    inout.add(new CommonInOut(1, in.getId(), in.getAmount(), in.getNotes(),in.getAccount(), in.getDateOfReceipt(), in.getAccount()));
                 }
             }
             if (outcomes != null) {
                 for (Outcome out : outcomes) {
-                    inout.add(new CommonInOut(2, out.getId(), out.getAmount(), out.getNotes(),out.getCategory(), out.getDateOfSpending(), out.getCurrency()));
+                    inout.add(new CommonInOut(2, out.getId(), out.getAmount(), out.getNotes(),out.getCategory(), out.getDateOfSpending(), out.getAccount()));
                 }
+            }
+
+            if(currencies.size() == 0){
+                currentCurrency = new Currency();
+            }else{
+                currentCurrency = currencies.get(0);
             }
         } catch (SQLException ex) {
 
@@ -72,7 +81,6 @@ public class MoneyApplication extends Application {
         wInstance = this;
         DBHelperFactory.setHelper(getApplicationContext());
         dbHelper = DBHelperFactory.getHelper();
-        MyCurrencies = getResources().getStringArray(R.array.currency_names);
         GetCommonData();
     }
 

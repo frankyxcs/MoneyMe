@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/add_income_toolbar"
@@ -13,14 +10,20 @@
             android:layout_height="?attr/actionBarSize"
             android:background="@color/colorPrimary" />
 
-    </android.support.design.widget.AppBarLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:isScrollContainer="true"
+        android:orientation="vertical"
+        android:padding="4dp">
 
     <LinearLayout android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/text_input_layout_income"
+            android:id="@+id/text_input_layout_income_amount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="3">
@@ -35,13 +38,108 @@
                 android:inputType="numberDecimal"/>
 
         </android.support.design.widget.TextInputLayout>
-        <Spinner
+        <TextView
             android:id="@+id/add_income_currency"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="1"
-            android:entries="@array/currency_names" />
+            android:text="UAH" />
 
     </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp">
+
+        <TextView
+            android:id="@+id/TextView13"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:text="Счет:" />
+
+        <Spinner
+            android:id="@+id/add_income_category"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/TextView16"
+            android:entries="@array/transaction_categories" />
+
+        <TextView
+            android:id="@+id/TextView17"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/add_income_category"
+            android:layout_marginLeft="4dp"
+            android:layout_marginTop="10dp"
+            android:text="Дата:"/>
+
+        <TextView
+            android:id="@+id/add_income_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/TextView17"
+            android:layout_toRightOf="@+id/TextView16"
+            android:text="12-12-12">
+
+        </TextView>
+
+        <ImageView android:id="@+id/add_income_calendar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/TextView17"
+            android:layout_toRightOf="@+id/add_income_date"
+            android:layout_marginLeft="15dp"
+            android:onClick="showDatePickerDialog"
+            android:src="@drawable/ic_calendar_dark"/>
+
+        <TextView
+            android:id="@+id/TextView16"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/add_income_date"
+            android:layout_marginLeft="4dp"
+            android:layout_marginTop="10dp"
+            android:text="Заметка:"/>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/TextView16"
+            android:layout_toRightOf="@+id/TextView16"
+            app:counterEnabled="true"
+            app:counterMaxLength="200">
+
+            <EditText
+                android:id="@+id/add_income_note"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textShortMessage|textAutoCorrect|textCapSentences|textMultiLine|textAutoComplete"
+                android:maxLength="200"
+                android:maxLines="2"/>
+        </android.support.design.widget.TextInputLayout>
+
+
+    </RelativeLayout>
+
+    </LinearLayout>
+
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/coordinator_outcome">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/add_income_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/floating_action_button"
+            app:fabSize="normal"
+            android:layout_gravity="bottom|right|end"
+            app:backgroundTint="@color/colorGreen"
+            android:src="@drawable/ic_fab_check" />
+
+    </android.support.design.widget.CoordinatorLayout>
 
 </LinearLayout>
