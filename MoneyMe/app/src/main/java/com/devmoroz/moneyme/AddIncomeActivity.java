@@ -26,9 +26,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.devmoroz.moneyme.helpers.DBHelper;
-import com.devmoroz.moneyme.models.CreatedItemInfo;
+import com.devmoroz.moneyme.models.CreatedItem;
 import com.devmoroz.moneyme.models.Income;
-import com.devmoroz.moneyme.models.Outcome;
 import com.devmoroz.moneyme.utils.Constants;
 
 import java.sql.SQLException;
@@ -90,7 +89,7 @@ public class AddIncomeActivity extends AppCompatActivity {
                     return;
                 }
                 Intent intent;
-                CreatedItemInfo info = new CreatedItemInfo(-1,"",0);
+                CreatedItem info = new CreatedItem(-1,"",0);
                 try {
                     info = addIncome();
                 } catch (SQLException ex) {
@@ -109,7 +108,7 @@ public class AddIncomeActivity extends AppCompatActivity {
         buttonAdd.startAnimation(animation);
     }
 
-    private CreatedItemInfo addIncome() throws java.sql.SQLException {
+    private CreatedItem addIncome() throws java.sql.SQLException {
         Date dateAdded;
         String incomeNote = description.getText().toString();
         double incomeAmount = Double.parseDouble(amount.getText().toString());
@@ -125,7 +124,7 @@ public class AddIncomeActivity extends AppCompatActivity {
         dbHelper = MoneyApplication.getInstance().GetDBHelper();
         dbHelper.getIncomeDAO().create(income);
 
-        return new CreatedItemInfo(income.getId(),selectedAccount,incomeAmount);
+        return new CreatedItem(income.getId(),selectedAccount,incomeAmount);
     }
 
     @Override

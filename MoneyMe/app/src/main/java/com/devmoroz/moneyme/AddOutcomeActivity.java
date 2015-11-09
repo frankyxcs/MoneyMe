@@ -17,13 +17,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -32,7 +30,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.devmoroz.moneyme.helpers.DBHelper;
-import com.devmoroz.moneyme.models.CreatedItemInfo;
+import com.devmoroz.moneyme.models.CreatedItem;
 import com.devmoroz.moneyme.models.Outcome;
 import com.devmoroz.moneyme.utils.Constants;
 
@@ -102,7 +100,7 @@ public class AddOutcomeActivity extends AppCompatActivity {
                     return;
                 }
                 Intent intent;
-                CreatedItemInfo info = new CreatedItemInfo(-1,"",0);
+                CreatedItem info = new CreatedItem(-1,"",0);
                 try {
                     info = addOutcome();
                 } catch (SQLException ex) {
@@ -143,7 +141,7 @@ public class AddOutcomeActivity extends AppCompatActivity {
         newFragment.show(getSupportFragmentManager(), "datePicker");
     }
 
-    private CreatedItemInfo addOutcome() throws java.sql.SQLException {
+    private CreatedItem addOutcome() throws java.sql.SQLException {
         Date dateAdded;
         String outcomeNote = description.getText().toString();
         double outcomeAmount = Double.parseDouble(amount.getText().toString());
@@ -159,7 +157,7 @@ public class AddOutcomeActivity extends AppCompatActivity {
         dbHelper = MoneyApplication.getInstance().GetDBHelper();
         dbHelper.getOutcomeDAO().create(outcome);
 
-        return new CreatedItemInfo(outcome.getId(),selectedCategory,outcomeAmount);
+        return new CreatedItem(outcome.getId(),selectedCategory,outcomeAmount);
     }
 
     @Override
