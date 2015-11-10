@@ -13,6 +13,7 @@ import com.devmoroz.moneyme.models.Currency;
 import com.devmoroz.moneyme.models.Goal;
 import com.devmoroz.moneyme.models.Income;
 import com.devmoroz.moneyme.models.Outcome;
+import com.devmoroz.moneyme.utils.CurrencyCache;
 import com.squareup.otto.Subscribe;
 
 import java.sql.SQLException;
@@ -20,8 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MoneyApplication extends Application {
-
-    public static Currency currentCurrency;
 
     private static MoneyApplication wInstance;
 
@@ -42,10 +41,8 @@ public class MoneyApplication extends Application {
 
     public void GetCommonData() {
         try {
-            List<Currency> currencies;
             incomes = dbHelper.getIncomeDAO().queryForAll();
             outcomes = dbHelper.getOutcomeDAO().queryForAll();
-            currencies = dbHelper.getCurrencyDAO().queryForAll();
 
             inout = new ArrayList<>();
 
@@ -60,11 +57,6 @@ public class MoneyApplication extends Application {
                 }
             }
 
-            if(currencies.size() == 0){
-                currentCurrency = new Currency();
-            }else{
-                currentCurrency = currencies.get(0);
-            }
         } catch (SQLException ex) {
 
         }
@@ -81,6 +73,7 @@ public class MoneyApplication extends Application {
         wInstance = this;
         DBHelperFactory.setHelper(getApplicationContext());
         dbHelper = DBHelperFactory.getHelper();
+        CurrencyCache.initialize(dbHelper);
         GetCommonData();
     }
 

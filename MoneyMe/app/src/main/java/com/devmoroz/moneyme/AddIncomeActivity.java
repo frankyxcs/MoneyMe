@@ -29,6 +29,7 @@ import com.devmoroz.moneyme.helpers.DBHelper;
 import com.devmoroz.moneyme.models.CreatedItem;
 import com.devmoroz.moneyme.models.Income;
 import com.devmoroz.moneyme.utils.Constants;
+import com.devmoroz.moneyme.utils.CurrencyCache;
 
 import java.sql.SQLException;
 import java.text.DateFormat;
@@ -47,7 +48,6 @@ public class AddIncomeActivity extends AppCompatActivity {
     private TextInputLayout floatingAmountLabel;
     private TextView date;
     private Spinner categorySpin;
-    private TextView currencyText;
     private Toolbar toolbar;
     private ImageView chequeImage;
 
@@ -59,7 +59,6 @@ public class AddIncomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setTheme(R.style.AppDefaultOutcome);
-        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_income);
         Animation animation = AnimationUtils.loadAnimation(this, R.anim.fab_grow);
 
@@ -75,7 +74,6 @@ public class AddIncomeActivity extends AppCompatActivity {
         description = (EditText) findViewById(R.id.add_income_note);
         date = (TextView) findViewById(R.id.add_income_date);
         categorySpin = (Spinner) findViewById(R.id.add_income_category);
-        currencyText = (TextView) findViewById(R.id.add_income_currency);
         date.setText(dateFormat.format(new Date()));
         buttonAdd = (FloatingActionButton) findViewById(R.id.add_income_save);
         floatingAmountLabel = (TextInputLayout) findViewById(R.id.text_input_layout_income_amount);
@@ -144,6 +142,9 @@ public class AddIncomeActivity extends AppCompatActivity {
     }
 
     private void setupFloatingLabelError() {
+        String currencyName = CurrencyCache.getCurrencyOrEmpty().getName();
+        String labelHint = String.format("%s, %s:", getString(R.string.amount), currencyName);
+        floatingAmountLabel.setHint(labelHint);
         floatingAmountLabel.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence text, int start, int count, int after) {

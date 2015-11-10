@@ -11,6 +11,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.devmoroz.moneyme.MoneyApplication;
+import com.devmoroz.moneyme.utils.CurrencyCache;
 
 public class CommonInOut implements Parcelable{
 
@@ -87,7 +88,7 @@ public class CommonInOut implements Parcelable{
     }
 
     public String getFormatedAmount() {
-        String sign = MoneyApplication.currentCurrency.getSymbol();
+        String sign = CurrencyCache.getCurrencyOrEmpty().getSymbol();
 
         DecimalFormatSymbols symbols = new DecimalFormatSymbols();
         symbols.setGroupingSeparator(',');

@@ -33,6 +33,7 @@ import com.devmoroz.moneyme.helpers.DBHelper;
 import com.devmoroz.moneyme.models.CreatedItem;
 import com.devmoroz.moneyme.models.Outcome;
 import com.devmoroz.moneyme.utils.Constants;
+import com.devmoroz.moneyme.utils.CurrencyCache;
 
 import java.io.File;
 import java.io.IOException;
@@ -59,7 +60,7 @@ public class AddOutcomeActivity extends AppCompatActivity {
     private TextInputLayout floatingAmountLabel;
     private TextView date;
     private Spinner categorySpin;
-    private TextView currencyText;
+
     private Toolbar toolbar;
     private ImageView chequeImage;
 
@@ -86,7 +87,6 @@ public class AddOutcomeActivity extends AppCompatActivity {
         description = (EditText) findViewById(R.id.add_outcome_note);
         date = (TextView) findViewById(R.id.add_outcome_date);
         categorySpin = (Spinner) findViewById(R.id.add_outcome_category);
-        currencyText = (TextView) findViewById(R.id.add_outcome_currency);
         date.setText(dateFormat.format(new Date()));
         buttonAdd = (FloatingActionButton) findViewById(R.id.add_outcome_save);
         floatingAmountLabel = (TextInputLayout) findViewById(R.id.text_input_layout_out_amount);
@@ -244,6 +244,9 @@ public class AddOutcomeActivity extends AppCompatActivity {
     }
 
     private void setupFloatingLabelError() {
+        String currencyName = CurrencyCache.getCurrencyOrEmpty().getName();
+        String labelHint = String.format("%s, %s:", getString(R.string.amount), currencyName);
+        floatingAmountLabel.setHint(labelHint);
         floatingAmountLabel.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence text, int start, int count, int after) {

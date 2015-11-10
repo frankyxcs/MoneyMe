@@ -22,7 +22,9 @@ import com.devmoroz.moneyme.eventBus.BusProvider;
 import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
 import com.devmoroz.moneyme.helpers.CurrencyHelper;
 import com.devmoroz.moneyme.logging.L;
+import com.devmoroz.moneyme.models.Currency;
 import com.devmoroz.moneyme.utils.Constants;
+import com.devmoroz.moneyme.utils.CurrencyCache;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 
@@ -68,8 +70,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void selectCurrency() {
-        CurrencyHelper ch = new CurrencyHelper(getApplicationContext());
-        ch.show();
+        Currency c = CurrencyCache.getCurrencyOrEmpty();
+        if (c.isEmpty()) {
+            CurrencyHelper ch = new CurrencyHelper(MainActivity.this,MoneyApplication.getInstance().GetDBHelper());
+            ch.show();
+        }
     }
 
     @Override
@@ -141,23 +146,31 @@ public class MainActivity extends AppCompatActivity {
         fabIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Snackbar.make(coordinator, "Added", Snackbar.LENGTH_LONG).show();
+                startAddActivity(Constants.INCOME_ACTIVITY);
             }
         });
 
         fabOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startAddActivity(R.string.outcome_toolbar_name);
+                startAddActivity(Constants.OUTCOME_ACTIVITY);
             }
         });
     }
 
-    private void startAddActivity(int headerText) {
+    private void startAddActivity(String activity) {
         fab.collapse();
-        Intent intent = new Intent(this, AddOutcomeActivity.class);
-        intent.putExtra("toolbar_header_text", headerText);
-        startActivityForResult(intent, REQUEST_CODE_OUTCOME);
+        Intent intent;
+        switch (activity){
+            case Constants.INCOME_ACTIVITY:
+                intent = new Intent(this, AddIncomeActivity.class);
+                startActivityForResult(intent, REQUEST_CODE_INCOME);
+                break;
+            case Constants.OUTCOME_ACTIVITY:
+                intent = new Intent(this, AddOutcomeActivity.class);
+                startActivityForResult(intent, REQUEST_CODE_OUTCOME);
+                break;
+        }
     }
 
     @Override
@@ -170,12 +183,13 @@ public class MainActivity extends AppCompatActivity {
                     if (createdIncomeId != -1) {
                         String account = extras.getString(Constants.CREATED_ITEM_CATEGORY);
                         double amount = extras.getDouble(Constants.CREATED_ITEM_AMOUNT);
-                        String info = String.format("%s: %s %10.2f ",account,getString(R.string.added_income),amount);
+                        String sign = CurrencyCache.getCurrencyOrEmpty().getSymbol();
+                        String info = String.format("%s: %s %10.2f %s", account, getString(R.string.added_income), amount,sign);
                         Snackbar.make(coordinator, info, Snackbar.LENGTH_LONG)
                                 .setCallback(new Snackbar.Callback() {
                                     @Override
                                     public void onDismissed(Snackbar snackbar, int event) {
-                                        if(event == Snackbar.Callback.DISMISS_EVENT_TIMEOUT || event == Snackbar.Callback.DISMISS_EVENT_SWIPE ){
+                                        if (event == Snackbar.Callback.DISMISS_EVENT_TIMEOUT || event == Snackbar.Callback.DISMISS_EVENT_SWIPE) {
                                             BusProvider.postOnMain(new WalletChangeEvent());
                                         }
                                     }
@@ -193,8 +207,8 @@ public class MainActivity extends AppCompatActivity {
                                 })
                                 .setActionTextColor(Color.RED)
                                 .show();
-                    }else{
-                        L.t(this,"Something went wrong.Please,try again.");
+                    } else {
+                        L.t(this, "Something went wrong.Please,try again.");
                     }
                     break;
                 case REQUEST_CODE_OUTCOME:
@@ -202,13 +216,14 @@ public class MainActivity extends AppCompatActivity {
                     if (createdOutcomeId != -1) {
                         String account = extras.getString(Constants.CREATED_ITEM_CATEGORY);
                         double amount = extras.getDouble(Constants.CREATED_ITEM_AMOUNT);
-                        String info = String.format("%s: %s %10.2f ",account,getString(R.string.added_outcome),amount);
+                        String sign = CurrencyCache.getCurrencyOrEmpty().getSymbol();
+                        String info = String.format("%s: %s %10.2f %s", account, getString(R.string.added_outcome), amount,sign);
                         Snackbar.make(coordinator, info, Snackbar.LENGTH_LONG)
                                 .setCallback(new Snackbar.Callback() {
                                     @Override
                                     public void onDismissed(Snackbar snackbar, int event) {
-                                        if(event == Snackbar.Callback.DISMISS_EVENT_TIMEOUT || event == Snackbar.Callback.DISMISS_EVENT_SWIPE ){
-                                                BusProvider.postOnMain(new WalletChangeEvent());
+                                        if (event == Snackbar.Callback.DISMISS_EVENT_TIMEOUT || event == Snackbar.Callback.DISMISS_EVENT_SWIPE) {
+                                            BusProvider.postOnMain(new WalletChangeEvent());
                                         }
                                     }
                                 })
@@ -225,13 +240,13 @@ public class MainActivity extends AppCompatActivity {
                                 })
                                 .setActionTextColor(Color.RED)
                                 .show();
-                    }else{
-                        L.t(this,"Something went wrong.Please,try again.");
+                    } else {
+                        L.t(this, "Something went wrong.Please,try again.");
                     }
                     break;
             }
         } else {
-            L.t(this,"Something went wrong.Please,try again.");
+            L.t(this, "Something went wrong.Please,try again.");
         }
     }
 

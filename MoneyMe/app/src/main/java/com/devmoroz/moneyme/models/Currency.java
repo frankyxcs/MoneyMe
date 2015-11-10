@@ -7,6 +7,16 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable(tableName = "currency")
 public class Currency {
 
+    public static final Currency EMPTY = new Currency();
+
+    static {
+        EMPTY.id = -1;
+        EMPTY.name = "";
+        EMPTY.title = "Default";
+        EMPTY.symbol = "";
+    }
+
+
     @DatabaseField(generatedId = true)
     private int id;
 
@@ -54,5 +64,26 @@ public class Currency {
     public boolean isDeafult() {
 
         return isDeafult;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setSymbol(String symbol) {
+        this.symbol = symbol;
+    }
+
+    public boolean isEmpty() {
+        return id == -1;
+
     }
 }

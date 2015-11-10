@@ -16,6 +16,7 @@
     <string name="currencies">Валюты</string>
     <string name="currency">Валюта</string>
     <string name="ok">OK</string>
+    <string name="amount">Сумма</string>
 
     <string-array name="transaction_categories">
         <item>Одежда</item>

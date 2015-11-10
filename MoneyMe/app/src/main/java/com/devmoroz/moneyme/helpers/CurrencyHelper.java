@@ -6,13 +6,17 @@ import android.content.Context;
 import android.content.DialogInterface;
 
 
+import com.devmoroz.moneyme.MainActivity;
+import com.devmoroz.moneyme.MoneyApplication;
 import com.devmoroz.moneyme.R;
 import com.devmoroz.moneyme.logging.L;
 import com.devmoroz.moneyme.models.Currency;
+import com.devmoroz.moneyme.utils.CurrencyCache;
 import com.devmoroz.moneyme.utils.csv.Csv;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -20,11 +24,13 @@ import java.util.List;
 public class CurrencyHelper {
 
     private final Context context;
+    private DBHelper dbHelper;
     private final List<List<String>> currencies;
     private int selectedCurrency = 0;
 
-    public CurrencyHelper(Context context) {
+    public CurrencyHelper(Context context, DBHelper dbHelper) {
         this.context = context;
+        this.dbHelper = dbHelper;
         this.currencies = readCurrenciesFromAsset();
     }
 
@@ -49,15 +55,20 @@ public class CurrencyHelper {
     }
 
     public void addSelectedCurrency(int selectedCurrency) {
-        if (selectedCurrency > 0 && selectedCurrency <= currencies.size()) {
-            List<String> c = currencies.get(selectedCurrency-1);
+        if (selectedCurrency <= currencies.size()) {
+            List<String> c = currencies.get(selectedCurrency);
             addSelectedCurrency(c);
         }
     }
 
     private void addSelectedCurrency(List<String> list) {
         Currency c = new Currency(list.get(0),list.get(1),list.get(2));
-
+        try{
+            dbHelper.getCurrencyDAO().create(c);
+            CurrencyCache.initialize(dbHelper);
+        }catch (SQLException ex){
+            L.t(context,"Something went wrong.Please,try again.");
+        }
     }
 
     private List<List<String>> readCurrenciesFromAsset() {
@@ -85,10 +96,9 @@ public class CurrencyHelper {
     private String[] createItemsList(List<List<String>> currencies) {
         int size = currencies.size();
         String[] items = new String[size+1];
-        items[0] = "";
         for (int i=0; i<size; i++) {
             List<String> c = currencies.get(i);
-            items[i+1] = c.get(0)+" ("+c.get(1)+")";
+            items[i] = c.get(0)+" ("+c.get(1)+")";
         }
         return items;
     }
