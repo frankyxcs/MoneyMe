@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-<item android:id="@+id/search"
-    android:title="@string/search_title"
-    android:orderInCategory="1" />
+    <item
+        android:id="@+id/last_month"
+        android:orderInCategory="1"
+        android:title="@string/period_last_month" />
+    <item
+        android:id="@+id/last_week"
+        android:orderInCategory="2"
+        android:title="@string/period_last_week" />
+    <item
+        android:id="@+id/this_week"
+        android:orderInCategory="3"
+        android:title="@string/period_this_week" />
+    <item
+        android:id="@+id/this_month"
+        android:orderInCategory="4"
+        android:title="@string/period_this_month" />
 </menu>

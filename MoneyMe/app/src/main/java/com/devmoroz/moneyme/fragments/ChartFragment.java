@@ -73,14 +73,15 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
         view = inflater.inflate(R.layout.chart_fragment, container, false);
         chart = (PieChart) view.findViewById(R.id.walletPieChart);
 
-        chart.setHoleRadius(35f);
-        chart.setTransparentCircleRadius(40f);
+        chart.setHoleRadius(40f);
+        chart.setTransparentCircleRadius(45f);
         chart.setExtraOffsets(5, 10, 5, 5);
-
+        chart.setDragDecelerationFrictionCoef(0.95f);
 
         Legend l = chart.getLegend();
-        l.setEnabled(false);
-        l.setPosition(Legend.LegendPosition.RIGHT_OF_CHART);
+        //l.setEnabled(false);
+        l.setPosition(Legend.LegendPosition.ABOVE_CHART_LEFT);
+        l.setWordWrapEnabled(true);
 
         outs = MoneyApplication.getInstance().outcomes;
         ins = MoneyApplication.getInstance().incomes;
@@ -143,10 +144,10 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
         String sign = CurrencyCache.getCurrencyOrEmpty().getSymbol();
         balance = String.format("%10.2f %s", totalBalance, sign);
         totalOut = String.format("%10.2f %s", totalAmount, sign);
-        PieDataSet ds1 = new PieDataSet(entries, totalOut);
+        PieDataSet ds1 = new PieDataSet(entries, "");
         ds1.setColors(ColorTemplate.VORDIPLOM_COLORS);
         ds1.setSliceSpace(2f);
-        ds1.setValueTextColor(Color.BLACK);
+        ds1.setValueTextColor(Color.WHITE);
         ds1.setValueTextSize(10f);
 
         PieData d = new PieData(xVals, ds1);
