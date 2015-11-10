@@ -73,8 +73,8 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
         view = inflater.inflate(R.layout.chart_fragment, container, false);
         chart = (PieChart) view.findViewById(R.id.walletPieChart);
 
-        chart.setHoleRadius(40f);
-        chart.setTransparentCircleRadius(45f);
+        chart.setHoleRadius(50f);
+        chart.setTransparentCircleRadius(53f);
         chart.setExtraOffsets(5, 10, 5, 5);
         chart.setDragDecelerationFrictionCoef(0.95f);
 
@@ -88,7 +88,7 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
 
         chart.setData(generatePieData());
         chart.setCenterText(generateCenterText());
-        chart.setCenterTextSize(12f);
+        chart.setCenterTextSize(16f);
         chart.setDescription("");
         chart.setOnChartValueSelectedListener(this);
         chart.invalidate();

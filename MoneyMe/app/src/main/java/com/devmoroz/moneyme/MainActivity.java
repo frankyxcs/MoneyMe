@@ -184,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
                         String account = extras.getString(Constants.CREATED_ITEM_CATEGORY);
                         double amount = extras.getDouble(Constants.CREATED_ITEM_AMOUNT);
                         String sign = CurrencyCache.getCurrencyOrEmpty().getSymbol();
-                        String info = String.format("%s: %s %10.2f %s", account, getString(R.string.added_income), amount,sign);
+                        String info = String.format("%s: %s %10.2f%s", account, getString(R.string.added_income), amount,sign);
                         Snackbar.make(coordinator, info, Snackbar.LENGTH_LONG)
                                 .setCallback(new Snackbar.Callback() {
                                     @Override
@@ -217,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
                         String account = extras.getString(Constants.CREATED_ITEM_CATEGORY);
                         double amount = extras.getDouble(Constants.CREATED_ITEM_AMOUNT);
                         String sign = CurrencyCache.getCurrencyOrEmpty().getSymbol();
-                        String info = String.format("%s: %s %10.2f %s", account, getString(R.string.added_outcome), amount,sign);
+                        String info = String.format("%s: %s %10.2f%s", account, getString(R.string.added_outcome), amount,sign);
                         Snackbar.make(coordinator, info, Snackbar.LENGTH_LONG)
                                 .setCallback(new Snackbar.Callback() {
                                     @Override
