@@ -11,7 +11,8 @@
         android:id="@+id/add_outcome_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/colorPrimary" />
+        android:background="@color/colorPrimary"
+        android:theme="@style/AppDefault"/>
 
 
 
@@ -127,6 +128,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/coordinator_outcome">
+
+        <ImageView
+            android:id="@+id/add_outcome_cheque"
+            android:layout_width="match_parent"
+            android:layout_height="200dp" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/add_outcome_save"

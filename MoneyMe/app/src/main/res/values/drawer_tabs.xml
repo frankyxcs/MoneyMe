@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string-array name="drawer_tabs">
-        <item>История</item>
-        <item>График</item>
-        <item>Цели</item>
-    </string-array>
-</resources>

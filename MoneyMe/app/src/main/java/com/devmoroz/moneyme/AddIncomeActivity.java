@@ -56,9 +56,9 @@ public class AddIncomeActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.AppDefaultOutcome);
         super.onCreate(savedInstanceState);
 
-        setTheme(R.style.AppDefaultOutcome);
         setContentView(R.layout.activity_add_income);
         Animation animation = AnimationUtils.loadAnimation(this, R.anim.fab_grow);
 

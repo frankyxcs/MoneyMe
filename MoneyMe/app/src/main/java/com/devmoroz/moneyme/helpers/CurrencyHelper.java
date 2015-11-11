@@ -1,13 +1,9 @@
 package com.devmoroz.moneyme.helpers;
 
-
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
+import android.view.View;
 
-
-import com.devmoroz.moneyme.MainActivity;
-import com.devmoroz.moneyme.MoneyApplication;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.devmoroz.moneyme.R;
 import com.devmoroz.moneyme.logging.L;
 import com.devmoroz.moneyme.models.Currency;
@@ -36,19 +32,20 @@ public class CurrencyHelper {
 
     public void show() {
         String[] items = createItemsList(currencies);
-        new AlertDialog.Builder(context)
-                .setTitle(R.string.currencies)
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+        new MaterialDialog.Builder(context)
+                .title(R.string.currencies)
+                .positiveText(R.string.ok)
+                .dividerColorRes(R.color.colorPrimaryDark)
+                .titleColorRes(R.color.colorPrimary)
+                .positiveColorRes(R.color.colorPrimary)
+                .widgetColorRes(R.color.colorPrimary)
+                .items(items)
+                .itemsCallbackSingleChoice(-1, new MaterialDialog.ListCallbackSingleChoice() {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        addSelectedCurrency(selectedCurrency);
-                        dialogInterface.dismiss();
-                    }
-                })
-                .setSingleChoiceItems(items, 0, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
+                    public boolean onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
                         selectedCurrency = i;
+                        addSelectedCurrency(selectedCurrency);
+                        return true;
                     }
                 })
                 .show();
@@ -62,12 +59,12 @@ public class CurrencyHelper {
     }
 
     private void addSelectedCurrency(List<String> list) {
-        Currency c = new Currency(list.get(0),list.get(1),list.get(2));
-        try{
+        Currency c = new Currency(list.get(0), list.get(1), list.get(2));
+        try {
             dbHelper.getCurrencyDAO().create(c);
             CurrencyCache.initialize(dbHelper);
-        }catch (SQLException ex){
-            L.t(context,"Something went wrong.Please,try again.");
+        } catch (SQLException ex) {
+            L.t(context, "Something went wrong.Please,try again.");
         }
     }
 
@@ -95,10 +92,10 @@ public class CurrencyHelper {
 
     private String[] createItemsList(List<List<String>> currencies) {
         int size = currencies.size();
-        String[] items = new String[size+1];
-        for (int i=0; i<size; i++) {
+        String[] items = new String[size + 1];
+        for (int i = 0; i < size; i++) {
             List<String> c = currencies.get(i);
-            items[i] = c.get(0)+" ("+c.get(1)+")";
+            items[i] = c.get(0) + " (" + c.get(1) + ")";
         }
         return items;
     }

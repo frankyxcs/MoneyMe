@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
@@ -30,6 +32,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.devmoroz.moneyme.helpers.DBHelper;
+import com.devmoroz.moneyme.logging.L;
 import com.devmoroz.moneyme.models.CreatedItem;
 import com.devmoroz.moneyme.models.Outcome;
 import com.devmoroz.moneyme.utils.Constants;
@@ -76,13 +79,8 @@ public class AddOutcomeActivity extends AppCompatActivity {
         Animation animation = AnimationUtils.loadAnimation(this, R.anim.fab_grow);
 
         toolbar = (Toolbar) findViewById(R.id.add_outcome_toolbar);
-        if (toolbar != null) {
-            toolbar.setTitle(R.string.outcome_toolbar_name);
-            toolbar.setTitleTextColor(Color.WHITE);
-            setSupportActionBar(toolbar);
-            getSupportActionBar().setHomeButtonEnabled(true);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
+        initToolbar();
+
         amount = (EditText) findViewById(R.id.add_outcome_amount);
         description = (EditText) findViewById(R.id.add_outcome_note);
         date = (TextView) findViewById(R.id.add_outcome_date);
@@ -90,17 +88,17 @@ public class AddOutcomeActivity extends AppCompatActivity {
         date.setText(dateFormat.format(new Date()));
         buttonAdd = (FloatingActionButton) findViewById(R.id.add_outcome_save);
         floatingAmountLabel = (TextInputLayout) findViewById(R.id.text_input_layout_out_amount);
-
+        chequeImage = (ImageView) findViewById(R.id.add_outcome_cheque);
         buttonAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(amount.getText().toString().isEmpty()){
+                if (amount.getText().toString().isEmpty()) {
                     floatingAmountLabel.setError(getString(R.string.outcome_amount_required));
                     floatingAmountLabel.setErrorEnabled(true);
                     return;
                 }
                 Intent intent;
-                CreatedItem info = new CreatedItem(-1,"",0);
+                CreatedItem info = new CreatedItem(-1, "", 0);
                 try {
                     info = addOutcome();
                 } catch (SQLException ex) {
@@ -119,9 +117,26 @@ public class AddOutcomeActivity extends AppCompatActivity {
         buttonAdd.startAnimation(animation);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_outcome, menu);
+        return true;
+    }
+
+    private void initToolbar() {
+        if (toolbar != null) {
+            toolbar.setTitle(R.string.outcome_toolbar_name);
+            toolbar.setTitleTextColor(Color.WHITE);
+            setSupportActionBar(toolbar);
+            getSupportActionBar().setHomeButtonEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            toolbar.inflateMenu(R.menu.menu_outcome);
+        }
+    }
+
     private void initCategorySpinner() {
         final String[] categories = getResources().getStringArray(R.array.transaction_categories);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,android.R.layout.simple_spinner_dropdown_item,categories);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, categories);
         categorySpin.setAdapter(adapter);
     }
 
@@ -153,21 +168,26 @@ public class AddOutcomeActivity extends AppCompatActivity {
             dateAdded = new Date();
         }
 
-        Outcome outcome = new Outcome(outcomeNote, dateAdded, outcomeAmount,selectedCategory, account);
+        Outcome outcome = new Outcome(outcomeNote, dateAdded, outcomeAmount, selectedCategory, account);
         dbHelper = MoneyApplication.getInstance().GetDBHelper();
         dbHelper.getOutcomeDAO().create(outcome);
 
-        return new CreatedItem(outcome.getId(),selectedCategory,outcomeAmount);
+        return new CreatedItem(outcome.getId(), selectedCategory, outcomeAmount);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-
-        if (id == android.R.id.home) {
-            NavUtils.navigateUpFromSameTask(this);
+        switch (id) {
+            case (android.R.id.home):
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+            case (R.id.image_outcome_toolbar):
+                takePhoto();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
     }
 
 
@@ -182,28 +202,22 @@ public class AddOutcomeActivity extends AppCompatActivity {
             Uri contentUri = Uri.fromFile(photoFile);
             intent.setData(contentUri);
             this.sendBroadcast(intent);
+            setPic();
         }
     }
 
     private void takePhoto() {
-        Intent takePictureIntent = new
-                Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(
-                getPackageManager()) != null) {
-            File photoFile = null;
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            photoFile = null;
             try {
                 photoFile = filename();
             } catch (IOException ex) {
-                Toast toast = Toast.makeText(getApplicationContext(),
-                        "No SD card",
-                        Toast.LENGTH_SHORT);
-                toast.show();
+                L.t(getApplicationContext(), "No SD card");
             }
             if (photoFile != null) {
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
-                        Uri.fromFile(photoFile));
-                startActivityForResult(takePictureIntent,
-                        SAVE_REQUEST_CODE);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+                startActivityForResult(takePictureIntent, SAVE_REQUEST_CODE);
             }
         }
     }
@@ -211,11 +225,34 @@ public class AddOutcomeActivity extends AppCompatActivity {
     private File filename() throws IOException {
         String time = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String file = time;
-        File dir = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES);
+        File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(file, ".jpg", dir);
         photoPath = "file:" + image.getAbsolutePath();
         return image;
+    }
+
+    private void setPic() {
+        // Get the dimensions of the View
+        int targetW = chequeImage.getWidth();
+        int targetH = chequeImage.getHeight();
+
+        // Get the dimensions of the bitmap
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        bmOptions.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(photoPath, bmOptions);
+        int photoW = bmOptions.outWidth;
+        int photoH = bmOptions.outHeight;
+
+        // Determine how much to scale down the image
+        int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
+
+        // Decode the image file into a Bitmap sized to fill the View
+        bmOptions.inJustDecodeBounds = false;
+        bmOptions.inSampleSize = scaleFactor;
+        bmOptions.inPurgeable = true;
+
+        Bitmap bitmap = BitmapFactory.decodeFile(photoPath, bmOptions);
+        chequeImage.setImageBitmap(bitmap);
     }
 
     public static class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
@@ -238,7 +275,7 @@ public class AddOutcomeActivity extends AppCompatActivity {
         }
 
         public void onDateSet(DatePicker view, int year, int month, int day) {
-            month+=1;
+            month += 1;
             date.setText(day + "-" + month + "-" + year);
         }
     }
@@ -257,6 +294,7 @@ public class AddOutcomeActivity extends AppCompatActivity {
                     floatingAmountLabel.setErrorEnabled(true);
                 }
             }
+
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count,
                                           int after) {
@@ -265,7 +303,7 @@ public class AddOutcomeActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if(s.toString().length()==0){
+                if (s.toString().length() == 0) {
                     floatingAmountLabel.setError(getString(R.string.outcome_amount_required));
                     floatingAmountLabel.setErrorEnabled(true);
                 }

@@ -21,6 +21,9 @@
     <string name="period_this_month">Текущий месяц</string>
     <string name="period_last_week">Прошлая неделя</string>
     <string name="period_last_month">Прошлый месяц</string>
+    <string name="attach_picture">Прикрепить фото</string>
+    <string name="location">Местоположение</string>
+    <string name="total_amount">Общая сумма</string>
 
     <string-array name="transaction_categories">
         <item>Одежда</item>
@@ -48,5 +51,12 @@
         <item>Наличные</item>
         <item>Кредитная карта</item>
         <item>Банк</item>
+    </string-array>
+
+    <string-array name="drawer_tabs">
+        <item>История</item>
+        <item>Сводка</item>
+        <item>Цели</item>
+        <item>Счета</item>
     </string-array>
 </resources>
