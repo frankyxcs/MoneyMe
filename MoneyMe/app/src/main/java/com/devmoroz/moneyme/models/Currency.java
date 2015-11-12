@@ -4,6 +4,9 @@ package com.devmoroz.moneyme.models;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+
 @DatabaseTable(tableName = "currency")
 public class Currency {
 
@@ -85,5 +88,16 @@ public class Currency {
     public boolean isEmpty() {
         return id == -1;
 
+    }
+
+    public DecimalFormat getFormat(){
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+        symbols.setGroupingSeparator(',');
+        symbols.setDecimalSeparator('.');
+
+        DecimalFormat decimalFormat = new DecimalFormat("#,###.00", symbols);
+        decimalFormat.setGroupingSize(3);
+
+        return decimalFormat;
     }
 }

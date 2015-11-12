@@ -8,6 +8,7 @@ import java.util.Date;
 
 @DatabaseTable(tableName = "accounts")
 public class Account {
+
     public Account() {
     }
 

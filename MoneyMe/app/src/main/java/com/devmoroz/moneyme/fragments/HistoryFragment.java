@@ -39,7 +39,7 @@ public class HistoryFragment extends Fragment {
 
     private CommonInOutSorter sorter = new CommonInOutSorter();
 
-    private RecyclerView wRecycleWalletEntries;
+    private RecyclerView recyclerView;
     private TextView mTextError;
     private View view;
     private FloatingActionsMenu fab;
@@ -79,13 +79,13 @@ public class HistoryFragment extends Fragment {
         view = inflater.inflate(R.layout.history_fragment, container, false);
         mTextError = (TextView) view.findViewById(R.id.textWalletHistoryError);
 
-        wRecycleWalletEntries = (RecyclerView) view.findViewById(R.id.main_recycler_view);
+        recyclerView = (RecyclerView) view.findViewById(R.id.main_recycler_view);
 
-        wRecycleWalletEntries.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         wAdapter = new HistoryAdapter(getActivity());
-        wRecycleWalletEntries.setAdapter(wAdapter);
+        recyclerView.setAdapter(wAdapter);
 
-        wRecycleWalletEntries.addOnScrollListener(new CustomRecyclerScroll() {
+        recyclerView.addOnScrollListener(new CustomRecyclerScroll() {
             @Override
             public void show() {
                 if (fab != null) {
@@ -137,7 +137,7 @@ public class HistoryFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            currentItem = wRecycleWalletEntries.getChildAdapterPosition(v);
+            currentItem = recyclerView.getChildAdapterPosition(v);
             startActivity(new Intent(getContext(), AddOutcomeActivity.class));
         }
     }

@@ -24,6 +24,8 @@
     <string name="attach_picture">Прикрепить фото</string>
     <string name="location">Местоположение</string>
     <string name="total_amount">Общая сумма</string>
+    <string name="balance">Баланс</string>
+    <string name="header_expenses">Расходы</string>
 
     <string-array name="transaction_categories">
         <item>Одежда</item>

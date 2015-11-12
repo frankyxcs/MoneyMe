@@ -47,15 +47,17 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import static com.devmoroz.moneyme.utils.PhotoUtil.PICTURES_DIR;
+import static com.devmoroz.moneyme.utils.PhotoUtil.makeBitmap;
+
 public class AddOutcomeActivity extends AppCompatActivity {
 
     private static final int PREVIEW_REQUEST_CODE = 1;
     private static final int SAVE_REQUEST_CODE = 2;
     private DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
-    private String photoPath;
+    private String photoFileName;
     private File photoFile;
-
 
     private EditText amount;
     private EditText description;
@@ -224,35 +226,29 @@ public class AddOutcomeActivity extends AppCompatActivity {
 
     private File filename() throws IOException {
         String time = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String file = time;
-        File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(file, ".jpg", dir);
-        photoPath = "file:" + image.getAbsolutePath();
+        photoFileName = time + ".jpg";
+        File image = new File(PICTURES_DIR, photoFileName);
         return image;
     }
 
     private void setPic() {
-        // Get the dimensions of the View
-        int targetW = chequeImage.getWidth();
-        int targetH = chequeImage.getHeight();
+        Bitmap bitmap = makeBitmap(photoFileName, chequeImage);
+        if (bitmap != null) {
+            chequeImage.setImageBitmap(bitmap);
+            chequeImage.setTag(photoFileName);
+        }
+    }
 
-        // Get the dimensions of the bitmap
-        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-        bmOptions.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(photoPath, bmOptions);
-        int photoW = bmOptions.outWidth;
-        int photoH = bmOptions.outHeight;
-
-        // Determine how much to scale down the image
-        int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
-
-        // Decode the image file into a Bitmap sized to fill the View
-        bmOptions.inJustDecodeBounds = false;
-        bmOptions.inSampleSize = scaleFactor;
-        bmOptions.inPurgeable = true;
-
-        Bitmap bitmap = BitmapFactory.decodeFile(photoPath, bmOptions);
-        chequeImage.setImageBitmap(bitmap);
+    private void removePic() {
+        if (chequeImage == null) {
+            return;
+        }
+        if (photoFileName != null) {
+            new File(PICTURES_DIR, photoFileName).delete();
+        }
+        photoFileName = null;
+        chequeImage.setImageBitmap(null);
+        chequeImage.setTag(null);
     }
 
     public static class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
