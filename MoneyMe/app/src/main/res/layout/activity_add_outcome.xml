@@ -38,7 +38,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:digits="1234567890."
-                android:hint="Сумма:"
+                android:hint="@string/amount"
                 android:imeOptions="actionNext"
                 android:inputType="numberDecimal"/>
 
@@ -56,7 +56,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="4dp"
-                android:text="Категория:" />
+                android:text="@string/category" />
 
             <Spinner
                 android:id="@+id/add_outcome_category"
@@ -66,13 +66,28 @@
                 android:entries="@array/transaction_categories" />
 
             <TextView
-                android:id="@+id/TextView07"
+                android:id="@+id/TextView04"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/add_outcome_category"
                 android:layout_marginLeft="4dp"
+                android:text="@string/account" />
+
+            <Spinner
+                android:id="@+id/add_outcome_account"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/add_outcome_category"
+                android:layout_toRightOf="@+id/TextView03"/>
+
+            <TextView
+                android:id="@+id/TextView07"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/add_outcome_account"
+                android:layout_marginLeft="4dp"
                 android:layout_marginTop="10dp"
-                android:text="Дата:"/>
+                android:text="@string/date"/>
 
             <TextView
                 android:id="@+id/add_outcome_date"
@@ -100,7 +115,7 @@
                 android:layout_below="@id/add_outcome_date"
                 android:layout_marginLeft="4dp"
                 android:layout_marginTop="10dp"
-                android:text="Заметка:"/>
+                android:text="@string/note"/>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"

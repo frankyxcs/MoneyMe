@@ -95,7 +95,7 @@ public class Currency {
         symbols.setGroupingSeparator(',');
         symbols.setDecimalSeparator('.');
 
-        DecimalFormat decimalFormat = new DecimalFormat("#,###.00", symbols);
+        DecimalFormat decimalFormat = new DecimalFormat("#,##0.00", symbols);
         decimalFormat.setGroupingSize(3);
 
         return decimalFormat;

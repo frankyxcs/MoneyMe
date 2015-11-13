@@ -33,7 +33,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:digits="1234567890."
-                android:hint="Сумма:"
+                android:hint="@string/amount"
                 android:imeOptions="actionNext"
                 android:inputType="numberDecimal"/>
 
@@ -51,7 +51,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="4dp"
-            android:text="Счет:" />
+            android:text="@string/account" />
 
         <Spinner
             android:id="@+id/add_income_category"
@@ -67,7 +67,7 @@
             android:layout_below="@id/add_income_category"
             android:layout_marginLeft="4dp"
             android:layout_marginTop="10dp"
-            android:text="Дата:"/>
+            android:text="@string/date"/>
 
         <TextView
             android:id="@+id/add_income_date"
@@ -95,7 +95,7 @@
             android:layout_below="@id/add_income_date"
             android:layout_marginLeft="4dp"
             android:layout_marginTop="10dp"
-            android:text="Заметка:"/>
+            android:text="@string/note"/>
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"

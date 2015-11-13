@@ -26,6 +26,11 @@
     <string name="total_amount">Общая сумма</string>
     <string name="balance">Баланс</string>
     <string name="header_expenses">Расходы</string>
+    <string name="account">Счёт</string>
+    <string name="date">Дата</string>
+    <string name="category">Категория</string>
+    <string name="note">Заметка</string>
+    <string name="add_account">Добавить счёт</string>
 
     <string-array name="transaction_categories">
         <item>Одежда</item>
@@ -53,6 +58,7 @@
         <item>Наличные</item>
         <item>Кредитная карта</item>
         <item>Банк</item>
+        <item>Сбережения</item>
     </string-array>
 
     <string-array name="drawer_tabs">

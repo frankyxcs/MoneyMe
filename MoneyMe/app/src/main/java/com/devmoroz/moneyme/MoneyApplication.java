@@ -8,6 +8,7 @@ import com.devmoroz.moneyme.eventBus.BusProvider;
 import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
 import com.devmoroz.moneyme.helpers.DBHelper;
 import com.devmoroz.moneyme.helpers.DBHelperFactory;
+import com.devmoroz.moneyme.models.Account;
 import com.devmoroz.moneyme.models.CommonInOut;
 import com.devmoroz.moneyme.models.Currency;
 import com.devmoroz.moneyme.models.Goal;
@@ -28,6 +29,7 @@ public class MoneyApplication extends Application {
     public static List<Income> incomes;
     public static List<Outcome> outcomes;
     public static ArrayList<CommonInOut> inout;
+    public static List<Account> accounts;
 
     private DBHelper dbHelper;
 
@@ -41,6 +43,7 @@ public class MoneyApplication extends Application {
 
     public void GetCommonData() {
         try {
+            accounts = dbHelper.getAccountDAO().queryForAll();
             incomes = dbHelper.getIncomeDAO().queryForAll();
             outcomes = dbHelper.getOutcomeDAO().queryForAll();
 
@@ -48,12 +51,12 @@ public class MoneyApplication extends Application {
 
             if (incomes != null) {
                 for (Income in : incomes) {
-                    inout.add(new CommonInOut(1, in.getId(), in.getAmount(), in.getNotes(),in.getAccount(), in.getDateOfReceipt(), in.getAccount()));
+                    inout.add(new CommonInOut(1, in.getId(), in.getAmount(), null, in.getDateOfReceipt(), in.getAccountName()));
                 }
             }
             if (outcomes != null) {
                 for (Outcome out : outcomes) {
-                    inout.add(new CommonInOut(2, out.getId(), out.getAmount(), out.getNotes(),out.getCategory(), out.getDateOfSpending(), out.getAccount()));
+                    inout.add(new CommonInOut(2, out.getId(), out.getAmount(), out.getCategory(), out.getDateOfSpending(), out.getAccountName()));
                 }
             }
 

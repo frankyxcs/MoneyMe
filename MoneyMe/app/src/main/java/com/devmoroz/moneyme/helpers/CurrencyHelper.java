@@ -40,7 +40,7 @@ public class CurrencyHelper {
                 .positiveColorRes(R.color.colorPrimary)
                 .widgetColorRes(R.color.colorPrimary)
                 .items(items)
-                .itemsCallbackSingleChoice(-1, new MaterialDialog.ListCallbackSingleChoice() {
+                .itemsCallbackSingleChoice(143, new MaterialDialog.ListCallbackSingleChoice() {
                     @Override
                     public boolean onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
                         selectedCurrency = i;

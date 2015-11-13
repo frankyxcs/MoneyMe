@@ -9,6 +9,8 @@ import java.util.Date;
 @DatabaseTable(tableName = "outcomes")
 public class Outcome {
 
+    public static final String ACCOUNT_ID_FIELD_NAME = "account_id";
+
     @DatabaseField(generatedId = true)
     private int id;
 
@@ -24,14 +26,25 @@ public class Outcome {
     @DatabaseField(canBeNull = false,dataType = DataType.DOUBLE)
     private double amount;
 
-    public String getCategory() {
-        return category;
-    }
+    @DatabaseField
+    private String photo;
 
-    @DatabaseField(canBeNull = false)
-    private String account;
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = ACCOUNT_ID_FIELD_NAME)
+    private Account account;
 
     public Outcome() {
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
+    }
+
+    public String getCategory() {
+        return category;
     }
 
     public int getId() {
@@ -50,11 +63,13 @@ public class Outcome {
         return amount;
     }
 
-    public String getAccount() {
+    public Account getAccount() {
         return account;
     }
 
-    public Outcome(String notes, Date dateOfSpending, double amount, String category,String account) {
+    public String getAccountName() { return account.getName();}
+
+    public Outcome(String notes, Date dateOfSpending, double amount, String category,Account account) {
         this.notes = notes;
         this.dateOfSpending = dateOfSpending;
         this.amount = amount;

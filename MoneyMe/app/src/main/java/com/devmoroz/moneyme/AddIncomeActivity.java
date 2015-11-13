@@ -26,10 +26,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.devmoroz.moneyme.helpers.DBHelper;
+import com.devmoroz.moneyme.models.Account;
 import com.devmoroz.moneyme.models.CreatedItem;
+import com.devmoroz.moneyme.models.Currency;
 import com.devmoroz.moneyme.models.Income;
 import com.devmoroz.moneyme.utils.Constants;
 import com.devmoroz.moneyme.utils.CurrencyCache;
+import com.devmoroz.moneyme.utils.FormatUtils;
 
 import java.sql.SQLException;
 import java.text.DateFormat;
@@ -37,6 +40,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class AddIncomeActivity extends AppCompatActivity {
 
@@ -47,7 +51,7 @@ public class AddIncomeActivity extends AppCompatActivity {
     private FloatingActionButton buttonAdd;
     private TextInputLayout floatingAmountLabel;
     private TextView date;
-    private Spinner categorySpin;
+    private Spinner accountSpin;
     private Toolbar toolbar;
     private ImageView chequeImage;
 
@@ -73,7 +77,7 @@ public class AddIncomeActivity extends AppCompatActivity {
         amount = (EditText) findViewById(R.id.add_income_amount);
         description = (EditText) findViewById(R.id.add_income_note);
         date = (TextView) findViewById(R.id.add_income_date);
-        categorySpin = (Spinner) findViewById(R.id.add_income_category);
+        accountSpin = (Spinner) findViewById(R.id.add_income_category);
         date.setText(dateFormat.format(new Date()));
         buttonAdd = (FloatingActionButton) findViewById(R.id.add_income_save);
         floatingAmountLabel = (TextInputLayout) findViewById(R.id.text_input_layout_income_amount);
@@ -101,7 +105,7 @@ public class AddIncomeActivity extends AppCompatActivity {
             }
         });
 
-        initCategorySpinner();
+        initAccountSpinner();
         setupFloatingLabelError();
         buttonAdd.startAnimation(animation);
     }
@@ -110,19 +114,24 @@ public class AddIncomeActivity extends AppCompatActivity {
         Date dateAdded;
         String incomeNote = description.getText().toString();
         double incomeAmount = Double.parseDouble(amount.getText().toString());
-        String selectedAccount = categorySpin.getSelectedItem().toString();
-        int currency = 1;
+
         try {
             dateAdded = dateFormat.parse(date.getText().toString());
         } catch (ParseException ex) {
             dateAdded = new Date();
         }
 
-        Income income = new Income(incomeNote,selectedAccount, dateAdded, incomeAmount, currency);
         dbHelper = MoneyApplication.getInstance().GetDBHelper();
-        dbHelper.getIncomeDAO().create(income);
+        int id = accountSpin.getSelectedItemPosition();
+        Account account = dbHelper.getAccountDAO().queryForAll().get(id);
+        account.setAmount(account.getAmount() + incomeAmount);
 
-        return new CreatedItem(income.getId(),selectedAccount,incomeAmount);
+        Income income = new Income(incomeNote,dateAdded, incomeAmount, account);
+
+        dbHelper.getIncomeDAO().create(income);
+        dbHelper.getAccountDAO().update(account);
+
+        return new CreatedItem(income.getId(),account.getName(),incomeAmount);
     }
 
     @Override
@@ -135,10 +144,19 @@ public class AddIncomeActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void initCategorySpinner() {
-        final String[] categories = getResources().getStringArray(R.array.account_categories);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,android.R.layout.simple_spinner_dropdown_item,categories);
-        categorySpin.setAdapter(adapter);
+    private void initAccountSpinner() {
+        List<Account> accountList = MoneyApplication.getInstance().accounts;
+        Currency c = CurrencyCache.getCurrencyOrEmpty();
+        if(accountList!=null){
+            String[] accountsWithBalance = new String[accountList.size()];
+            for (int i=0;i<accountList.size();i++){
+                Account acc = accountList.get(i);
+                accountsWithBalance[i]= FormatUtils.attachAmountToText(acc.getName(), c, acc.getAmount(),false);
+            }
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, accountsWithBalance);
+            accountSpin.setAdapter(adapter);
+        }
     }
 
     private void setupFloatingLabelError() {

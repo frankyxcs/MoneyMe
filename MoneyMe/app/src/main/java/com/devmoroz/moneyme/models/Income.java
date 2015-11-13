@@ -9,23 +9,22 @@ import java.util.Date;
 @DatabaseTable(tableName = "incomes")
 public class Income {
 
+    public static final String ACCOUNT_ID_FIELD_NAME = "account_id";
+
     @DatabaseField(generatedId = true)
     private int id;
 
     @DatabaseField(canBeNull = true)
     private String notes;
 
-    @DatabaseField(canBeNull = true)
-    private String account;
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = ACCOUNT_ID_FIELD_NAME)
+    private Account account;
 
     @DatabaseField(dataType = DataType.DATE)
     private Date dateOfReceipt;
 
     @DatabaseField(canBeNull = false,dataType = DataType.DOUBLE)
     private double amount;
-
-    @DatabaseField(canBeNull = true)
-    private int currency;
 
     public Income() {
     }
@@ -46,19 +45,16 @@ public class Income {
         return amount;
     }
 
-    public int getCurrency() {
-        return currency;
-    }
-
-    public String getAccount() {
+    public Account getAccount() {
         return account;
     }
 
-    public Income(String notes, String account, Date dateOfReceipt, double amount, int currency) {
+    public String getAccountName() { return account.getName();}
+
+    public Income(String notes, Date dateOfReceipt, double amount, Account account) {
         this.notes = notes;
         this.account = account;
         this.dateOfReceipt = dateOfReceipt;
         this.amount = amount;
-        this.currency = currency;
     }
 }

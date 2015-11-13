@@ -1,7 +1,9 @@
 package com.devmoroz.moneyme.models;
 
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.util.Date;
@@ -23,6 +25,34 @@ public class Account {
 
     @DatabaseField(dataType = DataType.DATE)
     private Date date;
+
+    @DatabaseField
+    private int currency;
+
+    @ForeignCollectionField
+    private ForeignCollection<Income> incomes;
+
+    @ForeignCollectionField
+    private ForeignCollection<Outcome> outcomes;
+
+    public Account(String name, double amount) {
+        this.name = name;
+        this.amount = amount;
+        this.date = new Date();
+    }
+
+    public Account(int id) {
+        this.id = id;
+        this.amount = 0f;
+        this.date = new Date();
+    }
+
+    public Account(String name, double amount, int currency) {
+        this.name = name;
+        this.amount = amount;
+        this.currency = currency;
+        this.date = new Date();
+    }
 
     public int getId() {
         return id;
@@ -54,5 +84,29 @@ public class Account {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public int getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(int currency) {
+        this.currency = currency;
+    }
+
+    public ForeignCollection<Income> getIncomes() {
+        return incomes;
+    }
+
+    public void setIncomes(ForeignCollection<Income> incomes) {
+        this.incomes = incomes;
+    }
+
+    public ForeignCollection<Outcome> getOutcomes() {
+        return outcomes;
+    }
+
+    public void setOutcomes(ForeignCollection<Outcome> outcomes) {
+        this.outcomes = outcomes;
     }
 }

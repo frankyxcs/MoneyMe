@@ -24,6 +24,11 @@ public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.Accoun
         accountData = data;
     }
 
+    public void setAccountsData(List<AccountRow> accountData){
+        this.accountData = accountData;
+        notifyDataSetChanged();
+    }
+
     @Override
     public AccountsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = inflater.inflate(R.layout.account_row,parent,false);

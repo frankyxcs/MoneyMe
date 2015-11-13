@@ -7,4 +7,13 @@
     <color name="colorIncomeItem">#80CBC4</color>
     <color name="colorOutcomeItem">#FFAB91</color>
     <color name="colorGreen">#009688</color>
+
+    <color name="holo_green_dark">#ff669900</color>
+    <color name="holo_red_dark">#ffcc0000</color>
+    <color name="holo_gray_dark">@android:color/secondary_text_light</color>
+
+    <color name="zero_amount">@color/holo_gray_dark</color>
+    <color name="balance_amount">@color/holo_gray_dark</color>
+    <color name="positive_amount">@color/holo_green_dark</color>
+    <color name="negative_amount">@color/holo_red_dark</color>
 </resources>

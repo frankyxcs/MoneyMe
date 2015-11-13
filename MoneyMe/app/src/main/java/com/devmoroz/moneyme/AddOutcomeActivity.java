@@ -33,10 +33,13 @@ import android.widget.Toast;
 
 import com.devmoroz.moneyme.helpers.DBHelper;
 import com.devmoroz.moneyme.logging.L;
+import com.devmoroz.moneyme.models.Account;
 import com.devmoroz.moneyme.models.CreatedItem;
+import com.devmoroz.moneyme.models.Currency;
 import com.devmoroz.moneyme.models.Outcome;
 import com.devmoroz.moneyme.utils.Constants;
 import com.devmoroz.moneyme.utils.CurrencyCache;
+import com.devmoroz.moneyme.utils.FormatUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,6 +49,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import static com.devmoroz.moneyme.utils.PhotoUtil.PICTURES_DIR;
 import static com.devmoroz.moneyme.utils.PhotoUtil.makeBitmap;
@@ -65,6 +69,7 @@ public class AddOutcomeActivity extends AppCompatActivity {
     private TextInputLayout floatingAmountLabel;
     private TextView date;
     private Spinner categorySpin;
+    private Spinner accountSpin;
 
     private Toolbar toolbar;
     private ImageView chequeImage;
@@ -87,6 +92,7 @@ public class AddOutcomeActivity extends AppCompatActivity {
         description = (EditText) findViewById(R.id.add_outcome_note);
         date = (TextView) findViewById(R.id.add_outcome_date);
         categorySpin = (Spinner) findViewById(R.id.add_outcome_category);
+        accountSpin = (Spinner) findViewById(R.id.add_outcome_account);
         date.setText(dateFormat.format(new Date()));
         buttonAdd = (FloatingActionButton) findViewById(R.id.add_outcome_save);
         floatingAmountLabel = (TextInputLayout) findViewById(R.id.text_input_layout_out_amount);
@@ -115,6 +121,7 @@ public class AddOutcomeActivity extends AppCompatActivity {
         });
 
         initCategorySpinner();
+        initAccountSpinner();
         setupFloatingLabelError();
         buttonAdd.startAnimation(animation);
     }
@@ -137,9 +144,24 @@ public class AddOutcomeActivity extends AppCompatActivity {
     }
 
     private void initCategorySpinner() {
-        final String[] categories = getResources().getStringArray(R.array.transaction_categories);
+        String[] categories = getResources().getStringArray(R.array.transaction_categories);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, categories);
         categorySpin.setAdapter(adapter);
+    }
+
+    private void initAccountSpinner() {
+        List<Account> accountList = MoneyApplication.getInstance().accounts;
+        Currency c = CurrencyCache.getCurrencyOrEmpty();
+        if(accountList!=null){
+            String[] accountsWithBalance = new String[accountList.size()];
+            for (int i=0;i<accountList.size();i++){
+                Account acc = accountList.get(i);
+                accountsWithBalance[i]= FormatUtils.attachAmountToText(acc.getName(),c,acc.getAmount(),false);
+            }
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, accountsWithBalance);
+            accountSpin.setAdapter(adapter);
+        }
     }
 
     @Override
@@ -159,20 +181,27 @@ public class AddOutcomeActivity extends AppCompatActivity {
     }
 
     private CreatedItem addOutcome() throws java.sql.SQLException {
+        dbHelper = MoneyApplication.getInstance().GetDBHelper();
         Date dateAdded;
         String outcomeNote = description.getText().toString();
         double outcomeAmount = Double.parseDouble(amount.getText().toString());
         String selectedCategory = categorySpin.getSelectedItem().toString();
-        String account = "Наличные";
+
         try {
             dateAdded = dateFormat.parse(date.getText().toString());
         } catch (ParseException ex) {
             dateAdded = new Date();
         }
 
+        int id = accountSpin.getSelectedItemPosition();
+        Account account = dbHelper.getAccountDAO().queryForAll().get(id);
+        account.setAmount(account.getAmount() - outcomeAmount);
+
         Outcome outcome = new Outcome(outcomeNote, dateAdded, outcomeAmount, selectedCategory, account);
-        dbHelper = MoneyApplication.getInstance().GetDBHelper();
+        outcome.setPhoto(photoFileName);
+
         dbHelper.getOutcomeDAO().create(outcome);
+        dbHelper.getAccountDAO().update(account);
 
         return new CreatedItem(outcome.getId(), selectedCategory, outcomeAmount);
     }
