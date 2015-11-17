@@ -36,7 +36,7 @@ public class CurrencyHelper {
                 .title(R.string.currencies)
                 .positiveText(R.string.ok)
                 .dividerColorRes(R.color.colorPrimaryDark)
-                .titleColorRes(R.color.colorPrimary)
+                .titleColorRes(R.color.colorPrimaryDark)
                 .positiveColorRes(R.color.colorPrimary)
                 .widgetColorRes(R.color.colorPrimary)
                 .items(items)

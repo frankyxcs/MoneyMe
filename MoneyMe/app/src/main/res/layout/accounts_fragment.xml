@@ -13,7 +13,7 @@
         android:layout_gravity="right|end"
         android:text="@string/total_amount"/>
 
-    <android.support.v7.widget.RecyclerView
+    <com.devmoroz.moneyme.widgets.EmptyRecyclerView
         android:id="@+id/accountsList"
         android:layout_width="match_parent"
         android:layout_height="100dp"/>

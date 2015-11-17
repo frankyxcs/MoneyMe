@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.devmoroz.moneyme.adapters.TabsPagerFragmentAdapter;
+import com.devmoroz.moneyme.eventBus.AppInitCompletedEvent;
 import com.devmoroz.moneyme.eventBus.BusProvider;
 
 import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
@@ -27,6 +28,7 @@ import com.devmoroz.moneyme.utils.Constants;
 import com.devmoroz.moneyme.utils.CurrencyCache;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
+import com.squareup.otto.Subscribe;
 
 import java.sql.SQLException;
 
@@ -61,12 +63,7 @@ public class MainActivity extends AppCompatActivity {
         fabOut = (FloatingActionButton) findViewById(R.id.fab_main_outcome);
         coordinator = findViewById(R.id.coordinator);
 
-        initToolbar();
-        initNavigationView();
-        initTabs();
-        initFloatingActionMenu();
-
-        selectCurrency();
+        start();
     }
 
     private void selectCurrency() {
@@ -75,6 +72,42 @@ public class MainActivity extends AppCompatActivity {
             CurrencyHelper ch = new CurrencyHelper(MainActivity.this,MoneyApplication.getInstance().GetDBHelper());
             ch.show();
         }
+    }
+
+    private void start(){
+        if (MoneyApplication.isInitialized()) {
+            initialize();
+            switchToContentView();
+        } else {
+            switchToSplashView();
+        }
+    }
+
+    private void initialize(){
+        initToolbar();
+        initNavigationView();
+        initTabs();
+        initFloatingActionMenu();
+
+        selectCurrency();
+    }
+
+    private void switchToSplashView() {
+        toolbar.setVisibility(View.GONE);
+        fab.setVisibility(View.GONE);
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+    }
+
+    private void switchToContentView() {
+        toolbar.setVisibility(View.VISIBLE);
+        fab.setVisibility(View.VISIBLE);
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+    }
+
+    @Subscribe
+    public void onAppInitCompleted(AppInitCompletedEvent event) {
+        initialize();
+        switchToContentView();
     }
 
     @Override

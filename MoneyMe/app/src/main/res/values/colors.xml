@@ -11,6 +11,7 @@
     <color name="holo_green_dark">#ff669900</color>
     <color name="holo_red_dark">#ffcc0000</color>
     <color name="holo_gray_dark">@android:color/secondary_text_light</color>
+    <color name="disable_gray">#BDBDBD</color>
 
     <color name="zero_amount">@color/holo_gray_dark</color>
     <color name="balance_amount">@color/holo_gray_dark</color>

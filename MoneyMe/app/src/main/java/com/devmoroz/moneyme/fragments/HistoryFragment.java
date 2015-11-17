@@ -6,13 +6,13 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.devmoroz.moneyme.AddOutcomeActivity;
@@ -23,7 +23,8 @@ import com.devmoroz.moneyme.eventBus.BusProvider;
 import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
 import com.devmoroz.moneyme.models.CommonInOut;
 import com.devmoroz.moneyme.utils.CommonInOutSorter;
-import com.devmoroz.moneyme.utils.CustomRecyclerScroll;
+import com.devmoroz.moneyme.widgets.CustomRecyclerScroll;
+import com.devmoroz.moneyme.widgets.EmptyRecyclerView;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.squareup.otto.Subscribe;
 
@@ -39,8 +40,8 @@ public class HistoryFragment extends Fragment {
 
     private CommonInOutSorter sorter = new CommonInOutSorter();
 
-    private RecyclerView recyclerView;
-    private TextView mTextError;
+    private EmptyRecyclerView recyclerView;
+    private LinearLayout mTextError;
     private View view;
     private FloatingActionsMenu fab;
     static View.OnClickListener cardOnClickListener;
@@ -77,9 +78,10 @@ public class HistoryFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.history_fragment, container, false);
-        mTextError = (TextView) view.findViewById(R.id.textWalletHistoryError);
+        mTextError = (LinearLayout) view.findViewById(R.id.walletHistoryEmpty);
 
-        recyclerView = (RecyclerView) view.findViewById(R.id.main_recycler_view);
+        recyclerView = (EmptyRecyclerView) view.findViewById(R.id.main_recycler_view);
+        recyclerView.setEmptyView(mTextError);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         wAdapter = new HistoryAdapter(getActivity());

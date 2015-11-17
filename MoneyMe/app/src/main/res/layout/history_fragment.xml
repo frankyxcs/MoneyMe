@@ -1,21 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:gravity="center">
 
-    <android.support.v7.widget.RecyclerView
+    <com.devmoroz.moneyme.widgets.EmptyRecyclerView
         android:id="@+id/main_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         />
 
-    <TextView
-        android:id="@+id/textWalletHistoryError"
-        android:layout_width="match_parent"
+   <LinearLayout
+        android:id="@+id/walletHistoryEmpty"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:padding="16dp"
-        android:textColor="#FF4444"
         android:visibility="gone"
-        android:text="Добавьте вашу первую запись"/>
+        android:orientation="vertical">
+
+       <TextView
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:gravity="center"
+           android:textColor="@color/disable_gray"
+           android:text="@string/no_data_available"
+           android:textSize="17sp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/no_data_add_new"
+            android:textColor="@color/disable_gray"
+            android:textSize="15sp"/>
+
+    </LinearLayout>
+
 </LinearLayout>

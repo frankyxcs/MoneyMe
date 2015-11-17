@@ -1,4 +1,4 @@
-package com.devmoroz.moneyme.utils;
+package com.devmoroz.moneyme.widgets;
 
 import android.support.v7.widget.RecyclerView;
 
