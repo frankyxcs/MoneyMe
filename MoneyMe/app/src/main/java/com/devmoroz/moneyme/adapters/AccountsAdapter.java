@@ -44,8 +44,6 @@ public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.Accoun
         holder.accountName.setText(current.name);
         holder.accountAvailable.setText(String.valueOf(current.total));
         holder.accountExpense.setText(String.valueOf(current.expense));
-
-
     }
 
     @Override

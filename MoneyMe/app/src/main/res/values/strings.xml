@@ -17,6 +17,7 @@
     <string name="currency">Валюта</string>
     <string name="ok">OK</string>
     <string name="amount">Сумма</string>
+    <string name="amount_percent">Сумма(%)</string>
     <string name="period_this_week">Текущая неделя</string>
     <string name="period_this_month">Текущий месяц</string>
     <string name="period_last_week">Прошлая неделя</string>

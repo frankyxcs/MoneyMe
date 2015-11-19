@@ -5,6 +5,8 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
@@ -18,11 +20,14 @@ import android.widget.TextView;
 
 import com.devmoroz.moneyme.MoneyApplication;
 import com.devmoroz.moneyme.R;
+import com.devmoroz.moneyme.adapters.ChartLegendAdapter;
 import com.devmoroz.moneyme.eventBus.BusProvider;
 import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
 import com.devmoroz.moneyme.models.Income;
+import com.devmoroz.moneyme.models.LegendDetails;
 import com.devmoroz.moneyme.models.Outcome;
 import com.devmoroz.moneyme.utils.CurrencyCache;
+import com.devmoroz.moneyme.widgets.DividerItemDecoration;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
@@ -44,7 +49,8 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
 
     private View view;
     private PieChart chart;
-    private LinearLayout childlayout;
+    private RecyclerView recyclerView;
+    ChartLegendAdapter adapter;
 
     private List<Outcome> outs;
     private List<Income> ins;
@@ -77,7 +83,12 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.chart_fragment, container, false);
         chart = (PieChart) view.findViewById(R.id.walletPieChart);
-        childlayout = (LinearLayout) view.findViewById(R.id.childLayout);
+        recyclerView = (RecyclerView) view.findViewById(R.id.chartLegendsRecycler);
+        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+
+        adapter = new ChartLegendAdapter(getActivity());
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         chart.setHoleRadius(50f);
         chart.setTransparentCircleRadius(53f);
@@ -95,6 +106,7 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
         chart.setDescription("");
         chart.setOnChartValueSelectedListener(this);
         chart.invalidate();
+        chart.setUsePercentValues(true);
 
         customizeLegend();
 
@@ -102,69 +114,25 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
     }
 
     private void customizeLegend() {
+        ArrayList<LegendDetails> legendData = new ArrayList<>();
         Legend l = chart.getLegend();
-        //l.setEnabled(false);
-        l.setPosition(Legend.LegendPosition.ABOVE_CHART_LEFT);
-        l.setWordWrapEnabled(true);
-        /*l.setEnabled(false);
-        int colorcodes[] = l.getColors();
+        l.setEnabled(false);
+        int colorCodes[] = l.getColors();
+        PieData data = chart.getData();
+        List<Entry> entries = data.getDataSet().getYVals();
 
         for (int i = 0; i < l.getColors().length - 1; i++) {
-            LinearLayout.LayoutParams parms_left_layout = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-            parms_left_layout.weight = 1F;
-            LinearLayout left_layout = new LinearLayout(getContext());
-            left_layout.setOrientation(LinearLayout.HORIZONTAL);
-            left_layout.setLayoutParams(parms_left_layout);
+            Entry entry = entries.get(i);
+            String label = l.getLabel(i);
+            int colorCode = colorCodes[i];
+            float val = entry.getVal();
+            float valPercent = entry.getVal() / data.getYValueSum() * 100f;
+            legendData.add(new LegendDetails(colorCode,label,val,valPercent));
+        }
 
-            LinearLayout.LayoutParams parms_legen_layout = new LinearLayout.LayoutParams(
-                    20, 20);
-            parms_legen_layout.setMargins(0, 0, 20, 0);
-            LinearLayout legend_layout = new LinearLayout(getContext());
-            legend_layout.setLayoutParams(parms_legen_layout);
-            legend_layout.setOrientation(LinearLayout.HORIZONTAL);
-            legend_layout.setBackgroundColor(colorcodes[i]);
-            left_layout.addView(legend_layout);
-
-            TextView txt_unit = new TextView(getContext());
-            txt_unit.setText(l.getLabel(i));
-            left_layout.addView(txt_unit);
-
-            LinearLayout.LayoutParams parms_middle_layout = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-            parms_middle_layout.weight = 1F;
-            LinearLayout middle_layout = new LinearLayout(getContext());
-            middle_layout.setOrientation(LinearLayout.HORIZONTAL);
-            middle_layout.setLayoutParams(parms_middle_layout);
-
-            TextView txt_leads = new TextView(getContext());
-            txt_leads.setText("450");
-            middle_layout.addView(txt_leads);
-
-            LinearLayout.LayoutParams parms_right_layout = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-            parms_right_layout.weight = 1F;
-            LinearLayout right_layout = new LinearLayout(getContext());
-            right_layout.setOrientation(LinearLayout.HORIZONTAL);
-            right_layout.setLayoutParams(parms_right_layout);
-
-            TextView txt_leads_percentage = new TextView(getContext());
-            txt_leads_percentage.setText(40 + "");
-            right_layout.addView(txt_leads_percentage);
-
-            LinearLayout.LayoutParams main_layout_params = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-            LinearLayout main_layout = new LinearLayout(getContext());
-            main_layout.setOrientation(LinearLayout.HORIZONTAL);
-            main_layout.setLayoutParams(main_layout_params);
-
-            main_layout.addView(left_layout);
-            main_layout.addView(middle_layout);
-            main_layout.addView(right_layout);
-
-            childlayout.addView(main_layout);
-        }*/
-
+        if (legendData.size() != 0){
+            adapter.setData(legendData);
+        }
     }
 
 
@@ -220,6 +188,7 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
         ds1.setSliceSpace(2f);
         ds1.setValueTextColor(Color.WHITE);
         ds1.setValueTextSize(10f);
+
 
         PieData d = new PieData(xVals, ds1);
 

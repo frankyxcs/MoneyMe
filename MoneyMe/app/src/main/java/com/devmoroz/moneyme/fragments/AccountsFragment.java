@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -30,6 +31,7 @@ import com.devmoroz.moneyme.eventBus.BusProvider;
 import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
 import com.devmoroz.moneyme.models.Account;
 import com.devmoroz.moneyme.models.AccountRow;
+import com.devmoroz.moneyme.widgets.DecimalDigitsInputFilter;
 import com.devmoroz.moneyme.widgets.DividerItemDecoration;
 import com.devmoroz.moneyme.widgets.EmptyRecyclerView;
 import com.squareup.otto.Subscribe;
@@ -128,6 +130,8 @@ public class AccountsFragment extends Fragment {
 
         positiveAction = dialog.getActionButton(DialogAction.POSITIVE);
         accountNameInput = (TextInputLayout) dialog.getCustomView().findViewById(R.id.text_input_layout_add_account_name);
+        EditText accountBalanceInput = (EditText) dialog.getCustomView().findViewById(R.id.accountAddBalance);
+        accountBalanceInput.setFilters(new InputFilter[]{new DecimalDigitsInputFilter()});
         accountNameInput.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
