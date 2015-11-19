@@ -10,6 +10,9 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorControlNormal">@color/colorWhite</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColorPrimary">@color/colorPrimaryText</item>
+        <item name="android:textColorSecondary">@color/colorSecondaryText</item>
     </style>
 
     <style name="AppDefaultOutcome" parent="AppTheme">
@@ -24,5 +27,9 @@
         <item name="borderWidth">0dp</item>
         <item name="elevation">6dp</item>
         <item name="pressedTranslationZ">12dp</item>
+    </style>
+
+    <style name="BlackInput">
+        <item name="colorControlNormal">@color/colorPrimaryText</item>
     </style>
 </resources>

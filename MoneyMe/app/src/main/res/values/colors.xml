@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#03A9F4</color>
-    <color name="colorPrimaryDark">#0288D1</color>
+    <color name="colorPrimary">#2196F3</color>
+    <color name="colorPrimaryDark">#1976D2</color>
+    <color name="colorPrimaryLight">#BBDEFB</color>
+    <color name="colorAccent">#03A9F4</color>
+    <color name="colorPrimaryText">#212121</color>
+    <color name="colorSecondaryText">#727272</color>
+    <color name="colorDivider">#B6B6B6</color>
     <color name="mainBackground">#E3F2FD</color>
+
     <color name="colorWhite">#ffffff</color>
     <color name="colorIncomeItem">#80CBC4</color>
     <color name="colorOutcomeItem">#FFAB91</color>
@@ -12,6 +18,8 @@
     <color name="holo_red_dark">#ffcc0000</color>
     <color name="holo_gray_dark">@android:color/secondary_text_light</color>
     <color name="disable_gray">#BDBDBD</color>
+    <color name="material_teal_a400">#1DE9B6</color>
+    <color name="colorBlack">#000</color>
 
     <color name="zero_amount">@color/holo_gray_dark</color>
     <color name="balance_amount">@color/holo_gray_dark</color>

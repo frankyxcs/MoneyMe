@@ -5,26 +5,48 @@
     android:padding="16dp" >
 
     <android.support.design.widget.TextInputLayout
-        android:id="@+id/text_input_layout_add_account"
+        android:id="@+id/text_input_layout_add_account_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:minHeight="?android:attr/listPreferredItemHeight"
         android:hint="@string/account_name">
 
     <EditText android:id="@+id/accountAddName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:minHeight="?android:attr/listPreferredItemHeight"
         android:padding="16dp"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:theme="@style/BlackInput"/>
 
     </android.support.design.widget.TextInputLayout>
-    <CheckBox
-        android:id="@+id/chkIos"
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/text_input_layout_add_accont_balance"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
+        android:hint="@string/opening_amount"
+        android:minHeight="?android:attr/listPreferredItemHeight">
+
+    <EditText android:id="@+id/accountAddBalance"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
         android:padding="16dp"
-        android:text="@string/include_account_to_balance" />
+        android:textSize="16sp"
+        android:inputType="number|numberDecimal"
+        android:theme="@style/BlackInput"/>
+
+    </android.support.design.widget.TextInputLayout>
+
+    <CheckBox
+        android:id="@+id/accountAddIncludeInTotal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:padding="16dp"
+        android:minHeight="?android:attr/listPreferredItemHeight"
+        android:text="@string/include_account_to_balance"
+        android:theme="@style/BlackInput"/>
 
 </LinearLayout>

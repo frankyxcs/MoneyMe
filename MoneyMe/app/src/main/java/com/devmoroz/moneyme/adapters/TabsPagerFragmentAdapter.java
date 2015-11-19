@@ -9,15 +9,12 @@ import com.devmoroz.moneyme.fragments.AccountsFragment;
 import com.devmoroz.moneyme.fragments.ChartFragment;
 import com.devmoroz.moneyme.fragments.GoalsFragment;
 import com.devmoroz.moneyme.fragments.HistoryFragment;
+import com.devmoroz.moneyme.utils.Constants;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 
 public class TabsPagerFragmentAdapter extends FragmentPagerAdapter {
 
-    public static final int TAB_HISTORY = 0;
-    public static final int TAB_CHART = 1;
-    public static final int TAB_GOALS = 2;
-    public static final int TAB_ACCOUNTS = 3;
-    public static final int TAB_COUNT = 4;
+
 
     private String[] tabs;
     private FloatingActionsMenu fab;
@@ -36,13 +33,13 @@ public class TabsPagerFragmentAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         switch (position) {
-            case TAB_HISTORY :
+            case Constants.TAB_HISTORY :
                 return HistoryFragment.getInstance(fab);
-            case TAB_CHART:
+            case Constants.TAB_CHART:
                 return ChartFragment.getInstance();
-            case TAB_GOALS:
+            case Constants.TAB_GOALS:
                 return GoalsFragment.getInstance();
-            case TAB_ACCOUNTS:
+            case Constants.TAB_ACCOUNTS:
                 return AccountsFragment.getInstance();
         }
 
@@ -51,7 +48,7 @@ public class TabsPagerFragmentAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return TAB_COUNT;
+        return Constants.TAB_COUNT;
     }
 
 }

@@ -150,23 +150,36 @@ public class MainActivity extends AppCompatActivity {
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
+                drawerLayout.closeDrawers();
                 switch (menuItem.getItemId()) {
-                    case R.id.item_navigation_drawer_settings:
+                    case R.id.item_navigation_drawer_accounts:
                         menuItem.setChecked(true);
-                        Intent intent = new Intent(MainActivity.this, null);
-                        startActivity(intent);
-                        drawerLayout.closeDrawers();
+                        jumpToTab(Constants.TAB_ACCOUNTS);
                         return true;
-                    case R.id.item_navigation_drawer_help_and_about:
+                    case R.id.item_navigation_drawer_history:
                         menuItem.setChecked(true);
+                        jumpToTab(Constants.TAB_HISTORY);
+                        return true;
+                    case R.id.item_navigation_drawer_chart:
+                        menuItem.setChecked(true);
+                        jumpToTab(Constants.TAB_CHART);
+                        return true;
+                    case R.id.item_navigation_drawer_goals:
+                        menuItem.setChecked(true);
+                        jumpToTab(Constants.TAB_GOALS);
+                        return true;
+                    case R.id.item_navigation_drawer_about:
                         Toast.makeText(MainActivity.this, "MoneyMe 2015", Toast.LENGTH_LONG).show();
-                        drawerLayout.closeDrawers();
                         return true;
                 }
                 return true;
             }
         });
 
+    }
+
+    private void jumpToTab(int tab){
+        viewPager.setCurrentItem(tab);
     }
 
     private void initTabs() {

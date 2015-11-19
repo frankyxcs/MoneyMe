@@ -27,6 +27,7 @@
         android:minWidth="88dp"
         android:layout_width="wrap_content"
         android:textSize="14sp"
-        android:layout_height="36dp" />
+        android:layout_height="36dp"
+        android:background="@color/colorPrimary"/>
 
 </LinearLayout>

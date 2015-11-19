@@ -2,8 +2,8 @@
     <string name="app_name">MoneyMe</string>
     <string name="search_title">Поиск</string>
     <string name="option_settings">Настройки</string>
-    <string name="option_about_help">Инфо</string>
-    <string name="option_more">More</string>
+    <string name="option_about_help">Информация</string>
+    <string name="option_other">Другое</string>
     <string name="view_navigation_open">Open</string>
     <string name="view_navigation_close">Close</string>
     <string name="income_toolbar_name">Доход</string>
@@ -30,6 +30,7 @@
     <string name="balance">Баланс</string>
     <string name="header_expenses">Расходы</string>
     <string name="account">Счёт</string>
+    <string name="accounts">Счета</string>
     <string name="date">Дата</string>
     <string name="category">Категория</string>
     <string name="note">Заметка</string>
@@ -42,8 +43,14 @@
     <string name="no_data_available">У Вас пока нет данных.</string>
     <string name="no_data_add_new">Нажмите на \"+\" чтобы добавить свою первую запись.</string>
     <string name="include_account_to_balance">Учитывать в общем балансе</string>
-
-
+    <string name="opening_amount">Начальный баланс</string>
+    <string name="history">История</string>
+    <string name="chart">График</string>
+    <string name="goals">Цели</string>
+    <string name="regular_transactions">Регулярные операции</string>
+    <string name="statistics">Статистика</string>
+    <string name="csv_export">Экспорт в CSV</string>
+    <string name="csv_import">CSV импорт</string>
 
     <string-array name="transaction_categories">
         <item>Одежда</item>

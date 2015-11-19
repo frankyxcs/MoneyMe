@@ -1,16 +1,28 @@
 package com.devmoroz.moneyme.fragments;
 
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
+import com.afollestad.materialdialogs.internal.MDTintHelper;
+import com.afollestad.materialdialogs.internal.ThemeSingleton;
 import com.devmoroz.moneyme.MoneyApplication;
 import com.devmoroz.moneyme.R;
 import com.devmoroz.moneyme.adapters.AccountsAdapter;
@@ -33,6 +45,9 @@ public class AccountsFragment extends Fragment {
     private ArrayList<AccountRow> data = new ArrayList<>();
     private List<Account> accounts;
     private Button btnAddAccount;
+
+    private TextInputLayout accountNameInput;
+    private View positiveAction;
 
     public AccountsFragment() {
     }
@@ -92,24 +107,47 @@ public class AccountsFragment extends Fragment {
     }
 
     private void AddNewAccount(){
-        boolean wrapInScrollView = true;
-        MaterialDialog dialog = new MaterialDialog.Builder(getContext())
+        MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
                 .title(R.string.add_account)
-                .inputRangeRes(4, 20, R.color.holo_red_dark)
-                .inputType(InputType.TYPE_CLASS_TEXT)
+                .customView(R.layout.dialog_fragment_add_account, true)
+                .theme(Theme.LIGHT)
                 .negativeText(R.string.cancel)
                 .positiveText(R.string.save)
                 .positiveColorRes(R.color.colorPrimary)
                 .negativeColorRes(R.color.colorPrimary)
                 .widgetColorRes(R.color.colorPrimary)
-                .dividerColorRes(R.color.colorPrimaryDark)
-                .input(R.string.account_name, R.string.account_name, new MaterialDialog.InputCallback() {
+                .alwaysCallInputCallback()
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
-                    public void onInput(MaterialDialog dialog, CharSequence input) {
-                        // Do something
+                    public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
+                        View view = materialDialog.getCustomView();
+                        CreateNewAccount(view);
                     }
                 })
-                .show();
+                .build();
+
+        positiveAction = dialog.getActionButton(DialogAction.POSITIVE);
+        accountNameInput = (TextInputLayout) dialog.getCustomView().findViewById(R.id.text_input_layout_add_account_name);
+        accountNameInput.getEditText().addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                positiveAction.setEnabled(s.toString().trim().length() > 0);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+
+        dialog.show();
+        positiveAction.setEnabled(false);
+    }
+
+    private void CreateNewAccount(View view){
 
     }
 
