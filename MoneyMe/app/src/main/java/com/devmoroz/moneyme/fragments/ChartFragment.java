@@ -27,6 +27,7 @@ import com.devmoroz.moneyme.models.Income;
 import com.devmoroz.moneyme.models.LegendDetails;
 import com.devmoroz.moneyme.models.Outcome;
 import com.devmoroz.moneyme.utils.CurrencyCache;
+import com.devmoroz.moneyme.utils.CustomColorTemplate;
 import com.devmoroz.moneyme.widgets.DividerItemDecoration;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
@@ -51,6 +52,7 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
     private PieChart chart;
     private RecyclerView recyclerView;
     ChartLegendAdapter adapter;
+    LinearLayout tableDetails;
 
     private List<Outcome> outs;
     private List<Income> ins;
@@ -83,8 +85,10 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.chart_fragment, container, false);
         chart = (PieChart) view.findViewById(R.id.walletPieChart);
+        tableDetails = (LinearLayout) view.findViewById(R.id.chartDetailsTable);
         recyclerView = (RecyclerView) view.findViewById(R.id.chartLegendsRecycler);
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+
 
         adapter = new ChartLegendAdapter(getActivity());
         recyclerView.setAdapter(adapter);
@@ -103,10 +107,9 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
         chart.setData(generatePieData());
         chart.setCenterText(generateCenterText());
         chart.setCenterTextSize(16f);
-        chart.setDescription("");
+        chart.setDescription("Данные за текущий месяц");
         chart.setOnChartValueSelectedListener(this);
         chart.invalidate();
-        chart.setUsePercentValues(true);
 
         customizeLegend();
 
@@ -132,6 +135,9 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
 
         if (legendData.size() != 0){
             adapter.setData(legendData);
+            tableDetails.setVisibility(View.VISIBLE);
+        }else{
+            tableDetails.setVisibility(View.GONE);
         }
     }
 
@@ -181,13 +187,14 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
 
         totalBalance -= totalAmount;
         String sign = CurrencyCache.getCurrencyOrEmpty().getSymbol();
-        balance = String.format("%10.2f %s", totalBalance, sign);
-        totalOut = String.format("%10.2f %s", totalAmount, sign);
+        balance = String.format("%10.2f %s", totalBalance, sign).trim();
+        totalOut = String.format("%10.2f %s", totalAmount, sign).trim();
         PieDataSet ds1 = new PieDataSet(entries, "");
-        ds1.setColors(ColorTemplate.VORDIPLOM_COLORS);
+        ds1.setColors(CustomColorTemplate.PIECHART_COLORS);
         ds1.setSliceSpace(2f);
         ds1.setValueTextColor(Color.WHITE);
-        ds1.setValueTextSize(10f);
+        ds1.setValueTextSize(8f);
+        ds1.setDrawValues(false);
 
 
         PieData d = new PieData(xVals, ds1);
@@ -224,5 +231,6 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
         chart.setCenterText(generateCenterText());
         chart.invalidate();
         chart.animateY(1400);
+        customizeLegend();
     }
 }

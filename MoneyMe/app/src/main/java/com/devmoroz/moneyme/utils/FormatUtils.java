@@ -73,6 +73,11 @@ public class FormatUtils {
         return sb.toString();
     }
 
+    public static String roundValueToString(float value){
+        long rounded = Math.round(value);
+        return String.valueOf(rounded);
+    }
+
     public static boolean isNotEmpty(String s) {
         return s != null && s.length() > 0;
     }

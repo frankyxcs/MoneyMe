@@ -10,7 +10,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.devmoroz.moneyme.R;
+import com.devmoroz.moneyme.models.Currency;
 import com.devmoroz.moneyme.models.LegendDetails;
+import com.devmoroz.moneyme.utils.CurrencyCache;
+import com.devmoroz.moneyme.utils.FormatUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -39,6 +42,7 @@ public class ChartLegendAdapter extends RecyclerView.Adapter<ChartLegendAdapter.
 
     @Override
     public void onBindViewHolder(LegendsViewHolder holder, int position) {
+        Currency currency = CurrencyCache.getCurrencyOrEmpty();
         LegendDetails details = legendData.get(position);
 
         TextView sliceAmount = holder.sliceAmount;
@@ -48,8 +52,8 @@ public class ChartLegendAdapter extends RecyclerView.Adapter<ChartLegendAdapter.
 
         sliceColor.setBackgroundColor(details.ColorCode);
         sliceCategory.setText(details.CategoryName);
-        sliceAmount.setText(String.valueOf(details.Amount));
-        sliceAmountPercent.setText(String.valueOf(details.AmountPercent));
+        sliceAmount.setText(FormatUtils.amountToString(currency, details.Amount));
+        sliceAmountPercent.setText(FormatUtils.roundValueToString(details.AmountPercent));
     }
 
     @Override

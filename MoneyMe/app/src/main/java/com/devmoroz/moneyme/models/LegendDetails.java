@@ -1,8 +1,6 @@
 package com.devmoroz.moneyme.models;
 
-/**
- * Created by Vitalii_Moroz on 11/19/2015.
- */
+
 public class LegendDetails {
     public int ColorCode;
     public String CategoryName;

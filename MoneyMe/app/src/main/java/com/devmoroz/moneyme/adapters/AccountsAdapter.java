@@ -10,6 +10,9 @@ import android.widget.TextView;
 
 import com.devmoroz.moneyme.R;
 import com.devmoroz.moneyme.models.AccountRow;
+import com.devmoroz.moneyme.models.Currency;
+import com.devmoroz.moneyme.utils.CurrencyCache;
+import com.devmoroz.moneyme.utils.FormatUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -39,11 +42,12 @@ public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.Accoun
 
     @Override
     public void onBindViewHolder(AccountsViewHolder holder, int position) {
+        Currency currency = CurrencyCache.getCurrencyOrEmpty();
         AccountRow current = accountData.get(position);
 
         holder.accountName.setText(current.name);
-        holder.accountAvailable.setText(String.valueOf(current.total));
-        holder.accountExpense.setText(String.valueOf(current.expense));
+        holder.accountAvailable.setText(FormatUtils.amountToString(currency,current.total));
+        holder.accountExpense.setText(FormatUtils.amountToString(currency, current.expense));
     }
 
     @Override

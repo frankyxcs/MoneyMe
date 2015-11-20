@@ -103,6 +103,7 @@ public class AccountsFragment extends Fragment {
         accounts = MoneyApplication.getInstance().accounts;
         data.clear();
         for (Account acc : accounts) {
+
             data.add(new AccountRow(acc.getId(),acc.getName(),acc.getAmount(),0));
         }
         adapter.setAccountsData(data);

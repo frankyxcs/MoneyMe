@@ -50,7 +50,7 @@ public class MoneyApplication extends Application {
 
     public void GetCommonData() {
         try {
-            accounts = dbHelper.getAccountDAO().queryForAll();
+            accounts = dbHelper.getAccountDAO().getAccountIncludedInTotal();
             incomes = dbHelper.getIncomeDAO().queryForAll();
             outcomes = dbHelper.getOutcomeDAO().queryForAll();
 

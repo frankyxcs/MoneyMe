@@ -11,6 +11,8 @@ import java.util.Date;
 @DatabaseTable(tableName = "accounts")
 public class Account {
 
+    public final static String INCLUDE_IN_TOTAL_FIELD_NAME = "includeintotal";
+
     public Account() {
     }
 
@@ -29,15 +31,19 @@ public class Account {
     @DatabaseField
     private int currency;
 
+    @DatabaseField(columnName = INCLUDE_IN_TOTAL_FIELD_NAME)
+    private boolean includeInTotal;
+
     @ForeignCollectionField
     private ForeignCollection<Income> incomes;
 
     @ForeignCollectionField
     private ForeignCollection<Outcome> outcomes;
 
-    public Account(String name, double amount) {
+    public Account(String name, double amount, boolean includeInTotal) {
         this.name = name;
         this.amount = amount;
+        this.includeInTotal = includeInTotal;
         this.date = new Date();
     }
 
@@ -47,10 +53,11 @@ public class Account {
         this.date = new Date();
     }
 
-    public Account(String name, double amount, int currency) {
+    public Account(String name, double amount, int currency, boolean includeInTotal) {
         this.name = name;
         this.amount = amount;
         this.currency = currency;
+        this.includeInTotal = includeInTotal;
         this.date = new Date();
     }
 
@@ -108,5 +115,13 @@ public class Account {
 
     public void setOutcomes(ForeignCollection<Outcome> outcomes) {
         this.outcomes = outcomes;
+    }
+
+    public boolean isIncludeInTotal() {
+        return includeInTotal;
+    }
+
+    public void setIncludeInTotal(boolean includeInTotal) {
+        this.includeInTotal = includeInTotal;
     }
 }
