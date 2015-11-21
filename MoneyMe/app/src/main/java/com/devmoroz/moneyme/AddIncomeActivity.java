@@ -124,7 +124,7 @@ public class AddIncomeActivity extends AppCompatActivity {
         dbHelper = MoneyApplication.getInstance().GetDBHelper();
         int id = accountSpin.getSelectedItemPosition();
         Account account = dbHelper.getAccountDAO().queryForAll().get(id);
-        account.setAmount(account.getAmount() + incomeAmount);
+        account.setBalance(account.getBalance() + incomeAmount);
 
         Income income = new Income(incomeNote,dateAdded, incomeAmount, account);
 
@@ -151,7 +151,7 @@ public class AddIncomeActivity extends AppCompatActivity {
             String[] accountsWithBalance = new String[accountList.size()];
             for (int i=0;i<accountList.size();i++){
                 Account acc = accountList.get(i);
-                accountsWithBalance[i]= FormatUtils.attachAmountToText(acc.getName(), c, acc.getAmount(),false);
+                accountsWithBalance[i]= FormatUtils.attachAmountToText(acc.getName(), c, acc.getBalance(),false);
             }
 
             ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, accountsWithBalance);

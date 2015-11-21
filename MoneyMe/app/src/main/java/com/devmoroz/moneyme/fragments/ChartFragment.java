@@ -23,6 +23,7 @@ import com.devmoroz.moneyme.R;
 import com.devmoroz.moneyme.adapters.ChartLegendAdapter;
 import com.devmoroz.moneyme.eventBus.BusProvider;
 import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
+import com.devmoroz.moneyme.models.Account;
 import com.devmoroz.moneyme.models.Income;
 import com.devmoroz.moneyme.models.LegendDetails;
 import com.devmoroz.moneyme.models.Outcome;
@@ -55,7 +56,7 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
     LinearLayout tableDetails;
 
     private List<Outcome> outs;
-    private List<Income> ins;
+    private List<Account> accounts;
     private String totalOut;
     private String balance;
 
@@ -102,7 +103,7 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
 
 
         outs = MoneyApplication.getInstance().outcomes;
-        ins = MoneyApplication.getInstance().incomes;
+        accounts = MoneyApplication.getInstance().accounts;
 
         chart.setData(generatePieData());
         chart.setCenterText(generateCenterText());
@@ -157,8 +158,8 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
         ArrayList<String> xVals = new ArrayList<>();
         HashMap<String, Float> data = new HashMap<>();
 
-        for (Income in : ins) {
-            totalBalance += in.getAmount();
+        for (Account acc : accounts) {
+            totalBalance += acc.getBalance();
         }
 
         for (int i = 0; i < outs.size(); i++) {
@@ -185,14 +186,13 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
             }
         }
 
-        totalBalance -= totalAmount;
         String sign = CurrencyCache.getCurrencyOrEmpty().getSymbol();
         balance = String.format("%10.2f %s", totalBalance, sign).trim();
         totalOut = String.format("%10.2f %s", totalAmount, sign).trim();
         PieDataSet ds1 = new PieDataSet(entries, "");
         ds1.setColors(CustomColorTemplate.PIECHART_COLORS);
         ds1.setSliceSpace(2f);
-        ds1.setValueTextColor(Color.WHITE);
+        ds1.setValueTextColor(CustomColorTemplate.SECONDARY_TEXT);
         ds1.setValueTextSize(8f);
         ds1.setDrawValues(false);
 
@@ -226,7 +226,7 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
     @Subscribe
     public void OnWalletChange(WalletChangeEvent event) {
         outs = MoneyApplication.getInstance().outcomes;
-        ins = MoneyApplication.getInstance().incomes;
+        accounts = MoneyApplication.getInstance().accounts;
         chart.setData(generatePieData());
         chart.setCenterText(generateCenterText());
         chart.invalidate();

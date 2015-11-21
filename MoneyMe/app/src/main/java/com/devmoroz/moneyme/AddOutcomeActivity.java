@@ -41,6 +41,7 @@ import com.devmoroz.moneyme.models.Outcome;
 import com.devmoroz.moneyme.utils.Constants;
 import com.devmoroz.moneyme.utils.CurrencyCache;
 import com.devmoroz.moneyme.utils.FormatUtils;
+import com.devmoroz.moneyme.utils.datetime.TimeUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -158,7 +159,7 @@ public class AddOutcomeActivity extends AppCompatActivity {
             String[] accountsWithBalance = new String[accountList.size()];
             for (int i = 0; i < accountList.size(); i++) {
                 Account acc = accountList.get(i);
-                accountsWithBalance[i] = FormatUtils.attachAmountToText(acc.getName(), c, acc.getAmount(), false);
+                accountsWithBalance[i] = FormatUtils.attachAmountToText(acc.getName(), c, acc.getBalance(), false);
             }
 
             ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, accountsWithBalance);
@@ -197,7 +198,7 @@ public class AddOutcomeActivity extends AppCompatActivity {
 
         int id = accountSpin.getSelectedItemPosition();
         Account account = dbHelper.getAccountDAO().queryForAll().get(id);
-        account.setAmount(account.getAmount() - outcomeAmount);
+        account.setBalance(account.getBalance() - outcomeAmount);
 
         Outcome outcome = new Outcome(outcomeNote, dateAdded, outcomeAmount, selectedCategory, account);
         outcome.setPhoto(photoFileName);

@@ -19,4 +19,6 @@ public class CustomColorTemplate {
             Color.rgb(188, 170, 164),
             Color.rgb(140, 158, 255)
     };
+
+    public static final int SECONDARY_TEXT = Color.rgb(114,114,114);
 }

@@ -23,7 +23,7 @@ public class Account {
     private String name;
 
     @DatabaseField
-    private double amount;
+    private double balance;
 
     @DatabaseField(dataType = DataType.DATE)
     private Date date;
@@ -40,22 +40,22 @@ public class Account {
     @ForeignCollectionField
     private ForeignCollection<Outcome> outcomes;
 
-    public Account(String name, double amount, boolean includeInTotal) {
+    public Account(String name, double balance, boolean includeInTotal) {
         this.name = name;
-        this.amount = amount;
+        this.balance = balance;
         this.includeInTotal = includeInTotal;
         this.date = new Date();
     }
 
     public Account(int id) {
         this.id = id;
-        this.amount = 0f;
+        this.balance = 0f;
         this.date = new Date();
     }
 
-    public Account(String name, double amount, int currency, boolean includeInTotal) {
+    public Account(String name, double balance, int currency, boolean includeInTotal) {
         this.name = name;
-        this.amount = amount;
+        this.balance = balance;
         this.currency = currency;
         this.includeInTotal = includeInTotal;
         this.date = new Date();
@@ -77,12 +77,12 @@ public class Account {
         this.name = name;
     }
 
-    public double getAmount() {
-        return amount;
+    public double getBalance() {
+        return balance;
     }
 
-    public void setAmount(double amount) {
-        this.amount = amount;
+    public void setBalance(double balance) {
+        this.balance = balance;
     }
 
     public Date getDate() {

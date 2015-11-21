@@ -80,7 +80,7 @@ public class AccountsFragment extends Fragment {
         accounts = MoneyApplication.getInstance().accounts;
         data.clear();
         for (Account acc : accounts) {
-            data.add(new AccountRow(acc.getId(),acc.getName(),acc.getAmount(),0));
+            data.add(new AccountRow(acc.getId(),acc.getName(),acc.getBalance(),0));
         }
         view = inflater.inflate(R.layout.accounts_fragment, container, false);
         recyclerView = (EmptyRecyclerView) view.findViewById(R.id.accountsList);
@@ -103,8 +103,7 @@ public class AccountsFragment extends Fragment {
         accounts = MoneyApplication.getInstance().accounts;
         data.clear();
         for (Account acc : accounts) {
-
-            data.add(new AccountRow(acc.getId(),acc.getName(),acc.getAmount(),0));
+            data.add(new AccountRow(acc.getId(),acc.getName(),acc.getBalance(),0));
         }
         adapter.setAccountsData(data);
     }

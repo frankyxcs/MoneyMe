@@ -17,7 +17,7 @@ public class AccountDAO extends BaseDaoImpl<Account, Integer> {
         super(connectionSource, dataClass);
     }
 
-    public List<Account> getAccountIncludedInTotal() throws SQLException{
+    public List<Account> getAccountsIncludedInTotal() throws SQLException{
         QueryBuilder<Account,Integer> queryBuilder = queryBuilder();
         queryBuilder.where().eq(Account.INCLUDE_IN_TOTAL_FIELD_NAME,true);
         PreparedQuery<Account> preparedQuery = queryBuilder.prepare();

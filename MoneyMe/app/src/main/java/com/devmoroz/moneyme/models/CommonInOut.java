@@ -85,6 +85,8 @@ public class CommonInOut implements Parcelable{
         return dateAdded;
     }
 
+    public long getDateLong(){ return dateAdded.getTime();}
+
     public String getFormatedAmount() {
         String sign = CurrencyCache.getCurrencyOrEmpty().getSymbol();
 

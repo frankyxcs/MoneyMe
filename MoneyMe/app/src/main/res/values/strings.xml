@@ -52,6 +52,51 @@
     <string name="statistics">Статистика</string>
     <string name="csv_export">Экспорт в CSV</string>
     <string name="csv_import">CSV импорт</string>
+    <string name="day_title_today">Сегодня</string>
+    <string name="day_title_yesterday">Вчера</string>
+    <string name="day_title_tomorrow">Завтра</string>
+    <string name="day_mon">Пн</string>
+    <string name="day_tue">Вт</string>
+    <string name="day_wed">Ср</string>
+    <string name="day_thr">Чт</string>
+    <string name="day_fri">Пт</string>
+    <string name="day_sat">Сб</string>
+    <string name="day_sun">Вс</string>
+    <string name="sunday">Воскресенье</string>
+    <string name="monday">Понедельник</string>
+    <string name="tuesday">Вторник</string>
+    <string name="wednesday">Среда</string>
+    <string name="thursday">Четверг</string>
+    <string name="friday">Пятница</string>
+    <string name="saturday">Суббота</string>
+    <string name="month_jan">ЯНВ</string>
+    <string name="month_feb">ФЕВ</string>
+    <string name="month_mar">МАР</string>
+    <string name="month_apr">АПР</string>
+    <string name="month_mai">МАЙ</string>
+    <string name="month_jun">ИЮН</string>
+    <string name="month_jul">ИЮЛ</string>
+    <string name="month_aug">АВГ</string>
+    <string name="month_sep">СЕН</string>
+    <string name="month_oct">ОКТ</string>
+    <string name="month_nov">НОЯ</string>
+    <string name="month_dec">ДЕК</string>
+    <string name="month_x_jan">Январь</string>
+    <string name="month_x_feb">Февраль</string>
+    <string name="month_x_mar">Март</string>
+    <string name="month_x_apr">Апрель</string>
+    <string name="month_x_mai">Май</string>
+    <string name="month_x_jun">Июнь</string>
+    <string name="month_x_jul">Июль</string>
+    <string name="month_x_aug">Август</string>
+    <string name="month_x_sep">Сентябрь</string>
+    <string name="month_x_oct">Октябрь</string>
+    <string name="month_x_nov">Ноябрь</string>
+    <string name="month_x_dec">Декабрь</string>
+    <string name="account_type_cash">Наличные</string>
+    <string name="account_type_bank">Банковский счёт</string>
+    <string name="account_type_credit_card">Кредитная карта</string>
+    <string name="account_type_other">Другой</string>
 
     <string-array name="transaction_categories">
         <item>Одежда</item>
@@ -84,7 +129,7 @@
 
     <string-array name="drawer_tabs">
         <item>История</item>
-        <item>Сводка</item>
+        <item>График</item>
         <item>Цели</item>
         <item>Счета</item>
     </string-array>

@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.devmoroz.moneyme.R;
 import com.devmoroz.moneyme.models.CommonInOut;
+import com.devmoroz.moneyme.utils.datetime.TimeUtils;
 
 import java.util.ArrayList;
 
@@ -19,8 +20,10 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
 
     private ArrayList<CommonInOut> inOutData = new ArrayList<>();
     private LayoutInflater wInflater;
+    private Context appContext;
 
     public HistoryAdapter(Context context){
+        appContext = context;
         wInflater = LayoutInflater.from(context);
     }
 
@@ -54,7 +57,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
         linearLayout.setBackgroundColor(wData.getType() == 1 ? Color.parseColor("#80CBC4") : Color.parseColor("#FFAB91"));
         textAmount.setText(wData.getFormatedAmount());
         textCategory.setText(wData.getCategory() != null ? wData.getCategory() : wData.getAccount());
-        textDateAdded.setText(wData.getFormatedDate());
+        textDateAdded.setText(TimeUtils.formatHumanFriendlyShortDate(appContext, wData.getDateLong()));
     }
 
     @Override
