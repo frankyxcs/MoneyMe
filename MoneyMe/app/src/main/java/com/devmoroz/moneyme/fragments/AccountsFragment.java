@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -18,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -31,6 +33,9 @@ import com.devmoroz.moneyme.eventBus.BusProvider;
 import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
 import com.devmoroz.moneyme.models.Account;
 import com.devmoroz.moneyme.models.AccountRow;
+import com.devmoroz.moneyme.models.Currency;
+import com.devmoroz.moneyme.utils.CurrencyCache;
+import com.devmoroz.moneyme.utils.FormatUtils;
 import com.devmoroz.moneyme.widgets.DecimalDigitsInputFilter;
 import com.devmoroz.moneyme.widgets.DividerItemDecoration;
 import com.devmoroz.moneyme.widgets.EmptyRecyclerView;
@@ -44,9 +49,11 @@ public class AccountsFragment extends Fragment {
     private View view;
     private EmptyRecyclerView recyclerView;
     private AccountsAdapter adapter;
+    private TextView textTotalBalance;
     private ArrayList<AccountRow> data = new ArrayList<>();
     private List<Account> accounts;
-    private Button btnAddAccount;
+    private double totalBalance = 0;
+    private CardView btnAddAccount;
 
     private TextInputLayout accountNameInput;
     private View positiveAction;
@@ -81,10 +88,14 @@ public class AccountsFragment extends Fragment {
         data.clear();
         for (Account acc : accounts) {
             data.add(new AccountRow(acc.getId(),acc.getName(),acc.getBalance(),0));
+            if(acc.isIncludeInTotal()){
+                totalBalance += acc.getBalance();
+            }
         }
         view = inflater.inflate(R.layout.accounts_fragment, container, false);
         recyclerView = (EmptyRecyclerView) view.findViewById(R.id.accountsList);
-        btnAddAccount = (Button) view.findViewById(R.id.add_new_account);
+        btnAddAccount = (CardView) view.findViewById(R.id.add_new_account);
+        textTotalBalance = (TextView) view.findViewById(R.id.accountsTotalAmount);
         btnAddAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -96,15 +107,26 @@ public class AccountsFragment extends Fragment {
         adapter = new AccountsAdapter(getActivity(), data);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        SetTotalBalance();
         return view;
+    }
+
+    private void SetTotalBalance(){
+        Currency currency = CurrencyCache.getCurrencyOrEmpty();
+        String text = getString(R.string.total_amount);
+        String value = FormatUtils.attachAmountToTextWithoutBrackets(text,currency, totalBalance,false);
+        textTotalBalance.setText(value);
     }
 
     private void CheckWallet(){
         accounts = MoneyApplication.getInstance().accounts;
         data.clear();
+        totalBalance = 0;
         for (Account acc : accounts) {
             data.add(new AccountRow(acc.getId(),acc.getName(),acc.getBalance(),0));
+            totalBalance += acc.getBalance();
         }
+        SetTotalBalance();
         adapter.setAccountsData(data);
     }
 

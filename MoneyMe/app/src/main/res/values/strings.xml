@@ -35,6 +35,7 @@
     <string name="date">Дата</string>
     <string name="category">Категория</string>
     <string name="note">Заметка</string>
+    <string name="add_account_c">ДОБАВИТЬ СЧЁТ</string>
     <string name="add_account">Добавить счёт</string>
     <string name="account_name">Название счёта</string>
     <string name="save">Сохранить</string>
@@ -97,6 +98,13 @@
     <string name="account_type_bank">Банковский счёт</string>
     <string name="account_type_credit_card">Кредитная карта</string>
     <string name="account_type_other">Другой</string>
+    <string name="goal">Цель</string>
+    <string name="goal_name">Название</string>
+    <string name="required_amount">Необходимая сумма</string>
+    <string name="goal_current_amount">Уже накопленная сумма(если есть)</string>
+    <string name="goal_finish_date">Дата завершения</string>
+    <string name="add_goal">Добавить цель</string>
+    <string name="add_goal_c">ДОБАВИТЬ ЦЕЛЬ</string>
 
     <string-array name="transaction_categories">
         <item>Одежда</item>

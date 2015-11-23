@@ -7,9 +7,11 @@ import android.os.AsyncTask;
 
 import com.devmoroz.moneyme.eventBus.AppInitCompletedEvent;
 import com.devmoroz.moneyme.eventBus.BusProvider;
+import com.devmoroz.moneyme.eventBus.GoalsChangeEvent;
 import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
 import com.devmoroz.moneyme.helpers.DBHelper;
 import com.devmoroz.moneyme.helpers.DBHelperFactory;
+import com.devmoroz.moneyme.logging.L;
 import com.devmoroz.moneyme.models.Account;
 import com.devmoroz.moneyme.models.CommonInOut;
 import com.devmoroz.moneyme.models.Currency;
@@ -68,7 +70,16 @@ public class MoneyApplication extends Application {
             }
 
         } catch (SQLException ex) {
+            L.t(this, "Something went wrong.Please,try again.");
+        }
+    }
 
+    public void GetGoals() {
+        try{
+            goals = dbHelper.getGoalDAO().queryForInProgress();
+        }
+        catch (SQLException ex) {
+            L.t(this, "Something went wrong.Please,try again.");
         }
     }
 
@@ -83,6 +94,7 @@ public class MoneyApplication extends Application {
             protected Boolean doInBackground(Void... voids) {
                 try {
                     GetCommonData();
+                    GetGoals();
                     return true;
                 } catch (Exception e) {
                     return false;
@@ -123,6 +135,9 @@ public class MoneyApplication extends Application {
     public void OnWalletChange(WalletChangeEvent event){
         getInstance().GetCommonData();
     }
-
+    @Subscribe
+    public void OnGoalsChange(GoalsChangeEvent event){
+        getInstance().GetGoals();
+    }
 
 }

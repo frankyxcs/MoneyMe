@@ -1,7 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <android.support.v7.widget.CardView
+        android:id="@+id/add_new_goal"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:layout_gravity="right|end"
+        android:layout_margin="8dp"
+        android:clickable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        app:cardBackgroundColor="@color/colorPrimaryLight"
+        app:cardCornerRadius="2dp"
+        app:cardElevation="1dp">
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:paddingRight="16dp"
+            android:paddingLeft="16dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:singleLine="true"
+                android:textSize="14sp"
+                android:text="@string/add_goal_c"
+                android:textColor="@color/colorSecondaryText"/>
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
 
-</RelativeLayout>
+    <com.devmoroz.moneyme.widgets.EmptyRecyclerView
+        android:id="@+id/goalsList"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"/>
+
+
+    <LinearLayout
+        android:id="@+id/goalsEmpty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/disable_gray"
+            android:text="@string/no_data_available"
+            android:textSize="17sp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/no_data_add_new"
+            android:textColor="@color/disable_gray"
+            android:textSize="15sp"/>
+
+    </LinearLayout>
+</LinearLayout>

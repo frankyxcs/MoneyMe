@@ -73,6 +73,13 @@ public class FormatUtils {
         return sb.toString();
     }
 
+    public static String attachAmountToTextWithoutBrackets(String s, Currency currency, double amount, boolean addMinus) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(s + ": ");
+        amountToString(sb, currency, amount, addMinus);
+        return sb.toString();
+    }
+
     public static String roundValueToString(float value){
         long rounded = Math.round(value);
         return String.valueOf(rounded);

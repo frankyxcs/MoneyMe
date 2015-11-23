@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/text_input_layout_add_goal_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="?android:attr/listPreferredItemHeight"
+        android:hint="@string/goal_name">
+
+        <EditText android:id="@+id/goalAddName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:padding="16dp"
+            android:textSize="14sp"
+            android:theme="@style/BlackInput"/>
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/text_input_layout_add_goal_required"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/required_amount"
+        android:minHeight="?android:attr/listPreferredItemHeight">
+
+        <EditText android:id="@+id/goalAddRequired"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:padding="16dp"
+            android:textSize="14sp"
+            android:inputType="number|numberDecimal"
+            android:maxLength="9"
+            android:theme="@style/BlackInput"/>
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/text_input_layout_add_goal_available"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/goal_current_amount"
+        android:minHeight="?android:attr/listPreferredItemHeight">
+
+        <EditText android:id="@+id/goalAddAvailable"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:padding="16dp"
+            android:textSize="14sp"
+            android:inputType="number|numberDecimal"
+            android:maxLength="9"
+            android:theme="@style/BlackInput"/>
+
+    </android.support.design.widget.TextInputLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:minHeight="?android:attr/listPreferredItemHeight">
+
+    <EditText android:id="@+id/goalAddDeadlineDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:padding="16dp"
+        android:textSize="14sp"
+        android:inputType="date"
+        android:hint="@string/goal_finish_date"
+        android:theme="@style/BlackInput"/>
+
+    </LinearLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:counterEnabled="true"
+        android:hint="@string/note"
+        app:counterMaxLength="200"
+        android:minHeight="?android:attr/listPreferredItemHeight">
+        <EditText
+            android:id="@+id/goalAddNote"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:textSize="14sp"
+            android:inputType="textShortMessage|textAutoCorrect|textCapSentences|textMultiLine|textAutoComplete"
+            android:maxLength="200"
+            android:maxLines="2"
+            android:theme="@style/BlackInput"/>
+    </android.support.design.widget.TextInputLayout>
+
+</LinearLayout>
