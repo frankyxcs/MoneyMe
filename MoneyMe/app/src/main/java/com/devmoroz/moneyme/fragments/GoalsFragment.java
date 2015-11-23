@@ -6,6 +6,7 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.SwitchCompat;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
@@ -15,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -43,6 +45,7 @@ public class GoalsFragment extends Fragment {
     EditText goalRequiredInput;
     EditText goalDeadlineDate;
     EditText goalName;
+    SwitchCompat goalDateSwitch;
 
     List<Goal> goals;
 
@@ -112,6 +115,7 @@ public class GoalsFragment extends Fragment {
         goalRequiredInput = (EditText) dialog.getCustomView().findViewById(R.id.goalAddRequired);
         goalDeadlineDate = (EditText) dialog.getCustomView().findViewById(R.id.goalAddDeadlineDate);
         goalName = (EditText) dialog.getCustomView().findViewById(R.id.goalAddName);
+        goalDateSwitch = (SwitchCompat) dialog.getCustomView().findViewById(R.id.goalDateSwitch);
         EditText goalAvailableInput = (EditText) dialog.getCustomView().findViewById(R.id.goalAddAvailable);
         goalRequiredInput.setFilters(new InputFilter[]{new DecimalDigitsInputFilter()});
         goalAvailableInput.setFilters(new InputFilter[]{new DecimalDigitsInputFilter()});
