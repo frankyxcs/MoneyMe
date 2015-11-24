@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Switch;
@@ -27,6 +28,7 @@ import com.devmoroz.moneyme.adapters.GoalsAdapter;
 import com.devmoroz.moneyme.eventBus.BusProvider;
 import com.devmoroz.moneyme.eventBus.GoalsChangeEvent;
 import com.devmoroz.moneyme.models.Goal;
+import com.devmoroz.moneyme.utils.AnimationUtils;
 import com.devmoroz.moneyme.utils.FormatUtils;
 import com.devmoroz.moneyme.widgets.DecimalDigitsInputFilter;
 import com.devmoroz.moneyme.widgets.EmptyRecyclerView;
@@ -45,7 +47,6 @@ public class GoalsFragment extends Fragment {
     EditText goalRequiredInput;
     EditText goalDeadlineDate;
     EditText goalName;
-    SwitchCompat goalDateSwitch;
 
     List<Goal> goals;
 
@@ -115,7 +116,6 @@ public class GoalsFragment extends Fragment {
         goalRequiredInput = (EditText) dialog.getCustomView().findViewById(R.id.goalAddRequired);
         goalDeadlineDate = (EditText) dialog.getCustomView().findViewById(R.id.goalAddDeadlineDate);
         goalName = (EditText) dialog.getCustomView().findViewById(R.id.goalAddName);
-        goalDateSwitch = (SwitchCompat) dialog.getCustomView().findViewById(R.id.goalDateSwitch);
         EditText goalAvailableInput = (EditText) dialog.getCustomView().findViewById(R.id.goalAddAvailable);
         goalRequiredInput.setFilters(new InputFilter[]{new DecimalDigitsInputFilter()});
         goalAvailableInput.setFilters(new InputFilter[]{new DecimalDigitsInputFilter()});

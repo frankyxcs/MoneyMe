@@ -86,6 +86,7 @@ public class AccountsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         accounts = MoneyApplication.getInstance().accounts;
         data.clear();
+        totalBalance = 0;
         for (Account acc : accounts) {
             data.add(new AccountRow(acc.getId(),acc.getName(),acc.getBalance(),0));
             if(acc.isIncludeInTotal()){

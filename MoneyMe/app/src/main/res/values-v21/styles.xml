@@ -17,4 +17,10 @@
     <style name="floating_action_button">
         <item name="android:layout_margin">16dp</item>
     </style>
+
+    <style name="BlackInput">
+        <item name="colorControlNormal">@color/colorPrimaryText</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+    </style>
 </resources>

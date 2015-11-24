@@ -105,6 +105,12 @@
     <string name="goal_finish_date">Дата завершения</string>
     <string name="add_goal">Добавить цель</string>
     <string name="add_goal_c">ДОБАВИТЬ ЦЕЛЬ</string>
+    <string name="reset_preferences">Сброс настроек</string>
+    <string name="reset_preferences_confirm">Установить все настройки в значения по умолчанию?</string>
+    <string name="reset">Сброс</string>
+    <string name="history_order_asc">Новые операции внизу</string>
+    <string name="history_order_desc">Новые операции наверху</string>
+    <string name="pref_history_order_title">Порядок отображения операций</string>
 
     <string-array name="transaction_categories">
         <item>Одежда</item>

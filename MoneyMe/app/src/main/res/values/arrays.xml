@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Language -->
+    <string-array name="language_options">
+        <item>English</item>
+        <item>Русский</item>
+        <item>Українська</item>
+    </string-array>
+    <string-array name="language_values">
+        <item>en</item>
+        <item>default</item>
+        <item>ua</item>
+    </string-array>
+
+    <!-- History order -->
+    <string-array name="pref_history_order_options">
+        <item>@string/history_order_asc</item>
+        <item>@string/history_order_desc</item>
+    </string-array>
+    <string-array name="pref_history_order_values">
+        <item>@string/pref_history_order_value_asc</item>
+        <item>@string/pref_history_order_value_desc</item>
+    </string-array>
+    <string name="pref_history_order_value_asc">asc</string>
+    <string name="pref_history_order_value_desc">desc</string>
+
+    <!-- History period -->
+</resources>

@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.devmoroz.moneyme.R;
@@ -52,7 +53,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
         TextView textAmount = holder.textAmount;
         TextView textCategory = holder.textCategory;
         TextView textDateAdded = holder.textDateAdded;
-        LinearLayout linearLayout = holder.linearLayout;
+        RelativeLayout linearLayout = holder.linearLayout;
 
         linearLayout.setBackgroundColor(wData.getType() == 1 ? Color.parseColor("#80CBC4") : Color.parseColor("#FFAB91"));
         textAmount.setText(wData.getFormatedAmount());
@@ -70,11 +71,11 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
         TextView textAmount;
         TextView textCategory;
         TextView textDateAdded;
-        LinearLayout linearLayout;
+        RelativeLayout linearLayout;
 
         public MainViewHolder(View v) {
             super(v);
-            this.linearLayout = (LinearLayout) v.findViewById(R.id.card_view_main_color);
+            this.linearLayout = (RelativeLayout) v.findViewById(R.id.card_view_main_color);
             this.textAmount = (TextView)v.findViewById(R.id.card_main_amount);
             this.textCategory = (TextView)v.findViewById(R.id.card_main_category);
             this.textDateAdded = (TextView)v.findViewById(R.id.card_main_date);

@@ -1,40 +1,24 @@
 package com.devmoroz.moneyme;
 
+import android.graphics.Color;
 import android.os.Bundle;
-import android.preference.PreferenceFragment;
-import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 
-import com.devmoroz.moneyme.utils.AppCompatPreferenceActivity;
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.devmoroz.moneyme.utils.AppUtils;
+import com.devmoroz.moneyme.utils.Preferences;
 
-import java.util.List;
-
-public class SettingsActivity  extends AppCompatPreferenceActivity {
-
-    @Override
-    public void onBuildHeaders(List<Header> target) {
-        //loadHeadersFromResource(R.xml.settings, target);
-
-        setContentView(R.layout.settings_activity);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarSettings);
-        setSupportActionBar(toolbar);
-
-        ActionBar bar = getSupportActionBar();
-
-        bar.setHomeButtonEnabled(true);
-        bar.setDisplayHomeAsUpEnabled(true);
-        bar.setDisplayShowTitleEnabled(true);
-        bar.setTitle(R.string.option_settings);
-    }
+public class SettingsActivity  extends AppCompatActivity {
 
     @Override
-    protected boolean isValidFragment(String fragmentName) {
-        return SettingsFragment.class.getName().equals(fragmentName);
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_preferences, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -43,58 +27,38 @@ public class SettingsActivity  extends AppCompatPreferenceActivity {
             case android.R.id.home:
                 onBackPressed();
                 break;
+            case R.id.menu_reset_preferences:
+                new MaterialDialog.Builder(this)
+                        .title(R.string.reset_preferences)
+                        .content(R.string.reset_preferences_confirm)
+                        .negativeText(R.string.cancel)
+                        .positiveText(R.string.reset)
+                        .titleColorRes(R.color.colorPrimaryDark)
+                        .positiveColorRes(R.color.colorPrimary)
+                        .negativeColorRes(R.color.colorPrimary)
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
+                                    Preferences.reset(SettingsActivity.this);
+                                    AppUtils.restart(SettingsActivity.this);
+                                }
+                            })
+                            .show();
+
         }
         return super.onOptionsItemSelected(item);
     }
 
-    public static class SettingsFragment extends PreferenceFragment {
-
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            getActivity().setTheme(R.style.AppDefault);
-
-            if (getArguments() != null) {
-                String page = getArguments().getString("page");
-                if (page != null)
-                    switch (page) {
-                        case "page1":
-                            //addPreferencesFromResource(R.xml.settings_page1);
-                            break;
-                        case "page2":
-                           // addPreferencesFromResource(R.xml.settings_page2);
-                            break;
-
-                    }
-            }
-        }
-
-        @Override
-        public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            View layout = inflater.inflate(R.layout.settings_activity, container, false);
-            if (layout != null) {
-                AppCompatPreferenceActivity activity = (AppCompatPreferenceActivity) getActivity();
-                Toolbar toolbar = (Toolbar) layout.findViewById(R.id.toolbarSettings);
-                activity.setSupportActionBar(toolbar);
-
-                ActionBar bar = activity.getSupportActionBar();
-                bar.setHomeButtonEnabled(true);
-                bar.setDisplayHomeAsUpEnabled(true);
-                bar.setDisplayShowTitleEnabled(true);
-                bar.setTitle(getPreferenceScreen().getTitle());
-            }
-            return layout;
-        }
-
-        @Override
-        public void onResume() {
-            super.onResume();
-
-            if (getView() != null) {
-                View frame = (View) getView().getParent();
-                if (frame != null)
-                    frame.setPadding(0, 0, 0, 0);
-            }
-        }
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.AppDefault);
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.settings_activity);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarSettings);
+        toolbar.setTitleTextColor(Color.WHITE);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
+                ActionBar.DISPLAY_HOME_AS_UP | ActionBar.DISPLAY_SHOW_TITLE);
     }
+
 }

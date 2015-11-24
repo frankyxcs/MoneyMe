@@ -1,9 +1,11 @@
 package com.devmoroz.moneyme;
 
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -171,6 +173,9 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.item_navigation_drawer_about:
                         Toast.makeText(MainActivity.this, "MoneyMe 2015", Toast.LENGTH_LONG).show();
                         return true;
+                    case R.id.item_navigation_drawer_settings:
+                        navigate(SettingsActivity.class);
+                        return true;
                 }
                 return true;
             }
@@ -180,6 +185,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void jumpToTab(int tab){
         viewPager.setCurrentItem(tab);
+    }
+
+    private void navigate(final Class<? extends Activity> activityClass) {
+        if (!getClass().equals(activityClass)) {
+           final Intent intent = new Intent(this, activityClass);
+           intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+           startActivity(intent);
+        }
     }
 
     private void initTabs() {
