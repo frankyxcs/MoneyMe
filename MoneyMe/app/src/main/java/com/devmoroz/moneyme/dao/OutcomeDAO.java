@@ -43,4 +43,70 @@ public class OutcomeDAO extends BaseDaoImpl<Outcome, Integer> {
 
         return result;
     }
+
+    public List<Outcome> queryForPeriod(int period, int monthStart) throws SQLException{
+        QueryBuilder<Outcome,Integer> queryBuilder = queryBuilder();
+
+        Calendar currentDate = Calendar.getInstance();
+
+        Calendar dateStart = Calendar.getInstance();
+        Calendar dateEnd = Calendar.getInstance();
+
+        if(currentDate.get(Calendar.DAY_OF_MONTH) == monthStart){
+            dateStart.add(Calendar.DAY_OF_MONTH, -1);
+        }
+        else {
+            dateStart.set(Calendar.DAY_OF_MONTH, monthStart);
+            dateStart.add(Calendar.DAY_OF_MONTH, -1);
+        }
+        dateEnd.add(Calendar.DAY_OF_MONTH, 1);
+
+        switch (period) {
+            case 1:
+                if (currentDate.get(Calendar.DAY_OF_MONTH) < monthStart) {
+                    dateStart.add(Calendar.MONTH, -1);
+                }
+                break;
+            case 2:
+                if (currentDate.get(Calendar.DAY_OF_MONTH) < monthStart) {
+                    dateStart.add(Calendar.MONTH, -2);
+                }
+                else {
+                    dateStart.add(Calendar.MONTH, -1);
+                }
+                break;
+            case 3:
+                if (currentDate.get(Calendar.DAY_OF_MONTH) < monthStart) {
+                    dateStart.add(Calendar.MONTH, -3);
+                }
+                else {
+                    dateStart.add(Calendar.MONTH, -2);
+                }
+                break;
+            case 6:
+                if (currentDate.get(Calendar.DAY_OF_MONTH) < monthStart) {
+                    dateStart.add(Calendar.MONTH, -6);
+                }
+                else {
+                    dateStart.add(Calendar.MONTH, -5);
+                }
+                break;
+            case 12:
+                if (currentDate.get(Calendar.DAY_OF_MONTH) < monthStart) {
+                    dateStart.add(Calendar.MONTH, -12);
+                }
+                else {
+                    dateStart.add(Calendar.MONTH, -11);
+                }
+                break;
+            case 0:
+                return queryForAll();
+        }
+
+        queryBuilder.where().between("dateOfSpending", dateStart.getTime(), dateEnd.getTime());
+        PreparedQuery<Outcome> preparedQuery = queryBuilder.prepare();
+        List<Outcome> result = query(preparedQuery);
+
+        return result;
+    }
 }

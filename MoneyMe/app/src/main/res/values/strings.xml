@@ -43,6 +43,7 @@
     <string name="edit_account">Редактировать счёт</string>
     <string name="delete_account_confirm">Удалить счёт?</string>
     <string name="no_data_available">У Вас пока нет данных.</string>
+    <string name="no_goal_data_available">Вы не добавили ни одной цели :(</string>
     <string name="no_data_add_new">Нажмите на \"+\" чтобы добавить свою первую запись.</string>
     <string name="include_account_to_balance">Учитывать в общем балансе</string>
     <string name="opening_amount">Начальный баланс</string>
@@ -105,12 +106,26 @@
     <string name="goal_finish_date">Дата завершения</string>
     <string name="add_goal">Добавить цель</string>
     <string name="add_goal_c">ДОБАВИТЬ ЦЕЛЬ</string>
+
+    <!--Preferences-->
+    <string name="pref_history_order">pref_history_order</string>
+    <string name="pref_history_period">pref_history_period</string>
+
+
     <string name="reset_preferences">Сброс настроек</string>
     <string name="reset_preferences_confirm">Установить все настройки в значения по умолчанию?</string>
     <string name="reset">Сброс</string>
-    <string name="history_order_asc">Новые операции внизу</string>
-    <string name="history_order_desc">Новые операции наверху</string>
+    <string name="history_order_asc">Старые наверху</string>
+    <string name="history_order_desc">Новые наверху</string>
     <string name="pref_history_order_title">Порядок отображения операций</string>
+    <string name="pref_history_period_title">Период операций</string>
+
+    <string name="history_period_current">Текущий месяц</string>
+    <string name="history_period_2">2 месяца</string>
+    <string name="history_period_3">3 месяца</string>
+    <string name="history_period_6">6 месяцев</string>
+    <string name="history_period_12">Год</string>
+    <string name="history_period_all">За всё время</string>
 
     <string-array name="transaction_categories">
         <item>Одежда</item>
@@ -144,7 +159,7 @@
     <string-array name="drawer_tabs">
         <item>История</item>
         <item>График</item>
-        <item>Цели</item>
         <item>Счета</item>
+        <item>Цели</item>
     </string-array>
 </resources>

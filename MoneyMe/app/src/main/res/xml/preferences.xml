@@ -6,12 +6,23 @@
         android:title="@string/history">
 
         <android.support.v7.preference.ListPreference
-            android:key="pref_history_order"
+            android:key="@string/pref_history_order"
             android:title="@string/pref_history_order_title"
             android:summary="%s"
             android:entries="@array/pref_history_order_options"
             android:entryValues="@array/pref_history_order_values"
-            android:defaultValue="@string/pref_history_order_value_desc"/>
+            android:defaultValue="@string/pref_history_order_value_desc"
+            android:layout="@layout/custom_pref"/>
+
+        <android.support.v7.preference.ListPreference
+            android:key="@string/pref_history_period"
+            android:title="@string/pref_history_period_title"
+            android:summary="%s"
+            android:entries="@array/pref_history_period_options"
+            android:entryValues="@array/pref_history_period_values"
+            android:defaultValue="0"
+            android:layout="@layout/custom_pref"/>
+
 
     </android.support.v7.preference.PreferenceCategory>
 

@@ -19,6 +19,7 @@ import com.devmoroz.moneyme.models.Goal;
 import com.devmoroz.moneyme.models.Income;
 import com.devmoroz.moneyme.models.Outcome;
 import com.devmoroz.moneyme.utils.CurrencyCache;
+import com.devmoroz.moneyme.utils.Preferences;
 import com.squareup.otto.Subscribe;
 
 import java.sql.SQLException;
@@ -52,9 +53,11 @@ public class MoneyApplication extends Application {
 
     public void GetCommonData() {
         try {
+            int period = Preferences.getHistoryPeriod(this);
+            int monthStart = 1;
             accounts = dbHelper.getAccountDAO().getAccountsIncludedInTotal();
-            incomes = dbHelper.getIncomeDAO().queryForCurrentMonth();
-            outcomes = dbHelper.getOutcomeDAO().queryForCurrentMonth();
+            incomes = dbHelper.getIncomeDAO().queryForPeriod(period,monthStart);
+            outcomes = dbHelper.getOutcomeDAO().queryForPeriod(period,monthStart);
 
             inout = new ArrayList<>();
 

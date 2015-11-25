@@ -8,7 +8,7 @@ public class Constants {
     public final static String INCOME_ACTIVITY= "startIncomeActivity";
     public static final int TAB_HISTORY = 0;
     public static final int TAB_CHART = 1;
-    public static final int TAB_GOALS = 2;
-    public static final int TAB_ACCOUNTS = 3;
+    public static final int TAB_GOALS = 3;
+    public static final int TAB_ACCOUNTS = 2;
     public static final int TAB_COUNT = 4;
 }

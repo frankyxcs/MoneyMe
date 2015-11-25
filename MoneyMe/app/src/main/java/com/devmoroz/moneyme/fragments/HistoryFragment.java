@@ -23,6 +23,7 @@ import com.devmoroz.moneyme.eventBus.BusProvider;
 import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
 import com.devmoroz.moneyme.models.CommonInOut;
 import com.devmoroz.moneyme.utils.CommonInOutSorter;
+import com.devmoroz.moneyme.utils.Preferences;
 import com.devmoroz.moneyme.widgets.CustomRecyclerScroll;
 import com.devmoroz.moneyme.widgets.EmptyRecyclerView;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
@@ -113,7 +114,8 @@ public class HistoryFragment extends Fragment {
             inout = MoneyApplication.inout;
             if (inout != null && !inout.isEmpty()) {
                 mListWalletEntries = inout;
-                sorter.sortWalletEntriesByDate(mListWalletEntries);
+                boolean desc = Preferences.isSortByDesc(getContext());
+                sorter.sortWalletEntriesByDate(mListWalletEntries,desc);
                 wAdapter.setInOutData(mListWalletEntries);
             } else {
                 mTextError.setVisibility(View.VISIBLE);
@@ -146,7 +148,8 @@ public class HistoryFragment extends Fragment {
 
     public void CheckWallet() {
         mListWalletEntries = MoneyApplication.inout;
-        sorter.sortWalletEntriesByDate(mListWalletEntries);
+        boolean desc = Preferences.isSortByDesc(getContext());
+        sorter.sortWalletEntriesByDate(mListWalletEntries,desc);
         wAdapter.setInOutData(mListWalletEntries);
     }
 

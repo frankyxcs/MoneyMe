@@ -41,26 +41,17 @@
     <LinearLayout
         android:id="@+id/goalsEmpty"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:visibility="gone"
+        android:gravity="center"
         android:orientation="vertical">
-
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
+            android:layout_gravity="center"
             android:textColor="@color/disable_gray"
-            android:text="@string/no_data_available"
+            android:text="@string/no_goal_data_available"
             android:textSize="17sp"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/no_data_add_new"
-            android:textColor="@color/disable_gray"
-            android:textSize="15sp"/>
-
     </LinearLayout>
 </LinearLayout>
