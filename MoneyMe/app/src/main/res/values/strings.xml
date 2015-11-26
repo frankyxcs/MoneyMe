@@ -110,6 +110,7 @@
     <!--Preferences-->
     <string name="pref_history_order">pref_history_order</string>
     <string name="pref_history_period">pref_history_period</string>
+    <string name="pref_month_start">pref_month_start</string>
 
 
     <string name="reset_preferences">Сброс настроек</string>
@@ -119,6 +120,8 @@
     <string name="history_order_desc">Новые наверху</string>
     <string name="pref_history_order_title">Порядок отображения операций</string>
     <string name="pref_history_period_title">Период операций</string>
+    <string name="pref_month_start_title">Начало месяца</string>
+    <string name="number">число</string>
 
     <string name="history_period_current">Текущий месяц</string>
     <string name="history_period_2">2 месяца</string>

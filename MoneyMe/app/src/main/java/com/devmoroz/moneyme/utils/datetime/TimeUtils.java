@@ -28,6 +28,7 @@ public class TimeUtils {
     public static String formatShortDate(Context context, Date date) {
         StringBuilder sb = new StringBuilder();
         Formatter formatter = new Formatter(sb);
+        
         return DateUtils.formatDateRange(context, formatter, date.getTime(), date.getTime(),
                 DateUtils.FORMAT_ABBREV_ALL | DateUtils.FORMAT_NO_YEAR,
                 TimeZone.getDefault().getID()).toString();

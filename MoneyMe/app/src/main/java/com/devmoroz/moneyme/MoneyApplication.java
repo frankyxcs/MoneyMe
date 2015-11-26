@@ -54,10 +54,10 @@ public class MoneyApplication extends Application {
     public void GetCommonData() {
         try {
             int period = Preferences.getHistoryPeriod(this);
-            int monthStart = 1;
+            int monthStart = Preferences.getMonthStart(this);
             accounts = dbHelper.getAccountDAO().getAccountsIncludedInTotal();
             incomes = dbHelper.getIncomeDAO().queryForPeriod(period,monthStart);
-            outcomes = dbHelper.getOutcomeDAO().queryForPeriod(period,monthStart);
+            outcomes = dbHelper.getOutcomeDAO().queryForPeriod(period, monthStart);
 
             inout = new ArrayList<>();
 

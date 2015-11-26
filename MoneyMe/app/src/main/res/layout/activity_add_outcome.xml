@@ -143,10 +143,27 @@
         android:layout_height="match_parent"
         android:id="@+id/coordinator_outcome">
 
-        <ImageView
-            android:id="@+id/add_outcome_cheque"
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
-            android:layout_height="200dp" />
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+
+            <ImageView
+                android:id="@+id/add_outcome_cheque"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_gravity="center"/>
+
+            <ImageView
+                android:id="@+id/delete_outcome_cheque"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentRight="true"
+                android:layout_margin="8dp"
+                android:src="@drawable/ic_close" />
+        </RelativeLayout>
+
+
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/add_outcome_save"

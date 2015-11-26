@@ -14,7 +14,6 @@
         <item name="android:textColorPrimary">@color/colorPrimaryText</item>
         <item name="android:textColorSecondary">@color/colorSecondaryText</item>
         <item name="preferenceTheme">@style/AppPreferenceThemeOverlay</item>
-
     </style>
 
     <style name="AppDefaultOutcome" parent="AppTheme">
@@ -23,9 +22,13 @@
 
     <style name="AppPreferenceThemeOverlay" parent="PreferenceThemeOverlay">
         <item name="preferenceHelpStyle">@style/Preference.PreferenceHelp</item>
+        <item name="numberPickerPreferenceStyle">@style/Preference.DialogPreference.NumberPickerPreference</item>
     </style>
     <style name="Preference.PreferenceHelp" parent="Preference">
         <item name="android:layout">@layout/preference_help</item>
+    </style>
+    <style name="Preference.DialogPreference.NumberPickerPreference">
+        <item name="dialogLayout">@layout/preference_numberpicker_dialog</item>
     </style>
 
     <style name="floating_action_button">

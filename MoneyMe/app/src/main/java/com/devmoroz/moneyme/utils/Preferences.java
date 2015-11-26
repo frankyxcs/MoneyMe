@@ -29,4 +29,11 @@ public class Preferences {
 
         return period;
     }
+
+    public static int getMonthStart(Context context) {
+        int monthStart = PreferenceManager.getDefaultSharedPreferences(context)
+                .getInt(context.getString(R.string.pref_month_start), 1);
+
+        return monthStart;
+    }
 }
