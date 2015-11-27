@@ -46,10 +46,11 @@
     <string name="no_goal_data_available">Вы не добавили ни одной цели :(</string>
     <string name="no_data_add_new">Нажмите на \"+\" чтобы добавить свою первую запись.</string>
     <string name="include_account_to_balance">Учитывать в общем балансе</string>
-    <string name="opening_amount">Начальный баланс</string>
+    <string name="opening_amount">Текущий баланс</string>
     <string name="history">История</string>
     <string name="chart">График</string>
     <string name="goals">Цели</string>
+    <string name="calendar">Календарь</string>
     <string name="regular_transactions">Регулярные операции</string>
     <string name="statistics">Статистика</string>
     <string name="csv_export">Экспорт в CSV</string>
@@ -132,24 +133,20 @@
 
     <string-array name="transaction_categories">
         <item>Одежда</item>
+        <item>Гигиена и косметика</item>
         <item>Здоровье</item>
         <item>Связь</item>
-        <item>Еда</item>
+        <item>Продукты</item>
         <item>Машина</item>
         <item>Подарки</item>
         <item>Еда вне дома</item>
         <item>Кредит</item>
         <item>Аренда</item>
+        <item>Техника</item>
         <item>Транспорт</item>
+        <item>Товары для дома</item>
         <item>Развлечения</item>
         <item>Другое</item>
-    </string-array>
-
-    <string-array name="currency_names">
-        <item>EUR</item>
-        <item>RUB</item>
-        <item>UAH</item>
-        <item>USD</item>
     </string-array>
 
     <string-array name="account_categories">

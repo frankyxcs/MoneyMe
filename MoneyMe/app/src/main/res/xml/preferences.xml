@@ -23,6 +23,14 @@
             android:defaultValue="0"
             android:layout="@layout/custom_pref"/>
 
+
+
+
+    </android.support.v7.preference.PreferenceCategory>
+
+    <android.support.v7.preference.PreferenceCategory
+        android:title="@string/calendar">
+
         <com.devmoroz.moneyme.utils.preference.NumberPickerPreference
             android:defaultValue="1"
             android:key="@string/pref_month_start"
@@ -30,8 +38,6 @@
             app:maxValue="28"
             app:minValue="1"
             android:layout="@layout/custom_pref"/>
-
-
     </android.support.v7.preference.PreferenceCategory>
 
 </android.support.v7.preference.PreferenceScreen>

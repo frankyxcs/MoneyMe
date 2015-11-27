@@ -25,6 +25,12 @@ public class AppUtils {
                 activeNetwork.getType() == ConnectivityManager.TYPE_WIFI;
     }
 
+    public static boolean isNetworkOn(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+        return networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnectedOrConnecting();
+    }
+
     public static void restart(Activity activity) {
         activity.finish();
         final Intent intent = activity.getIntent();

@@ -7,6 +7,7 @@ import android.text.format.DateUtils;
 import com.devmoroz.moneyme.R;
 
 import java.text.DateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Formatter;
 import java.util.TimeZone;
@@ -28,10 +29,20 @@ public class TimeUtils {
     public static String formatShortDate(Context context, Date date) {
         StringBuilder sb = new StringBuilder();
         Formatter formatter = new Formatter(sb);
-        
-        return DateUtils.formatDateRange(context, formatter, date.getTime(), date.getTime(),
-                DateUtils.FORMAT_ABBREV_ALL | DateUtils.FORMAT_NO_YEAR,
-                TimeZone.getDefault().getID()).toString();
+
+        Calendar cal = Calendar.getInstance();
+        int yearCurrent = cal.get(Calendar.YEAR);
+        cal.setTime(date);
+        int yearDate = cal.get(Calendar.YEAR);
+        if (yearCurrent == yearDate)
+            return DateUtils.formatDateRange(context, formatter, date.getTime(), date.getTime(),
+                    DateUtils.FORMAT_ABBREV_ALL | DateUtils.FORMAT_NO_YEAR,
+                    TimeZone.getDefault().getID()).toString();
+        else
+            return DateUtils.formatDateRange(context, formatter, date.getTime(), date.getTime(),
+                    DateUtils.FORMAT_ABBREV_ALL,
+                    TimeZone.getDefault().getID()).toString();
+
     }
 
     public static String formatHumanFriendlyShortDate(final Context context, long timestamp) {
