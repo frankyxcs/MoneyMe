@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_about"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        android:theme="@style/AppDefault"/>
+
+    <ScrollView
+        android:layout_width="match_parent" android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:scrollbars="none"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:text="@string/application_info_title"
+                style="@style/HeadlineTextStyle" />
+            <TextView
+                android:id="@+id/text_application_info"
+                style="@style/textContentStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:text="@string/libraries_title"
+                style="@style/HeadlineTextStyle" />
+            <TextView
+                android:id="@+id/text_libraries"
+                style="@style/textContentStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:text="@string/license_title"
+                style="@style/HeadlineTextStyle" />
+            <TextView
+                android:id="@+id/text_license"
+                style="@style/textContentStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:text="@string/third_party_licenses_title"
+                style="@style/HeadlineTextStyle" />
+            <TextView
+                android:id="@+id/text_3rd_party_licenses"
+                style="@style/textContentStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

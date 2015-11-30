@@ -3,6 +3,8 @@ package com.devmoroz.moneyme.utils;
 
 import android.content.Context;
 import android.support.annotation.ColorRes;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -104,6 +106,19 @@ public class FormatUtils {
 
     public static boolean sameCurrency(Currency fromCurrency, Currency toCurrency) {
         return fromCurrency.getId() == toCurrency.getId();
+    }
+
+    public static void setTextWithLinks(TextView textView, String htmlText) {
+        setHtmlText(textView, htmlText);
+        textView.setMovementMethod(LinkMovementMethod.getInstance());
+    }
+
+    public static void setHtmlText(TextView textView, String htmlText) {
+        textView.setText(isEmpty(htmlText) ? null : Html.fromHtml(htmlText));
+    }
+
+    public static void setTextViewText(TextView textView, String text) {
+        textView.setText(isEmpty(text) ? null : Html.fromHtml(text));
     }
 
 }

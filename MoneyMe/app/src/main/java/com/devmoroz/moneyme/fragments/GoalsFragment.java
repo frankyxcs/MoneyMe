@@ -1,8 +1,11 @@
 package com.devmoroz.moneyme.fragments;
 
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,9 +18,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -30,10 +35,13 @@ import com.devmoroz.moneyme.eventBus.GoalsChangeEvent;
 import com.devmoroz.moneyme.models.Goal;
 import com.devmoroz.moneyme.utils.AnimationUtils;
 import com.devmoroz.moneyme.utils.FormatUtils;
+import com.devmoroz.moneyme.utils.datetime.TimeUtils;
 import com.devmoroz.moneyme.widgets.DecimalDigitsInputFilter;
 import com.devmoroz.moneyme.widgets.EmptyRecyclerView;
 import com.squareup.otto.Subscribe;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class GoalsFragment extends Fragment {
@@ -43,9 +51,10 @@ public class GoalsFragment extends Fragment {
     private GoalsAdapter adapter;
     private LinearLayout mTextEmpty;
     private CardView btnAddNewGoal;
+    private static Date goalDate;
 
     EditText goalRequiredInput;
-    EditText goalDeadlineDate;
+    Button goalDeadlineDate;
     EditText goalName;
 
     List<Goal> goals;
@@ -97,7 +106,7 @@ public class GoalsFragment extends Fragment {
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
-                        if(FormatUtils.isEmpty(goalName) || FormatUtils.isEmpty(goalDeadlineDate) || FormatUtils.isEmpty(goalDeadlineDate)){
+                        if(FormatUtils.isEmpty(goalName) || FormatUtils.isEmpty(goalDeadlineDate.getText().toString()) || FormatUtils.isEmpty(goalRequiredInput)){
                             return;
                         }
                         else{
@@ -113,8 +122,18 @@ public class GoalsFragment extends Fragment {
                 })
                 .build();
 
+        goalDate = new Date();
         goalRequiredInput = (EditText) dialog.getCustomView().findViewById(R.id.goalAddRequired);
-        goalDeadlineDate = (EditText) dialog.getCustomView().findViewById(R.id.goalAddDeadlineDate);
+        goalDeadlineDate = (Button) dialog.getCustomView().findViewById(R.id.goalAddDeadlineDate);
+        goalDeadlineDate.setText(TimeUtils.formatShortDate(getContext(), goalDate));
+        goalDeadlineDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatePickerFragment newFragment = new DatePickerFragment();
+                newFragment.setDate(goalDeadlineDate);
+                newFragment.show(getFragmentManager(), "datePicker");
+            }
+        });
         goalName = (EditText) dialog.getCustomView().findViewById(R.id.goalAddName);
         EditText goalAvailableInput = (EditText) dialog.getCustomView().findViewById(R.id.goalAddAvailable);
         goalRequiredInput.setFilters(new InputFilter[]{new DecimalDigitsInputFilter()});
@@ -143,5 +162,34 @@ public class GoalsFragment extends Fragment {
     private void CheckGoals() {
         goals = MoneyApplication.getInstance().goals;
         adapter.setGoalsData(goals);
+    }
+
+    public static class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
+
+        private Button date;
+
+        public void setDate(Button date) {
+            this.date = date;
+        }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+
+            final Calendar c = Calendar.getInstance();
+            int year = c.get(Calendar.YEAR);
+            int month = c.get(Calendar.MONTH);
+            int day = c.get(Calendar.DAY_OF_MONTH);
+
+            return new DatePickerDialog(getActivity(), this, year, month, day);
+        }
+
+        public void onDateSet(DatePicker view, int year, int month, int day) {
+            Calendar cal = Calendar.getInstance();
+            cal.set(Calendar.YEAR, year);
+            cal.set(Calendar.MONTH,month);
+            cal.set(Calendar.DAY_OF_MONTH, day);
+            goalDate = cal.getTime();
+            date.setText(TimeUtils.formatShortDate(getContext(),goalDate));
+        }
     }
 }

@@ -61,22 +61,26 @@
     </android.support.design.widget.TextInputLayout>
 
     <LinearLayout
-        android:id="@+id/goalDateExpand"
+        android:id="@+id/from_row"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:minHeight="?android:attr/listPreferredItemHeight">
-
-    <EditText android:id="@+id/goalAddDeadlineDate"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:padding="16dp"
-        android:textSize="14sp"
-        android:inputType="date"
-        android:hint="@string/goal_finish_date"
-        android:theme="@style/BlackInput"/>
-
+        <TextView
+            android:id="@+id/from_label"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:text="@string/goal_finish_date"
+            style="@style/EditEvent_LabelSmall" />
+        <Button
+            android:id="@+id/goalAddDeadlineDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:gravity="center_vertical"
+            android:textSize="14sp"
+            android:theme="@style/BlackInput"
+            style="@style/TextAppearance.EditEvent_SpinnerButton" />
     </LinearLayout>
 
     <android.support.design.widget.TextInputLayout

@@ -3,12 +3,9 @@ package com.devmoroz.moneyme;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputLayout;
@@ -27,9 +24,9 @@ import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.devmoroz.moneyme.helpers.DBHelper;
@@ -46,8 +43,6 @@ import com.devmoroz.moneyme.utils.datetime.TimeUtils;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -55,16 +50,18 @@ import java.util.List;
 
 import static com.devmoroz.moneyme.utils.PhotoUtil.PICTURES_DIR;
 import static com.devmoroz.moneyme.utils.PhotoUtil.extractImageUrlFromGallery;
-import static com.devmoroz.moneyme.utils.PhotoUtil.makeBitmap;
+import static com.devmoroz.moneyme.utils.PhotoUtil.checkExistAndTakePath;
+import static com.devmoroz.moneyme.utils.PhotoUtil.setImageWithPicasso;
 
 public class AddOutcomeActivity extends AppCompatActivity {
 
     private static final int FROM_GALLERY_REQUEST_CODE = 1;
     private static final int SAVE_REQUEST_CODE = 2;
-    private DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
     private String photoFileName;
+    private String photoPath;
     private File photoFile;
+    private static Date outcomeDate = new Date();
 
     private EditText amount;
     private EditText description;
@@ -73,9 +70,11 @@ public class AddOutcomeActivity extends AppCompatActivity {
     private TextView date;
     private Spinner categorySpin;
     private Spinner accountSpin;
+    private RelativeLayout photoWrapper;
 
     private Toolbar toolbar;
     private ImageView chequeImage;
+    private ImageView imageDeletePhoto;
 
 
     private DBHelper dbHelper;
@@ -96,10 +95,18 @@ public class AddOutcomeActivity extends AppCompatActivity {
         date = (TextView) findViewById(R.id.add_outcome_date);
         categorySpin = (Spinner) findViewById(R.id.add_outcome_category);
         accountSpin = (Spinner) findViewById(R.id.add_outcome_account);
-        date.setText(dateFormat.format(new Date()));
+        date.setText(TimeUtils.formatShortDate(getApplicationContext(), new Date()));
         buttonAdd = (FloatingActionButton) findViewById(R.id.add_outcome_save);
         floatingAmountLabel = (TextInputLayout) findViewById(R.id.text_input_layout_out_amount);
         chequeImage = (ImageView) findViewById(R.id.add_outcome_cheque);
+        imageDeletePhoto = (ImageView) findViewById(R.id.delete_outcome_cheque);
+        photoWrapper = (RelativeLayout) findViewById(R.id.photoWrapper);
+        imageDeletePhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removePic();
+            }
+        });
         buttonAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -190,18 +197,14 @@ public class AddOutcomeActivity extends AppCompatActivity {
         double outcomeAmount = Double.parseDouble(amount.getText().toString());
         String selectedCategory = categorySpin.getSelectedItem().toString();
 
-        try {
-            dateAdded = dateFormat.parse(date.getText().toString());
-        } catch (ParseException ex) {
-            dateAdded = new Date();
-        }
+        dateAdded = outcomeDate == null ? new Date():outcomeDate;
 
         int id = accountSpin.getSelectedItemPosition();
         Account account = dbHelper.getAccountDAO().queryForAll().get(id);
         account.setBalance(account.getBalance() - outcomeAmount);
 
         Outcome outcome = new Outcome(outcomeNote, dateAdded, outcomeAmount, selectedCategory, account);
-        outcome.setPhoto(photoFileName);
+        outcome.setPhoto(photoPath);
 
         dbHelper.getOutcomeDAO().create(outcome);
         dbHelper.getAccountDAO().update(account);
@@ -251,8 +254,9 @@ public class AddOutcomeActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
             if (requestCode == FROM_GALLERY_REQUEST_CODE) {
-                photoFileName = extractImageUrlFromGallery(this, data);
+                photoPath = extractImageUrlFromGallery(this, data);
             } else if (requestCode == SAVE_REQUEST_CODE) {
+                photoPath = checkExistAndTakePath(photoFileName);
                 Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
                 Uri contentUri = Uri.fromFile(photoFile);
                 intent.setData(contentUri);
@@ -281,7 +285,7 @@ public class AddOutcomeActivity extends AppCompatActivity {
     private void chosePhotoFromGallery() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/*");
-        startActivityForResult(Intent.createChooser(intent, "Bla-bla"), FROM_GALLERY_REQUEST_CODE);
+        startActivityForResult(Intent.createChooser(intent, getString(R.string.choose_photo)), FROM_GALLERY_REQUEST_CODE);
     }
 
     private File filename() throws IOException {
@@ -292,12 +296,9 @@ public class AddOutcomeActivity extends AppCompatActivity {
     }
 
     private void setPic() {
-        if (FormatUtils.isNotEmpty(photoFileName)) {
-            Bitmap bitmap = makeBitmap(photoFileName, chequeImage);
-            if (bitmap != null) {
-                chequeImage.setImageBitmap(bitmap);
-                chequeImage.setTag(photoFileName);
-            }
+        if (FormatUtils.isNotEmpty(photoPath)) {
+            setImageWithPicasso(getApplicationContext(), photoPath, chequeImage);
+            photoWrapper.setVisibility(View.VISIBLE);
         }
     }
 
@@ -305,12 +306,12 @@ public class AddOutcomeActivity extends AppCompatActivity {
         if (chequeImage == null) {
             return;
         }
-        if (photoFileName != null) {
-            new File(PICTURES_DIR, photoFileName).delete();
+        if (photoPath != null && photoWrapper != null) {
+            photoWrapper.setVisibility(View.GONE);
+            photoFileName = null;
+            photoPath = null;
+            chequeImage.setImageBitmap(null);
         }
-        photoFileName = null;
-        chequeImage.setImageBitmap(null);
-        chequeImage.setTag(null);
     }
 
     public static class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
@@ -333,8 +334,12 @@ public class AddOutcomeActivity extends AppCompatActivity {
         }
 
         public void onDateSet(DatePicker view, int year, int month, int day) {
-            month += 1;
-            date.setText(day + "-" + month + "-" + year);
+            Calendar cal = Calendar.getInstance();
+            cal.set(Calendar.YEAR, year);
+            cal.set(Calendar.MONTH,month);
+            cal.set(Calendar.DAY_OF_MONTH, day);
+            outcomeDate = cal.getTime();
+            date.setText(TimeUtils.formatShortDate(getContext(),outcomeDate));
         }
     }
 

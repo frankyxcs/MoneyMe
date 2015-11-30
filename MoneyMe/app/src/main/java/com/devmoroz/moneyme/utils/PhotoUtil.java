@@ -11,6 +11,8 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.widget.ImageView;
 
+import com.squareup.picasso.Picasso;
+
 import java.io.File;
 
 public class PhotoUtil {
@@ -45,6 +47,14 @@ public class PhotoUtil {
         return b;
     }
 
+    public static String checkExistAndTakePath(String photoName){
+        File pictureFile = new File(PICTURES_DIR, photoName);
+        if (pictureFile.exists()) {
+            return  pictureFile.getPath();
+        }
+        return null;
+    }
+
     public static String extractImageUrlFromGallery(Context context, Intent data) {
         Uri selectedImage = data.getData();
         String[] filePathColumn = {MediaStore.Images.Media.DATA};
@@ -59,5 +69,10 @@ public class PhotoUtil {
         cursor.close();
 
         return fileName;
+    }
+
+    public static void setImageWithPicasso(Context context, String path, ImageView target){
+        String photoPath = "file://" + path;
+        Picasso.with(context).load(photoPath).fit().into(target);
     }
 }

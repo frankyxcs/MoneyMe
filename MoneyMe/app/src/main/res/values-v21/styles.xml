@@ -5,12 +5,13 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorControlNormal">@color/colorWhite</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColorPrimary">@color/colorPrimaryText</item>
+        <item name="android:textColorSecondary">@color/colorSecondaryText</item>
+        <item name="preferenceTheme">@style/AppPreferenceThemeOverlay</item>
     </style>
 
     <style name="AppDefaultOutcome" parent="AppTheme">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorControlActivated">@color/colorPrimaryDark</item>
     </style>
 
@@ -18,9 +19,47 @@
         <item name="android:layout_margin">16dp</item>
     </style>
 
+    <style name="AppPreferenceThemeOverlay" parent="PreferenceThemeOverlay">
+        <item name="preferenceHelpStyle">@style/Preference.PreferenceHelp</item>
+        <item name="numberPickerPreferenceStyle">@style/Preference.DialogPreference.NumberPickerPreference</item>
+    </style>
+    <style name="Preference.PreferenceHelp" parent="Preference">
+        <item name="android:layout">@layout/preference_help</item>
+    </style>
+    <style name="Preference.DialogPreference.NumberPickerPreference">
+        <item name="dialogLayout">@layout/preference_numberpicker_dialog</item>
+    </style>
+
     <style name="BlackInput">
         <item name="colorControlNormal">@color/colorPrimaryText</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+    </style>
+
+    <style name="HeadlineTextStyle" parent="TextAppearance.AppCompat.Headline">
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="textContentStyle">
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="TextAppearance.EditEvent_Spinner" parent="android:style/Widget.Holo.Light.Spinner">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/colorPrimaryText</item>
+    </style>
+
+    <style name="TextAppearance.EditEvent_SpinnerButton" parent="TextAppearance.EditEvent_Spinner">
+        <item name="android:paddingLeft">16dp</item>
+    </style>
+
+    <style name="EditEvent_LabelSmall" >
+        <item name="android:minHeight">24dp</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+        <item name="android:textSize">14sp</item>
     </style>
 </resources>

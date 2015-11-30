@@ -107,6 +107,19 @@
     <string name="goal_finish_date">Дата завершения</string>
     <string name="add_goal">Добавить цель</string>
     <string name="add_goal_c">ДОБАВИТЬ ЦЕЛЬ</string>
+    <string name="application_info_title">Инофрмация о приложении</string>
+    <string name="libraries_title">Libraries &amp; Resources</string>
+    <string name="license_title">License</string>
+    <string name="third_party_licenses_title">3rd Party Licenses</string>
+    <string name="title_activity_about">О приложении</string>
+    <string name="choose_photo">Выберите изображение</string>
+     <string name="application_info_text" formatted="false">
+        <![CDATA[
+            <p>Version: %s</p>
+        ]]>
+    </string>
+
+
 
     <!--Preferences-->
     <string name="pref_history_order">pref_history_order</string>

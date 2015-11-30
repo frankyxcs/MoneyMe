@@ -171,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
                         jumpToTab(Constants.TAB_GOALS);
                         return true;
                     case R.id.item_navigation_drawer_about:
-                        Toast.makeText(MainActivity.this, "MoneyMe 2015", Toast.LENGTH_LONG).show();
+                        navigate(AboutActivity.class);
                         return true;
                     case R.id.item_navigation_drawer_settings:
                         navigate(SettingsActivity.class);

@@ -33,6 +33,7 @@ import com.devmoroz.moneyme.models.Income;
 import com.devmoroz.moneyme.utils.Constants;
 import com.devmoroz.moneyme.utils.CurrencyCache;
 import com.devmoroz.moneyme.utils.FormatUtils;
+import com.devmoroz.moneyme.utils.datetime.TimeUtils;
 
 import java.sql.SQLException;
 import java.text.DateFormat;
@@ -44,8 +45,6 @@ import java.util.List;
 
 public class AddIncomeActivity extends AppCompatActivity {
 
-    private DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-
     private EditText amount;
     private EditText description;
     private FloatingActionButton buttonAdd;
@@ -54,6 +53,7 @@ public class AddIncomeActivity extends AppCompatActivity {
     private Spinner accountSpin;
     private Toolbar toolbar;
     private ImageView chequeImage;
+    private static Date incomeDate = new Date();
 
 
     private DBHelper dbHelper;
@@ -78,7 +78,7 @@ public class AddIncomeActivity extends AppCompatActivity {
         description = (EditText) findViewById(R.id.add_income_note);
         date = (TextView) findViewById(R.id.add_income_date);
         accountSpin = (Spinner) findViewById(R.id.add_income_category);
-        date.setText(dateFormat.format(new Date()));
+        date.setText(TimeUtils.formatShortDate(getApplicationContext(), new Date()));
         buttonAdd = (FloatingActionButton) findViewById(R.id.add_income_save);
         floatingAmountLabel = (TextInputLayout) findViewById(R.id.text_input_layout_income_amount);
 
@@ -114,12 +114,8 @@ public class AddIncomeActivity extends AppCompatActivity {
         Date dateAdded;
         String incomeNote = description.getText().toString();
         double incomeAmount = Double.parseDouble(amount.getText().toString());
+        dateAdded = incomeDate == null ? new Date():incomeDate;
 
-        try {
-            dateAdded = dateFormat.parse(date.getText().toString());
-        } catch (ParseException ex) {
-            dateAdded = new Date();
-        }
 
         dbHelper = MoneyApplication.getInstance().GetDBHelper();
         int id = accountSpin.getSelectedItemPosition();
@@ -216,8 +212,12 @@ public class AddIncomeActivity extends AppCompatActivity {
         }
 
         public void onDateSet(DatePicker view, int year, int month, int day) {
-            month+=1;
-            date.setText(day + "-" + month + "-" + year);
+            Calendar cal = Calendar.getInstance();
+            cal.set(Calendar.YEAR, year);
+            cal.set(Calendar.MONTH,month);
+            cal.set(Calendar.DAY_OF_MONTH, day);
+            incomeDate = cal.getTime();
+            date.setText(TimeUtils.formatShortDate(getContext(), incomeDate));
         }
     }
 }
