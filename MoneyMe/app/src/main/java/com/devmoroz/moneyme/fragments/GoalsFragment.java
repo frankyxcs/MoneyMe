@@ -164,6 +164,10 @@ public class GoalsFragment extends Fragment {
         adapter.setGoalsData(goals);
     }
 
+    private void createNewGoal(){
+
+    }
+
     public static class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 
         private Button date;

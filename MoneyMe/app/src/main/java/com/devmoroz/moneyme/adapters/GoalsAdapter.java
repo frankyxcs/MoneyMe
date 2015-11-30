@@ -2,12 +2,16 @@ package com.devmoroz.moneyme.adapters;
 
 
 import android.content.Context;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.daimajia.numberprogressbar.NumberProgressBar;
 import com.devmoroz.moneyme.R;
 import com.devmoroz.moneyme.models.Currency;
 import com.devmoroz.moneyme.models.Goal;
@@ -19,9 +23,11 @@ import java.util.List;
 public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHolder> {
 
     private LayoutInflater inflater;
+    private Context context;
     List<Goal> goalsData = Collections.emptyList();
 
     public GoalsAdapter(Context context, List<Goal> goalsData) {
+        this.context = context;
         inflater = LayoutInflater.from(context);
         this.goalsData = goalsData;
     }
@@ -44,6 +50,10 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHol
         Currency currency = CurrencyCache.getCurrencyOrEmpty();
         Goal current = goalsData.get(position);
 
+        holder.goalId = current.getId();
+        holder.goalName.setText(current.getName());
+        holder.goalProgress.setMax(current.getTotalAmount());
+        holder.goalProgress.setProgress(current.getAccumulated());
     }
 
     @Override
@@ -51,13 +61,42 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHol
         return goalsData.size();
     }
 
-    class GoalsViewHolder extends RecyclerView.ViewHolder{
-
+    class GoalsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        NumberProgressBar goalProgress;
+        ImageView moreMenu;
+        TextView goalName;
+        TextView goalCurrNeed;
+        int goalId;
 
         public GoalsViewHolder(View itemView) {
-
             super(itemView);
+            goalProgress = (NumberProgressBar) itemView.findViewById(R.id.goal_progress_bar);
+            moreMenu = (ImageView) itemView.findViewById(R.id.goal_more);
+            goalName = (TextView) itemView.findViewById(R.id.goal_name);
+            goalCurrNeed = (TextView) itemView.findViewById(R.id.goal_needed_available_amount);
+            moreMenu.setOnClickListener(this);
+        }
 
+        @Override
+        public void onClick(View v) {
+            PopupMenu popup = new PopupMenu(context, v);
+            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    switch (item.getItemId()) {
+                        case R.id.fill_up_goal:
+
+                            return true;
+                        case R.id.remove_goal:
+
+                            return true;
+                        default:
+                            return false;
+                    }
+                }
+            });
+            popup.inflate(R.menu.menu_goal_item);
+            popup.show();
         }
     }
 }

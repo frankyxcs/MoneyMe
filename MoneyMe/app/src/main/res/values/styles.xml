@@ -60,7 +60,7 @@
 
     <style name="TextAppearance.EditEvent_Spinner" parent="android:style/Widget.Holo.Light.Spinner">
         <item name="android:textSize">14sp</item>
-        <item name="android:textColor">#FF333333</item>
+        <item name="android:textColor">@color/colorPrimaryText</item>
     </style>
 
     <style name="TextAppearance.EditEvent_SpinnerButton" parent="TextAppearance.EditEvent_Spinner">

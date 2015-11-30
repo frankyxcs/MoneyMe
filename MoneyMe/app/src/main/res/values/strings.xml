@@ -113,6 +113,8 @@
     <string name="third_party_licenses_title">3rd Party Licenses</string>
     <string name="title_activity_about">О приложении</string>
     <string name="choose_photo">Выберите изображение</string>
+    <string name="add_amount_to_goal">Добавить сумму</string>
+    <string name="remove_goal">Удалить цель</string>
      <string name="application_info_text" formatted="false">
         <![CDATA[
             <p>Version: %s</p>
