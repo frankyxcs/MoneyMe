@@ -77,8 +77,8 @@ public class AccountsFragment extends Fragment {
 
     @Override
     public void onPause() {
-        super.onPause();
         BusProvider.getInstance().unregister(this);
+        super.onPause();
     }
 
     @Nullable

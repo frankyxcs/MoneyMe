@@ -150,8 +150,8 @@ public class GoalsFragment extends Fragment {
 
     @Override
     public void onPause() {
-        super.onPause();
         BusProvider.getInstance().unregister(this);
+        super.onPause();
     }
 
     @Subscribe

@@ -77,8 +77,8 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
 
     @Override
     public void onPause() {
-        super.onPause();
         BusProvider.getInstance().unregister(this);
+        super.onPause();
     }
 
     @Nullable

@@ -18,21 +18,21 @@
         android:id="@+id/card_view_main_color"
         android:padding="16dp">
 
-        <CheckedTextView
+        <TextView
             android:id="@+id/card_main_icon"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_alignParentLeft="true"
             android:layout_marginRight="16dp"
+            android:layout_centerVertical="true"
             android:layout_marginTop="5dp"
-            android:background="@color/colorPrimary"
-            android:checked="false"
+            android:background="@drawable/circle_green"
             android:gravity="center"
-            android:text="asd"
-            android:textAlignment="gravity"
+            android:text="A"
             android:textAllCaps="true"
             android:textColor="@color/colorWhite"
-            android:textSize="20dp" />
+            android:textSize="18sp" />
+
 
         <LinearLayout
             android:layout_width="match_parent"

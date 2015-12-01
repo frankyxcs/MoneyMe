@@ -3,16 +3,19 @@ package com.devmoroz.moneyme.adapters;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.devmoroz.moneyme.R;
 import com.devmoroz.moneyme.models.CommonInOut;
+import com.devmoroz.moneyme.utils.PhotoUtil;
 import com.devmoroz.moneyme.utils.datetime.TimeUtils;
 
 import java.util.ArrayList;
@@ -23,7 +26,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
     private LayoutInflater wInflater;
     private Context appContext;
 
-    public HistoryAdapter(Context context){
+    public HistoryAdapter(Context context) {
         appContext = context;
         wInflater = LayoutInflater.from(context);
     }
@@ -32,7 +35,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
         this.inOutData = inOutData;
     }
 
-    public void setInOutData(ArrayList<CommonInOut> inOutData){
+    public void setInOutData(ArrayList<CommonInOut> inOutData) {
         this.inOutData = inOutData;
 
         notifyDataSetChanged();
@@ -49,15 +52,24 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
     public void onBindViewHolder(MainViewHolder holder, int position) {
         CommonInOut wData = inOutData.get(position);
 
-
         TextView textAmount = holder.textAmount;
         TextView textCategory = holder.textCategory;
         TextView textDateAdded = holder.textDateAdded;
-        RelativeLayout linearLayout = holder.linearLayout;
+        TextView textCircle = holder.textCircle;
 
-        linearLayout.setBackgroundColor(wData.getType() == 1 ? Color.parseColor("#80CBC4") : Color.parseColor("#FFAB91"));
+        final int sdk = android.os.Build.VERSION.SDK_INT;
+        if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+            Drawable background = wData.getType() == 1 ? appContext.getResources().getDrawable(R.drawable.circle_green) : appContext.getResources().getDrawable(R.drawable.circle_red);
+            textCircle.setBackgroundDrawable(background);
+        } else {
+            Drawable background = wData.getType() == 1 ? appContext.getDrawable(R.drawable.circle_green) : appContext.getDrawable(R.drawable.circle_red);
+            textCircle.setBackground(background);
+        }
+
         textAmount.setText(wData.getFormatedAmount());
-        textCategory.setText(wData.getCategory() != null ? wData.getCategory() : wData.getAccount());
+        String categ = wData.getCategory() != null ? wData.getCategory() : wData.getAccount();
+        textCategory.setText(categ);
+        textCircle.setText(categ.substring(0, 1));
         textDateAdded.setText(TimeUtils.formatHumanFriendlyShortDate(appContext, wData.getDateLong()));
     }
 
@@ -71,14 +83,14 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
         TextView textAmount;
         TextView textCategory;
         TextView textDateAdded;
-        RelativeLayout linearLayout;
+        TextView textCircle;
 
         public MainViewHolder(View v) {
             super(v);
-            this.linearLayout = (RelativeLayout) v.findViewById(R.id.card_view_main_color);
-            this.textAmount = (TextView)v.findViewById(R.id.card_main_amount);
-            this.textCategory = (TextView)v.findViewById(R.id.card_main_category);
-            this.textDateAdded = (TextView)v.findViewById(R.id.card_main_date);
+            this.textCircle = (TextView) v.findViewById(R.id.card_main_icon);
+            this.textAmount = (TextView) v.findViewById(R.id.card_main_amount);
+            this.textCategory = (TextView) v.findViewById(R.id.card_main_category);
+            this.textDateAdded = (TextView) v.findViewById(R.id.card_main_date);
         }
 
     }

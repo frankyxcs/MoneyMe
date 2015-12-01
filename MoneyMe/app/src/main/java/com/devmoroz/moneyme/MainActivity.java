@@ -71,12 +71,12 @@ public class MainActivity extends AppCompatActivity {
     private void selectCurrency() {
         Currency c = CurrencyCache.getCurrencyOrEmpty();
         if (c.isEmpty()) {
-            CurrencyHelper ch = new CurrencyHelper(MainActivity.this,MoneyApplication.getInstance().GetDBHelper());
+            CurrencyHelper ch = new CurrencyHelper(MainActivity.this, MoneyApplication.getInstance().GetDBHelper());
             ch.show();
         }
     }
 
-    private void start(){
+    private void start() {
         if (MoneyApplication.isInitialized()) {
             initialize();
             switchToContentView();
@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void initialize(){
+    private void initialize() {
         initToolbar();
         initNavigationView();
         initTabs();
@@ -125,8 +125,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        super.onPause();
         BusProvider.getInstance().unregister(this);
+        super.onPause();
     }
 
     private void initToolbar() {
@@ -183,15 +183,15 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void jumpToTab(int tab){
+    private void jumpToTab(int tab) {
         viewPager.setCurrentItem(tab);
     }
 
     private void navigate(final Class<? extends Activity> activityClass) {
         if (!getClass().equals(activityClass)) {
-           final Intent intent = new Intent(this, activityClass);
-           intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-           startActivity(intent);
+            final Intent intent = new Intent(this, activityClass);
+            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            startActivity(intent);
         }
     }
 
@@ -220,7 +220,7 @@ public class MainActivity extends AppCompatActivity {
     private void startAddActivity(String activity) {
         fab.collapse();
         Intent intent;
-        switch (activity){
+        switch (activity) {
             case Constants.INCOME_ACTIVITY:
                 intent = new Intent(this, AddIncomeActivity.class);
                 startActivityForResult(intent, REQUEST_CODE_INCOME);
@@ -243,29 +243,39 @@ public class MainActivity extends AppCompatActivity {
                         String account = extras.getString(Constants.CREATED_ITEM_CATEGORY);
                         double amount = extras.getDouble(Constants.CREATED_ITEM_AMOUNT);
                         String sign = CurrencyCache.getCurrencyOrEmpty().getSymbol();
-                        String info = String.format("%s: %s %10.2f%s", account, getString(R.string.added_income), amount,sign);
-                        Snackbar.make(coordinator, info, Snackbar.LENGTH_LONG)
-                                .setCallback(new Snackbar.Callback() {
-                                    @Override
-                                    public void onDismissed(Snackbar snackbar, int event) {
-                                        if (event == Snackbar.Callback.DISMISS_EVENT_TIMEOUT || event == Snackbar.Callback.DISMISS_EVENT_SWIPE) {
-                                            BusProvider.postOnMain(new WalletChangeEvent());
-                                        }
-                                    }
-                                })
-                                .setAction(R.string.text_undo, new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        try {
-                                            MoneyApplication.getInstance().GetDBHelper().getIncomeDAO().deleteById(createdIncomeId);
-                                            BusProvider.postOnMain(new WalletChangeEvent());
-                                        } catch (SQLException ex) {
+                        String info = String.format("%s: %s%10.2f%s", account, getString(R.string.added_income), amount, sign);
+                        final Snackbar snackBar = Snackbar.make(coordinator, info, Snackbar.LENGTH_LONG);
+                        snackBar.setCallback(new Snackbar.Callback() {
+                            boolean mShown = false;
 
-                                        }
+                            @Override
+                            public void onShown(Snackbar snackbar) {
+                                mShown = true;
+                            }
+
+                            @Override
+                            public void onDismissed(Snackbar snackbar, int event) {
+                                if (mShown) {
+                                    mShown = false;
+                                    if (event == Snackbar.Callback.DISMISS_EVENT_TIMEOUT || event == Snackbar.Callback.DISMISS_EVENT_SWIPE) {
+                                        BusProvider.postOnMain(new WalletChangeEvent());
                                     }
-                                })
-                                .setActionTextColor(Color.RED)
-                                .show();
+                                }
+                            }
+                        });
+                        snackBar.setAction(R.string.text_undo, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                try {
+                                    MoneyApplication.getInstance().GetDBHelper().getIncomeDAO().deleteById(createdIncomeId);
+                                    BusProvider.postOnMain(new WalletChangeEvent());
+                                } catch (SQLException ex) {
+
+                                }
+                            }
+                        })
+                        .setActionTextColor(Color.RED);
+                        snackBar.show();
                     } else {
                         L.t(this, "Something went wrong.Please,try again.");
                     }
@@ -276,29 +286,40 @@ public class MainActivity extends AppCompatActivity {
                         String account = extras.getString(Constants.CREATED_ITEM_CATEGORY);
                         double amount = extras.getDouble(Constants.CREATED_ITEM_AMOUNT);
                         String sign = CurrencyCache.getCurrencyOrEmpty().getSymbol();
-                        String info = String.format("%s: %s %10.2f%s", account, getString(R.string.added_outcome), amount,sign);
-                        Snackbar.make(coordinator, info, Snackbar.LENGTH_LONG)
-                                .setCallback(new Snackbar.Callback() {
-                                    @Override
-                                    public void onDismissed(Snackbar snackbar, int event) {
-                                        if (event == Snackbar.Callback.DISMISS_EVENT_TIMEOUT || event == Snackbar.Callback.DISMISS_EVENT_SWIPE) {
-                                            BusProvider.postOnMain(new WalletChangeEvent());
-                                        }
-                                    }
-                                })
-                                .setAction(R.string.text_undo, new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        try {
-                                            MoneyApplication.getInstance().GetDBHelper().getOutcomeDAO().deleteById(createdOutcomeId);
-                                            BusProvider.postOnMain(new WalletChangeEvent());
-                                        } catch (SQLException ex) {
+                        String info = String.format("%s: %s%10.2f%s", account, getString(R.string.added_outcome), amount, sign);
+                        final Snackbar snackBar = Snackbar.make(coordinator, info, Snackbar.LENGTH_LONG);
+                        snackBar.setCallback(new Snackbar.Callback() {
+                            boolean mShown = false;
 
-                                        }
+                            @Override
+                            public void onShown(Snackbar snackbar) {
+                                mShown = true;
+                            }
+
+                            @Override
+                            public void onDismissed(Snackbar snackbar, int event) {
+                                if (mShown) {
+                                    mShown = false;
+                                    if (event == Snackbar.Callback.DISMISS_EVENT_TIMEOUT || event == Snackbar.Callback.DISMISS_EVENT_SWIPE) {
+                                        BusProvider.postOnMain(new WalletChangeEvent());
                                     }
-                                })
-                                .setActionTextColor(Color.RED)
-                                .show();
+                                }
+                            }
+                        });
+                        snackBar.setAction(R.string.text_undo, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                try {
+                                    MoneyApplication.getInstance().GetDBHelper().getOutcomeDAO().deleteById(createdOutcomeId);
+                                    BusProvider.postOnMain(new WalletChangeEvent());
+                                } catch (SQLException ex) {
+
+                                }
+                            }
+                        })
+                        .setActionTextColor(Color.RED);
+                        snackBar.show();
+
                     } else {
                         L.t(this, "Something went wrong.Please,try again.");
                     }

@@ -61,8 +61,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/fab_main_income"
             app:fab_icon="@drawable/ic_fab_income"
-            app:fab_colorNormal="#009688"
-            app:fab_colorPressed="#26A69A"
+            app:fab_colorNormal="@color/fab_income_normal"
+            app:fab_colorPressed="@color/fab_income_pressed"
             app:fab_size="mini"
             app:fab_title="Доход"/>
 
@@ -71,8 +71,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/fab_main_outcome"
             app:fab_icon="@drawable/ic_fab_outcome"
-            app:fab_colorNormal="#e91e63"
-            app:fab_colorPressed="#ec407a"
+            app:fab_colorNormal="@color/fab_outcome_normal"
+            app:fab_colorPressed="@color/fab_outcome_pressed"
             app:fab_size="mini"
             app:fab_title="Расход"/>
 
