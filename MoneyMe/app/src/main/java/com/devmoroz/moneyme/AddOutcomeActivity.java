@@ -116,7 +116,7 @@ public class AddOutcomeActivity extends AppCompatActivity {
                     return;
                 }
                 Intent intent;
-                CreatedItem info = new CreatedItem(-1, "", 0);
+                CreatedItem info = new CreatedItem(-1, "", 0, -1);
                 try {
                     info = addOutcome();
                 } catch (SQLException ex) {
@@ -125,6 +125,7 @@ public class AddOutcomeActivity extends AppCompatActivity {
                 intent.putExtra(Constants.CREATED_ITEM_ID, info.getItemId());
                 intent.putExtra(Constants.CREATED_ITEM_CATEGORY, info.getCategory());
                 intent.putExtra(Constants.CREATED_ITEM_AMOUNT, info.getAmount());
+                intent.putExtra(Constants.CREATED_ITEM_ACCOUNT, info.getAccountId());
                 setResult(RESULT_OK, intent);
                 finish();
             }
@@ -209,7 +210,7 @@ public class AddOutcomeActivity extends AppCompatActivity {
         dbHelper.getOutcomeDAO().create(outcome);
         dbHelper.getAccountDAO().update(account);
 
-        return new CreatedItem(outcome.getId(), selectedCategory, outcomeAmount);
+        return new CreatedItem(outcome.getId(), selectedCategory, outcomeAmount, account.getId());
     }
 
     @Override

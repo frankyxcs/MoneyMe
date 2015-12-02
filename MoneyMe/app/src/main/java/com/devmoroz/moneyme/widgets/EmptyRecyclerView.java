@@ -7,6 +7,7 @@ import android.view.View;
 
 public class EmptyRecyclerView extends RecyclerView {
     private View emptyView;
+    private View additional;
 
     final private AdapterDataObserver observer = new AdapterDataObserver() {
         @Override
@@ -41,6 +42,9 @@ public class EmptyRecyclerView extends RecyclerView {
         if (emptyView != null && getAdapter() != null) {
             final boolean emptyViewVisible = getAdapter().getItemCount() == 0;
             emptyView.setVisibility(emptyViewVisible ? VISIBLE : GONE);
+            if(additional != null){
+                additional.setVisibility(emptyViewVisible ? GONE : VISIBLE);
+            }
             setVisibility(emptyViewVisible ? GONE : VISIBLE);
         }
     }
@@ -61,6 +65,12 @@ public class EmptyRecyclerView extends RecyclerView {
 
     public void setEmptyView(View emptyView) {
         this.emptyView = emptyView;
+        checkIfEmpty();
+    }
+
+    public void setEmptyView(View emptyView, View additional) {
+        this.emptyView = emptyView;
+        this.additional = additional;
         checkIfEmpty();
     }
 }

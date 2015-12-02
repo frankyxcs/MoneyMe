@@ -55,7 +55,7 @@ public class MoneyApplication extends Application {
         try {
             int period = Preferences.getHistoryPeriod(this);
             int monthStart = Preferences.getMonthStart(this);
-            accounts = dbHelper.getAccountDAO().getAccountsIncludedInTotal();
+            accounts = dbHelper.getAccountDAO().queryForAll();
             incomes = dbHelper.getIncomeDAO().queryForPeriod(period,monthStart);
             outcomes = dbHelper.getOutcomeDAO().queryForPeriod(period, monthStart);
 

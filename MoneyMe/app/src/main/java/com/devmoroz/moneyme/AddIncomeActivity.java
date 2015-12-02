@@ -91,7 +91,7 @@ public class AddIncomeActivity extends AppCompatActivity {
                     return;
                 }
                 Intent intent;
-                CreatedItem info = new CreatedItem(-1,"",0);
+                CreatedItem info = new CreatedItem(-1,"",0,-1);
                 try {
                     info = addIncome();
                 } catch (SQLException ex) {
@@ -100,6 +100,7 @@ public class AddIncomeActivity extends AppCompatActivity {
                 intent.putExtra(Constants.CREATED_ITEM_ID, info.getItemId());
                 intent.putExtra(Constants.CREATED_ITEM_CATEGORY, info.getCategory());
                 intent.putExtra(Constants.CREATED_ITEM_AMOUNT, info.getAmount());
+                intent.putExtra(Constants.CREATED_ITEM_ACCOUNT, info.getAccountId());
                 setResult(RESULT_OK, intent);
                 finish();
             }
@@ -127,7 +128,7 @@ public class AddIncomeActivity extends AppCompatActivity {
         dbHelper.getIncomeDAO().create(income);
         dbHelper.getAccountDAO().update(account);
 
-        return new CreatedItem(income.getId(),account.getName(),incomeAmount);
+        return new CreatedItem(income.getId(),account.getName(),incomeAmount, account.getId());
     }
 
     @Override

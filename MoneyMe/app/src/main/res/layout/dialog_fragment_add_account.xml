@@ -21,6 +21,26 @@
 
     </android.support.design.widget.TextInputLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:textSize="16sp"
+        android:layout_gravity="center"
+        android:text="@string/type"/>
+    <Spinner
+        android:id="@+id/accountAddType"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:theme="@style/BlackInput"
+        android:minHeight="?android:attr/listPreferredItemHeight"/>
+    </LinearLayout>
+
     <android.support.design.widget.TextInputLayout
         android:id="@+id/text_input_layout_add_accont_balance"
         android:layout_width="match_parent"
@@ -39,15 +59,5 @@
         android:theme="@style/BlackInput"/>
 
     </android.support.design.widget.TextInputLayout>
-
-    <CheckBox
-        android:id="@+id/accountAddIncludeInTotal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="12sp"
-        android:padding="16dp"
-        android:minHeight="?android:attr/listPreferredItemHeight"
-        android:text="@string/include_account_to_balance"
-        android:theme="@style/BlackInput"/>
 
 </LinearLayout>

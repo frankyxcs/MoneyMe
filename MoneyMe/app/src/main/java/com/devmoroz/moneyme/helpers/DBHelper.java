@@ -121,7 +121,7 @@ public class DBHelper extends OrmLiteSqliteOpenHelper {
 
     private void initData() {
         try {
-            Account initialAccount = new Account("Credit card",0f,true);
+            Account initialAccount = new Account("Default",0f,0);
             getAccountDAO().create(initialAccount);
         } catch (SQLException ex) {
 

@@ -10,8 +10,8 @@
     <string name="outcome_toolbar_name">Расход</string>
     <string name="default_add_toolbar_name">Кошелек</string>
     <string name="text_undo">Отмена</string>
-    <string name="added_income">добавлено</string>
-    <string name="added_outcome">потрачено</string>
+    <string name="added_income" formatted="false">%s: добавлено %10.2f%s</string>
+    <string name="added_outcome" formatted="false">%s: потрачено %10.2f%s</string>
     <string name="outcome_amount_required">Пожалуйста, укажите сумму</string>
     <string name="currencies">Валюты</string>
     <string name="currency">Валюта</string>
@@ -117,6 +117,8 @@
     <string name="remove_goal">Удалить цель</string>
     <string name="text_total_income">Суммарный доход</string>
     <string name="text_total_outcome">Суммарный расход</string>
+    <string name="type">Тип</string>
+    <string name="balance_formatted" formatted="false">Баланс %s</string>
      <string name="application_info_text" formatted="false">
         <![CDATA[
             <p>Version: %s</p>
@@ -166,12 +168,14 @@
         <item>Другое</item>
     </string-array>
 
-    <string-array name="account_categories">
+    <string-array name="account_types">
         <item>Наличные</item>
         <item>Кредитная карта</item>
         <item>Банк</item>
-        <item>Сбережения</item>
     </string-array>
+
+
+
 
     <string-array name="drawer_tabs">
         <item>История</item>

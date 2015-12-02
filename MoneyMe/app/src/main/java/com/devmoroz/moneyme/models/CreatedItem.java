@@ -5,11 +5,13 @@ public class CreatedItem {
     int itemId;
     String category;
     double amount;
+    int accountId;
 
-    public CreatedItem(int id, String category, double amount) {
+    public CreatedItem(int id, String category, double amount, int accountId) {
         this.itemId = id;
         this.category = category;
         this.amount = amount;
+        this.accountId = accountId;
     }
 
     public int getItemId() {
@@ -22,5 +24,9 @@ public class CreatedItem {
 
     public double getAmount() {
         return amount;
+    }
+
+    public int getAccountId() {
+        return accountId;
     }
 }

@@ -1,31 +1,27 @@
 package com.devmoroz.moneyme.fragments;
 
-import android.content.res.Resources;
-import android.graphics.Color;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.Editable;
 import android.text.InputFilter;
-import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.CheckBox;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
-import com.afollestad.materialdialogs.internal.MDTintHelper;
-import com.afollestad.materialdialogs.internal.ThemeSingleton;
 import com.devmoroz.moneyme.MoneyApplication;
 import com.devmoroz.moneyme.R;
 import com.devmoroz.moneyme.adapters.AccountsAdapter;
@@ -58,6 +54,9 @@ public class AccountsFragment extends Fragment {
     private TextInputLayout accountNameInput;
     private View positiveAction;
 
+
+
+
     public AccountsFragment() {
     }
 
@@ -89,9 +88,7 @@ public class AccountsFragment extends Fragment {
         totalBalance = 0;
         for (Account acc : accounts) {
             data.add(new AccountRow(acc.getId(),acc.getName(),acc.getBalance(),0));
-            if(acc.isIncludeInTotal()){
-                totalBalance += acc.getBalance();
-            }
+            totalBalance += acc.getBalance();
         }
         view = inflater.inflate(R.layout.accounts_fragment, container, false);
         recyclerView = (EmptyRecyclerView) view.findViewById(R.id.accountsList);
@@ -151,9 +148,13 @@ public class AccountsFragment extends Fragment {
                 })
                 .build();
 
+        String[] types = getContext().getResources().getStringArray(R.array.account_types);
         positiveAction = dialog.getActionButton(DialogAction.POSITIVE);
         accountNameInput = (TextInputLayout) dialog.getCustomView().findViewById(R.id.text_input_layout_add_account_name);
         EditText accountBalanceInput = (EditText) dialog.getCustomView().findViewById(R.id.accountAddBalance);
+        Spinner accountTypesSpinner = (Spinner) dialog.getCustomView().findViewById(R.id.accountAddType);
+        SpinnerWithIconsAdapter adapter = new SpinnerWithIconsAdapter(getContext(),R.layout.account_type_row,types);
+        accountTypesSpinner.setAdapter(adapter);
         accountBalanceInput.setFilters(new InputFilter[]{new DecimalDigitsInputFilter()});
         accountNameInput.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
@@ -181,5 +182,42 @@ public class AccountsFragment extends Fragment {
     @Subscribe
     public void OnWalletChange(WalletChangeEvent event) {
        CheckWallet();
+    }
+
+
+    class SpinnerWithIconsAdapter extends ArrayAdapter<String> {
+
+        int[] typesOfAccountIcons = {R.drawable.ic_cash_multiple,R.drawable.ic_credit_card,R.drawable.ic_bank};
+        String[] typesOfAccount;
+
+        public SpinnerWithIconsAdapter(Context context, int textViewResourceId,
+                                       String[] objects) {
+            super(context, textViewResourceId, objects);
+            typesOfAccount = objects;
+        }
+
+        @Override
+        public View getDropDownView(int position, View convertView,
+                                    ViewGroup parent) {
+            return getCustomView(position, convertView, parent);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            return getCustomView(position, convertView, parent);
+        }
+
+        public View getCustomView(int position, View convertView,
+                                  ViewGroup parent) {
+            LayoutInflater inflater = LayoutInflater.from(getContext());
+            View row = inflater.inflate(R.layout.account_type_row, parent, false);
+            TextView label = (TextView) row.findViewById(R.id.accountTypeText);
+            label.setText(typesOfAccount[position]);
+
+            ImageView icon = (ImageView) row.findViewById(R.id.accountTypeIcon);
+            icon.setImageResource(typesOfAccountIcons[position]);
+
+            return row;
+        }
     }
 }

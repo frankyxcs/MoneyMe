@@ -31,6 +31,9 @@ public class Account {
     @DatabaseField
     private int currency;
 
+    @DatabaseField
+    private int type;
+
     @DatabaseField(columnName = INCLUDE_IN_TOTAL_FIELD_NAME)
     private boolean includeInTotal;
 
@@ -40,24 +43,28 @@ public class Account {
     @ForeignCollectionField
     private ForeignCollection<Outcome> outcomes;
 
-    public Account(String name, double balance, boolean includeInTotal) {
+    public Account(String name, double balance, int type) {
         this.name = name;
         this.balance = balance;
-        this.includeInTotal = includeInTotal;
+        this.includeInTotal = true;
         this.date = new Date();
+        this.type = type;
     }
 
     public Account(int id) {
         this.id = id;
         this.balance = 0f;
+        this.type = 0;
+        this.includeInTotal = true;
         this.date = new Date();
     }
 
-    public Account(String name, double balance, int currency, boolean includeInTotal) {
+    public Account(String name, double balance, int currency, int type, boolean includeInTotal) {
         this.name = name;
         this.balance = balance;
         this.currency = currency;
         this.includeInTotal = includeInTotal;
+        this.type = type;
         this.date = new Date();
     }
 
@@ -123,5 +130,13 @@ public class Account {
 
     public void setIncludeInTotal(boolean includeInTotal) {
         this.includeInTotal = includeInTotal;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 }

@@ -24,7 +24,9 @@ import com.devmoroz.moneyme.eventBus.BusProvider;
 
 import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
 import com.devmoroz.moneyme.helpers.CurrencyHelper;
+import com.devmoroz.moneyme.helpers.DBHelper;
 import com.devmoroz.moneyme.logging.L;
+import com.devmoroz.moneyme.models.Account;
 import com.devmoroz.moneyme.models.Currency;
 import com.devmoroz.moneyme.utils.Constants;
 import com.devmoroz.moneyme.utils.CurrencyCache;
@@ -240,10 +242,11 @@ public class MainActivity extends AppCompatActivity {
                 case REQUEST_CODE_INCOME:
                     createdIncomeId = extras.getInt(Constants.CREATED_ITEM_ID);
                     if (createdIncomeId != -1) {
-                        String account = extras.getString(Constants.CREATED_ITEM_CATEGORY);
-                        double amount = extras.getDouble(Constants.CREATED_ITEM_AMOUNT);
+                        String accountName = extras.getString(Constants.CREATED_ITEM_CATEGORY);
+                        final int accId = extras.getInt(Constants.CREATED_ITEM_ACCOUNT);
+                        final double amount = extras.getDouble(Constants.CREATED_ITEM_AMOUNT);
                         String sign = CurrencyCache.getCurrencyOrEmpty().getSymbol();
-                        String info = String.format("%s: %s%10.2f%s", account, getString(R.string.added_income), amount, sign);
+                        String info = getString(R.string.added_income, accountName, amount, sign);
                         final Snackbar snackBar = Snackbar.make(coordinator, info, Snackbar.LENGTH_LONG);
                         snackBar.setCallback(new Snackbar.Callback() {
                             boolean mShown = false;
@@ -267,7 +270,11 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onClick(View v) {
                                 try {
-                                    MoneyApplication.getInstance().GetDBHelper().getIncomeDAO().deleteById(createdIncomeId);
+                                    DBHelper dbhelper = MoneyApplication.getInstance().GetDBHelper();
+                                    Account acc = dbhelper.getAccountDAO().queryForId(accId);
+                                    acc.setBalance(acc.getBalance()-amount);
+                                    dbhelper.getAccountDAO().update(acc);
+                                    dbhelper.getIncomeDAO().deleteById(createdIncomeId);
                                     BusProvider.postOnMain(new WalletChangeEvent());
                                 } catch (SQLException ex) {
 
@@ -283,10 +290,11 @@ public class MainActivity extends AppCompatActivity {
                 case REQUEST_CODE_OUTCOME:
                     createdOutcomeId = extras.getInt(Constants.CREATED_ITEM_ID);
                     if (createdOutcomeId != -1) {
-                        String account = extras.getString(Constants.CREATED_ITEM_CATEGORY);
-                        double amount = extras.getDouble(Constants.CREATED_ITEM_AMOUNT);
+                        String category = extras.getString(Constants.CREATED_ITEM_CATEGORY);
+                        final int accId = extras.getInt(Constants.CREATED_ITEM_ACCOUNT);
+                        final double amount = extras.getDouble(Constants.CREATED_ITEM_AMOUNT);
                         String sign = CurrencyCache.getCurrencyOrEmpty().getSymbol();
-                        String info = String.format("%s: %s%10.2f%s", account, getString(R.string.added_outcome), amount, sign);
+                        String info = getString(R.string.added_outcome, category,amount,sign);
                         final Snackbar snackBar = Snackbar.make(coordinator, info, Snackbar.LENGTH_LONG);
                         snackBar.setCallback(new Snackbar.Callback() {
                             boolean mShown = false;
@@ -310,7 +318,11 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onClick(View v) {
                                 try {
-                                    MoneyApplication.getInstance().GetDBHelper().getOutcomeDAO().deleteById(createdOutcomeId);
+                                    DBHelper dbhelper = MoneyApplication.getInstance().GetDBHelper();
+                                    Account acc = dbhelper.getAccountDAO().queryForId(accId);
+                                    acc.setBalance(acc.getBalance() + amount);
+                                    dbhelper.getAccountDAO().update(acc);
+                                    dbhelper.getOutcomeDAO().deleteById(createdOutcomeId);
                                     BusProvider.postOnMain(new WalletChangeEvent());
                                 } catch (SQLException ex) {
 
