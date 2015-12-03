@@ -83,7 +83,7 @@ public class AccountsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        accounts = MoneyApplication.getInstance().accounts;
+        accounts = MoneyApplication.accounts;
         data.clear();
         totalBalance = 0;
         for (Account acc : accounts) {
@@ -117,7 +117,7 @@ public class AccountsFragment extends Fragment {
     }
 
     private void CheckWallet(){
-        accounts = MoneyApplication.getInstance().accounts;
+        accounts = MoneyApplication.accounts;
         data.clear();
         totalBalance = 0;
         for (Account acc : accounts) {

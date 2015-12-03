@@ -70,7 +70,7 @@ public class GoalsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        goals = MoneyApplication.getInstance().goals;
+        goals = MoneyApplication.goals;
         view = inflater.inflate(R.layout.goals_fragment, container, false);
         recyclerView = (EmptyRecyclerView) view.findViewById(R.id.goalsList);
         mTextEmpty = (LinearLayout) view.findViewById(R.id.goalsEmpty);
@@ -160,7 +160,7 @@ public class GoalsFragment extends Fragment {
     }
 
     private void CheckGoals() {
-        goals = MoneyApplication.getInstance().goals;
+        goals = MoneyApplication.goals;
         adapter.setGoalsData(goals);
     }
 

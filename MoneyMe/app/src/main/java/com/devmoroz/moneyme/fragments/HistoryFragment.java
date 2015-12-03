@@ -25,6 +25,7 @@ import com.devmoroz.moneyme.utils.CommonInOutUtils;
 import com.devmoroz.moneyme.utils.CurrencyCache;
 import com.devmoroz.moneyme.utils.FormatUtils;
 import com.devmoroz.moneyme.utils.Preferences;
+import com.devmoroz.moneyme.utils.datetime.PeriodUtils;
 import com.devmoroz.moneyme.widgets.CustomRecyclerScroll;
 import com.devmoroz.moneyme.widgets.EmptyRecyclerView;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
@@ -49,6 +50,7 @@ public class HistoryFragment extends Fragment {
     private TextView totalBalanceTextView;
     private TextView walletTotalIncome;
     private TextView walletTotalOutcome;
+    private TextView walletDatePeriod;
     private View view;
     private FloatingActionsMenu fab;
 
@@ -88,6 +90,7 @@ public class HistoryFragment extends Fragment {
         totalBalanceTextView = (TextView) view.findViewById(R.id.dashboard_total_balance);
         walletTotalIncome = (TextView) view.findViewById(R.id.walletTotalIncome);
         walletTotalOutcome = (TextView) view.findViewById(R.id.walletTotalOutcome);
+        walletDatePeriod = (TextView) view.findViewById(R.id.text_date_period);
         LinearLayout widg = (LinearLayout) view.findViewById(R.id.widgetBalance);
 
         recyclerView = (EmptyRecyclerView) view.findViewById(R.id.main_recycler_view);
@@ -134,7 +137,9 @@ public class HistoryFragment extends Fragment {
     }
 
     private void initBalanceWidget() {
-        accounts = MoneyApplication.getInstance().accounts;
+        int period = Preferences.getHistoryPeriod(getContext());
+        int monthStart = Preferences.getMonthStart(getContext());
+        accounts = MoneyApplication.accounts;
         totalBalance = 0;
         for (Account acc : accounts) {
             totalBalance += acc.getBalance();
@@ -146,6 +151,7 @@ public class HistoryFragment extends Fragment {
         walletTotalIncome.setText(totalInOut[0]);
         walletTotalOutcome.setText(totalInOut[1]);
         totalBalanceTextView.setText(formattedBalanceText);
+        walletDatePeriod.setText(PeriodUtils.GetPeriodString(period,monthStart,getContext(),false));
     }
 
     @Override

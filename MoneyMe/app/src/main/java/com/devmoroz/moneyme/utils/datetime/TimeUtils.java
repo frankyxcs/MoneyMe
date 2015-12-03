@@ -7,12 +7,16 @@ import android.text.format.DateUtils;
 import com.devmoroz.moneyme.R;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Formatter;
 import java.util.TimeZone;
 
 public class TimeUtils {
+
+    private static final int TIME_FLAGS = DateUtils.FORMAT_ABBREV_ALL
+            | DateUtils.FORMAT_SHOW_DATE;
 
     public static String formatShortTime(Context context, Date time) {
         // Android DateFormatter will honor the user's current settings.
@@ -65,5 +69,44 @@ public class TimeUtils {
         } else {
             return formatShortDate(context, new Date(timestamp));
         }
+    }
+
+    public static String formatWidgetDateRange(long intervalStart, long intervalEnd, StringBuilder recycle,
+                                               Context context) {
+        return formatWidgetDateRange(intervalStart, intervalEnd, recycle, context, false);
+    }
+
+    public static String formatWidgetDateRange(long intervalStart, long intervalEnd,StringBuilder recycle,
+                                               Context context, boolean shortFormat) {
+        if (shortFormat) {
+            TimeZone timeZone = TimeZone.getDefault();
+            Date intervalStartDate = new Date(intervalStart);
+            SimpleDateFormat shortDateFormat = new SimpleDateFormat("MMM dd");
+            DateFormat shortTimeFormat = DateFormat.getTimeInstance(DateFormat.SHORT);
+            shortDateFormat.setTimeZone(timeZone);
+            shortTimeFormat.setTimeZone(timeZone);
+            return shortDateFormat.format(intervalStartDate) + " "
+                    + shortTimeFormat.format(intervalStartDate);
+        } else {
+            String timeInterval = formatIntervalTimeString(intervalStart, intervalEnd, recycle,
+                    context);
+            return timeInterval;
+        }
+    }
+
+    public static String formatIntervalTimeString(long intervalStart, long intervalEnd,
+                                                  StringBuilder recycle, Context context) {
+        if (recycle == null) {
+            recycle = new StringBuilder();
+        } else {
+            recycle.setLength(0);
+        }
+        Formatter formatter = new Formatter(recycle);
+        return DateUtils.formatDateRange(context, formatter, intervalStart, intervalEnd, TIME_FLAGS,
+                TimeZone.getDefault().getID()).toString();
+    }
+
+    public static long getCurrentTime() {
+       return System.currentTimeMillis();
     }
 }

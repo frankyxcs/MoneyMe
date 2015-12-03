@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
@@ -120,6 +121,7 @@ public class AddOutcomeActivity extends AppCompatActivity {
                 try {
                     info = addOutcome();
                 } catch (SQLException ex) {
+                    L.t(AddOutcomeActivity.this, "Something went wrong.Please,try again.");
                 }
                 intent = new Intent(getApplicationContext(), MainActivity.class);
                 intent.putExtra(Constants.CREATED_ITEM_ID, info.getItemId());
@@ -161,7 +163,7 @@ public class AddOutcomeActivity extends AppCompatActivity {
     }
 
     private void initAccountSpinner() {
-        List<Account> accountList = MoneyApplication.getInstance().accounts;
+        List<Account> accountList = MoneyApplication.accounts;
         Currency c = CurrencyCache.getCurrencyOrEmpty();
         if (accountList != null) {
             String[] accountsWithBalance = new String[accountList.size()];
@@ -292,8 +294,7 @@ public class AddOutcomeActivity extends AppCompatActivity {
     private File filename() throws IOException {
         String time = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         photoFileName = time + ".jpg";
-        File image = new File(PICTURES_DIR, photoFileName);
-        return image;
+        return new File(PICTURES_DIR, photoFileName);
     }
 
     private void setPic() {
@@ -323,6 +324,7 @@ public class AddOutcomeActivity extends AppCompatActivity {
             this.date = date;
         }
 
+        @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
 

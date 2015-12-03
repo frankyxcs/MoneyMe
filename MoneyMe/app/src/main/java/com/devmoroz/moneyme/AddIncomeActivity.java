@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
@@ -21,11 +22,11 @@ import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.devmoroz.moneyme.helpers.DBHelper;
+import com.devmoroz.moneyme.logging.L;
 import com.devmoroz.moneyme.models.Account;
 import com.devmoroz.moneyme.models.CreatedItem;
 import com.devmoroz.moneyme.models.Currency;
@@ -36,9 +37,6 @@ import com.devmoroz.moneyme.utils.FormatUtils;
 import com.devmoroz.moneyme.utils.datetime.TimeUtils;
 
 import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -47,16 +45,11 @@ public class AddIncomeActivity extends AppCompatActivity {
 
     private EditText amount;
     private EditText description;
-    private FloatingActionButton buttonAdd;
     private TextInputLayout floatingAmountLabel;
     private TextView date;
     private Spinner accountSpin;
-    private Toolbar toolbar;
-    private ImageView chequeImage;
     private static Date incomeDate = new Date();
 
-
-    private DBHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +59,7 @@ public class AddIncomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_income);
         Animation animation = AnimationUtils.loadAnimation(this, R.anim.fab_grow);
 
-        toolbar = (Toolbar) findViewById(R.id.add_income_toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.add_income_toolbar);
         if (toolbar != null) {
             toolbar.setTitle(R.string.income_toolbar_name);
             toolbar.setTitleTextColor(Color.WHITE);
@@ -79,22 +72,23 @@ public class AddIncomeActivity extends AppCompatActivity {
         date = (TextView) findViewById(R.id.add_income_date);
         accountSpin = (Spinner) findViewById(R.id.add_income_category);
         date.setText(TimeUtils.formatShortDate(getApplicationContext(), new Date()));
-        buttonAdd = (FloatingActionButton) findViewById(R.id.add_income_save);
+        FloatingActionButton buttonAdd = (FloatingActionButton) findViewById(R.id.add_income_save);
         floatingAmountLabel = (TextInputLayout) findViewById(R.id.text_input_layout_income_amount);
 
         buttonAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(amount.getText().toString().isEmpty()){
+                if (amount.getText().toString().isEmpty()) {
                     floatingAmountLabel.setError(getString(R.string.outcome_amount_required));
                     floatingAmountLabel.setErrorEnabled(true);
                     return;
                 }
                 Intent intent;
-                CreatedItem info = new CreatedItem(-1,"",0,-1);
+                CreatedItem info = new CreatedItem(-1, "", 0, -1);
                 try {
                     info = addIncome();
                 } catch (SQLException ex) {
+                    L.t(AddIncomeActivity.this, "Something went wrong.Please,try again.");
                 }
                 intent = new Intent(getApplicationContext(), MainActivity.class);
                 intent.putExtra(Constants.CREATED_ITEM_ID, info.getItemId());
@@ -118,7 +112,7 @@ public class AddIncomeActivity extends AppCompatActivity {
         dateAdded = incomeDate == null ? new Date():incomeDate;
 
 
-        dbHelper = MoneyApplication.getInstance().GetDBHelper();
+        DBHelper dbHelper = MoneyApplication.getInstance().GetDBHelper();
         int id = accountSpin.getSelectedItemPosition();
         Account account = dbHelper.getAccountDAO().queryForAll().get(id);
         account.setBalance(account.getBalance() + incomeAmount);
@@ -142,7 +136,7 @@ public class AddIncomeActivity extends AppCompatActivity {
     }
 
     private void initAccountSpinner() {
-        List<Account> accountList = MoneyApplication.getInstance().accounts;
+        List<Account> accountList = MoneyApplication.accounts;
         Currency c = CurrencyCache.getCurrencyOrEmpty();
         if(accountList!=null){
             String[] accountsWithBalance = new String[accountList.size()];
@@ -201,6 +195,7 @@ public class AddIncomeActivity extends AppCompatActivity {
             this.date = date;
         }
 
+        @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
 

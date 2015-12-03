@@ -2,6 +2,7 @@ package com.devmoroz.moneyme;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -38,7 +39,7 @@ public class SettingsActivity  extends AppCompatActivity {
                         .negativeColorRes(R.color.colorPrimary)
                         .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
-                            public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
+                            public void onClick(@NonNull MaterialDialog materialDialog, DialogAction dialogAction) {
                                     Preferences.reset(SettingsActivity.this);
                                     AppUtils.restart(SettingsActivity.this);
                                 }

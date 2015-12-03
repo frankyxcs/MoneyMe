@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -16,12 +15,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.devmoroz.moneyme.adapters.TabsPagerFragmentAdapter;
 import com.devmoroz.moneyme.eventBus.AppInitCompletedEvent;
 import com.devmoroz.moneyme.eventBus.BusProvider;
-
 import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
 import com.devmoroz.moneyme.helpers.CurrencyHelper;
 import com.devmoroz.moneyme.helpers.DBHelper;
@@ -277,7 +274,7 @@ public class MainActivity extends AppCompatActivity {
                                     dbhelper.getIncomeDAO().deleteById(createdIncomeId);
                                     BusProvider.postOnMain(new WalletChangeEvent());
                                 } catch (SQLException ex) {
-
+                                    L.t(MainActivity.this, "Something went wrong.Please,try again.");
                                 }
                             }
                         })
@@ -325,7 +322,7 @@ public class MainActivity extends AppCompatActivity {
                                     dbhelper.getOutcomeDAO().deleteById(createdOutcomeId);
                                     BusProvider.postOnMain(new WalletChangeEvent());
                                 } catch (SQLException ex) {
-
+                                    L.t(MainActivity.this, "Something went wrong.Please,try again.");
                                 }
                             }
                         })

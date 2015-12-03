@@ -29,6 +29,8 @@ import com.devmoroz.moneyme.models.LegendDetails;
 import com.devmoroz.moneyme.models.Outcome;
 import com.devmoroz.moneyme.utils.CurrencyCache;
 import com.devmoroz.moneyme.utils.CustomColorTemplate;
+import com.devmoroz.moneyme.utils.Preferences;
+import com.devmoroz.moneyme.utils.datetime.PeriodUtils;
 import com.devmoroz.moneyme.widgets.DividerItemDecoration;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
@@ -102,13 +104,13 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
 
 
 
-        outs = MoneyApplication.getInstance().outcomes;
-        accounts = MoneyApplication.getInstance().accounts;
+        outs = MoneyApplication.outcomes;
+        accounts = MoneyApplication.accounts;
 
         chart.setData(generatePieData());
         chart.setCenterText(generateCenterText());
         chart.setCenterTextSize(16f);
-        chart.setDescription("Данные за текущий месяц");
+        chart.setDescription("");
         chart.setOnChartValueSelectedListener(this);
         chart.invalidate();
 
@@ -118,6 +120,8 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
     }
 
     private void customizeLegend() {
+        int period = Preferences.getHistoryPeriod(getContext());
+        int monthStart = Preferences.getMonthStart(getContext());
         ArrayList<LegendDetails> legendData = new ArrayList<>();
         Legend l = chart.getLegend();
         l.setEnabled(false);
@@ -137,8 +141,10 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
         if (legendData.size() != 0){
             adapter.setData(legendData);
             tableDetails.setVisibility(View.VISIBLE);
+            chart.setDescription(PeriodUtils.GetPeriodString(period, monthStart, getContext(), false));
         }else{
             tableDetails.setVisibility(View.GONE);
+            chart.setDescription("");
         }
     }
 
@@ -225,8 +231,8 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
 
     @Subscribe
     public void OnWalletChange(WalletChangeEvent event) {
-        outs = MoneyApplication.getInstance().outcomes;
-        accounts = MoneyApplication.getInstance().accounts;
+        outs = MoneyApplication.outcomes;
+        accounts = MoneyApplication.accounts;
         chart.setData(generatePieData());
         chart.setCenterText(generateCenterText());
         chart.invalidate();
