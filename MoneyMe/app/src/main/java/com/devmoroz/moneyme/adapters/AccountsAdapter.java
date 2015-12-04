@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.devmoroz.moneyme.R;
@@ -21,10 +22,10 @@ public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.Accoun
 
     private LayoutInflater inflater;
     List<AccountRow> accountData = Collections.emptyList();
+    final int[] typesOfAccountIcons = {R.drawable.ic_cash_multiple,R.drawable.ic_credit_card,R.drawable.ic_bank};
 
-    public AccountsAdapter(Context context, List<AccountRow> data) {
+    public AccountsAdapter(Context context) {
         inflater = LayoutInflater.from(context);
-        accountData = data;
     }
 
     public void setAccountsData(List<AccountRow> accountData){
@@ -48,6 +49,7 @@ public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.Accoun
         holder.accountName.setText(current.name);
         holder.accountAvailable.setText(FormatUtils.amountToString(currency,current.total));
         holder.accountExpense.setText(FormatUtils.amountToString(currency, current.expense));
+        holder.accountIcon.setImageResource(typesOfAccountIcons[current.type]);
     }
 
     @Override
@@ -55,16 +57,18 @@ public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.Accoun
         return accountData.size();
     }
 
-    class AccountsViewHolder extends RecyclerView.ViewHolder{
+    public class AccountsViewHolder extends RecyclerView.ViewHolder{
         TextView accountName;
         TextView accountAvailable;
         TextView accountExpense;
+        ImageView accountIcon;
 
         public AccountsViewHolder(View itemView) {
             super(itemView);
             accountName = (TextView)itemView.findViewById(R.id.accountName);
             accountAvailable = (TextView)itemView.findViewById(R.id.accountAvailable);
             accountExpense = (TextView)itemView.findViewById(R.id.accountSpending);
+            accountIcon = (ImageView)itemView.findViewById(R.id.accountIcon);
         }
     }
 }

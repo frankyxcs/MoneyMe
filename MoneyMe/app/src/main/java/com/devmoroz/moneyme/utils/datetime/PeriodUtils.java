@@ -9,19 +9,11 @@ public class PeriodUtils  {
 
     public static String GetPeriodString(int period, int monthStart, Context context, boolean shortFormat){
         Calendar currentDate = Calendar.getInstance();
-
         Calendar dateStart = Calendar.getInstance();
-        Calendar dateEnd = Calendar.getInstance();
 
-        if(currentDate.get(Calendar.DAY_OF_MONTH) == monthStart){
-            dateStart.add(Calendar.DAY_OF_MONTH, -1);
-        }
-        else {
+        if(currentDate.get(Calendar.DAY_OF_MONTH) != monthStart){
             dateStart.set(Calendar.DAY_OF_MONTH, monthStart);
-            dateStart.add(Calendar.DAY_OF_MONTH, -1);
         }
-        dateEnd.add(Calendar.DAY_OF_MONTH, 1);
-
         switch (period) {
             case 1:
                 if (currentDate.get(Calendar.DAY_OF_MONTH) < monthStart) {

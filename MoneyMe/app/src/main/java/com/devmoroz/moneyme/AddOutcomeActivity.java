@@ -15,6 +15,7 @@ import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -40,6 +41,7 @@ import com.devmoroz.moneyme.utils.Constants;
 import com.devmoroz.moneyme.utils.CurrencyCache;
 import com.devmoroz.moneyme.utils.FormatUtils;
 import com.devmoroz.moneyme.utils.datetime.TimeUtils;
+import com.devmoroz.moneyme.widgets.DecimalDigitsInputFilter;
 
 import java.io.File;
 import java.io.IOException;
@@ -92,6 +94,7 @@ public class AddOutcomeActivity extends AppCompatActivity {
         initToolbar();
 
         amount = (EditText) findViewById(R.id.add_outcome_amount);
+        amount.setFilters(new InputFilter[]{new DecimalDigitsInputFilter()});
         description = (EditText) findViewById(R.id.add_outcome_note);
         date = (TextView) findViewById(R.id.add_outcome_date);
         categorySpin = (Spinner) findViewById(R.id.add_outcome_category);

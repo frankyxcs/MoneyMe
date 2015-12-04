@@ -106,6 +106,10 @@ public class TimeUtils {
                 TimeZone.getDefault().getID()).toString();
     }
 
+    public static String formatIntervalTimeString(long intervalStart, StringBuilder recycle, Context context) {
+        return formatIntervalTimeString(intervalStart,getCurrentTime(),recycle,context);
+    }
+
     public static long getCurrentTime() {
        return System.currentTimeMillis();
     }

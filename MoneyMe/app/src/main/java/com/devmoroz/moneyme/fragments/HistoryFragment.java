@@ -1,6 +1,7 @@
 package com.devmoroz.moneyme.fragments;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,6 +14,8 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.devmoroz.moneyme.MoneyApplication;
 import com.devmoroz.moneyme.R;
 import com.devmoroz.moneyme.adapters.HistoryAdapter;
@@ -26,6 +29,7 @@ import com.devmoroz.moneyme.utils.CurrencyCache;
 import com.devmoroz.moneyme.utils.FormatUtils;
 import com.devmoroz.moneyme.utils.Preferences;
 import com.devmoroz.moneyme.utils.datetime.PeriodUtils;
+import com.devmoroz.moneyme.utils.datetime.TimeUtils;
 import com.devmoroz.moneyme.widgets.CustomRecyclerScroll;
 import com.devmoroz.moneyme.widgets.EmptyRecyclerView;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
@@ -33,15 +37,15 @@ import com.squareup.otto.Subscribe;
 
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class HistoryFragment extends Fragment {
 
     private static final String STATE_WALLET_ENTRIES = "state_wallet_entries";
     private ArrayList<CommonInOut> mListWalletEntries = new ArrayList<>();
-    private ArrayList<CommonInOut> inout;
     private List<Account> accounts;
-    int totalBalance;
+    double totalBalance;
 
     private CommonInOutUtils sorter = new CommonInOutUtils();
 
@@ -94,10 +98,36 @@ public class HistoryFragment extends Fragment {
         LinearLayout widg = (LinearLayout) view.findViewById(R.id.widgetBalance);
 
         recyclerView = (EmptyRecyclerView) view.findViewById(R.id.main_recycler_view);
-        recyclerView.setEmptyView(mTextError,widg);
+        recyclerView.setEmptyView(mTextError, widg);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        wAdapter = new HistoryAdapter(getActivity());
+        wAdapter = new HistoryAdapter(getActivity(), new HistoryAdapter.Callback() {
+            @Override
+            public void onDeleteClick(int id, int type) {
+                final int itemId = id;
+                final int itemType = type;
+                new MaterialDialog.Builder(getContext())
+                        .content(R.string.remove_item_confirm)
+                        .negativeText(R.string.cancel)
+                        .positiveText(R.string.remove)
+                        .positiveColorRes(R.color.colorPrimary)
+                        .negativeColorRes(R.color.colorPrimary)
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+                                if (CommonInOutUtils.deleteItem(itemId, itemType) == 1) {
+                                    BusProvider.postOnMain(new WalletChangeEvent());
+                                }
+                            }
+                        })
+                        .show();
+            }
+
+            @Override
+            public void onEditClick(int id, int type) {
+
+            }
+        });
         recyclerView.setAdapter(wAdapter);
 
         recyclerView.addOnScrollListener(new CustomRecyclerScroll() {
@@ -117,41 +147,47 @@ public class HistoryFragment extends Fragment {
                 }
             }
         });
-
+        boolean desc = Preferences.isSortByDesc(getContext());
 
         if (savedInstanceState != null) {
             mListWalletEntries = savedInstanceState.getParcelableArrayList(STATE_WALLET_ENTRIES);
         } else {
-            inout = MoneyApplication.inout;
-            if (inout != null && !inout.isEmpty()) {
-                mListWalletEntries = inout;
-                boolean desc = Preferences.isSortByDesc(getContext());
-                sorter.sortWalletEntriesByDate(mListWalletEntries,desc);
-                wAdapter.setInOutData(mListWalletEntries);
-            } else {
-                mTextError.setVisibility(View.VISIBLE);
-            }
+            mListWalletEntries = MoneyApplication.inout;
+            sorter.sortWalletEntriesByDate(mListWalletEntries, desc);
+            wAdapter.setInOutData(mListWalletEntries);
         }
-        initBalanceWidget();
+        initBalanceWidget(desc);
         return view;
     }
 
-    private void initBalanceWidget() {
-        int period = Preferences.getHistoryPeriod(getContext());
-        int monthStart = Preferences.getMonthStart(getContext());
-        accounts = MoneyApplication.accounts;
-        totalBalance = 0;
-        for (Account acc : accounts) {
-            totalBalance += acc.getBalance();
+    private void initBalanceWidget(boolean order) {
+        if (!mListWalletEntries.isEmpty()) {
+            int period = Preferences.getHistoryPeriod(getContext());
+            int monthStart = Preferences.getMonthStart(getContext());
+            accounts = MoneyApplication.accounts;
+            totalBalance = 0f;
+            for (Account acc : accounts) {
+                totalBalance += acc.getBalance();
+            }
+            Currency currency = CurrencyCache.getCurrencyOrEmpty();
+            String text = getString(R.string.balance);
+            String formattedBalanceText = FormatUtils.attachAmountToTextWithoutBrackets(text, currency, totalBalance, false);
+            String[] totalInOut = sorter.getTotalInOut(mListWalletEntries, currency);
+            walletTotalIncome.setText(totalInOut[0]);
+            walletTotalOutcome.setText(totalInOut[1]);
+            totalBalanceTextView.setText(formattedBalanceText);
+            if (period != 0) {
+                walletDatePeriod.setText(PeriodUtils.GetPeriodString(period, monthStart, getContext(), false));
+            } else {
+                long dateStart;
+                if (order) {
+                    dateStart = mListWalletEntries.get(mListWalletEntries.size() - 1).getDateLong();
+                } else {
+                    dateStart = mListWalletEntries.get(0).getDateLong();
+                }
+                walletDatePeriod.setText(TimeUtils.formatIntervalTimeString(dateStart, null, getContext()));
+            }
         }
-        Currency currency = CurrencyCache.getCurrencyOrEmpty();
-        String text = getString(R.string.balance);
-        String formattedBalanceText = FormatUtils.attachAmountToTextWithoutBrackets(text,currency,totalBalance,false);
-        String[] totalInOut = sorter.getTotalInOut(mListWalletEntries,currency);
-        walletTotalIncome.setText(totalInOut[0]);
-        walletTotalOutcome.setText(totalInOut[1]);
-        totalBalanceTextView.setText(formattedBalanceText);
-        walletDatePeriod.setText(PeriodUtils.GetPeriodString(period,monthStart,getContext(),false));
     }
 
     @Override
@@ -163,14 +199,14 @@ public class HistoryFragment extends Fragment {
 
     public void CheckWallet() {
         mListWalletEntries = MoneyApplication.inout;
-        initBalanceWidget();
         boolean desc = Preferences.isSortByDesc(getContext());
-        sorter.sortWalletEntriesByDate(mListWalletEntries,desc);
+        sorter.sortWalletEntriesByDate(mListWalletEntries, desc);
+        initBalanceWidget(desc);
         wAdapter.setInOutData(mListWalletEntries);
     }
 
     @Subscribe
-    public void OnWalletChange(WalletChangeEvent event){
+    public void OnWalletChange(WalletChangeEvent event) {
         CheckWallet();
     }
 }

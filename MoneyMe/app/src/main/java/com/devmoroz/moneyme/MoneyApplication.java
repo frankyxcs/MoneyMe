@@ -23,6 +23,7 @@ import com.squareup.otto.Subscribe;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class MoneyApplication extends Application {
@@ -34,11 +35,11 @@ public class MoneyApplication extends Application {
         return mIsInitialized;
     }
 
-    public static List<Goal> goals;
-    public static List<Income> incomes;
-    public static List<Outcome> outcomes;
-    public static ArrayList<CommonInOut> inout;
-    public static List<Account> accounts;
+    public static List<Goal> goals = Collections.emptyList();
+    public static List<Income> incomes =Collections.emptyList();
+    public static List<Outcome> outcomes =Collections.emptyList();
+    public static ArrayList<CommonInOut> inout = new ArrayList<>(0);
+    public static List<Account> accounts = Collections.emptyList();
 
     private DBHelper dbHelper;
 
@@ -62,12 +63,12 @@ public class MoneyApplication extends Application {
 
             if (incomes != null) {
                 for (Income in : incomes) {
-                    inout.add(new CommonInOut(1, in.getId(), in.getAmount(), null, in.getDateOfReceipt(), in.getAccountName(), null));
+                    inout.add(new CommonInOut(1, in.getId(), in.getAmount(), null, in.getDateOfReceipt(), in.getAccountName(), null, in.getNotes()));
                 }
             }
             if (outcomes != null) {
                 for (Outcome out : outcomes) {
-                    inout.add(new CommonInOut(2, out.getId(), out.getAmount(), out.getCategory(), out.getDateOfSpending(), out.getAccountName(), out.getPhoto()));
+                    inout.add(new CommonInOut(2, out.getId(), out.getAmount(), out.getCategory(), out.getDateOfSpending(), out.getAccountName(), out.getPhoto(), out.getNotes()));
                 }
             }
 

@@ -83,13 +83,6 @@ public class AccountsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        accounts = MoneyApplication.accounts;
-        data.clear();
-        totalBalance = 0;
-        for (Account acc : accounts) {
-            data.add(new AccountRow(acc.getId(),acc.getName(),acc.getBalance(),0));
-            totalBalance += acc.getBalance();
-        }
         view = inflater.inflate(R.layout.accounts_fragment, container, false);
         recyclerView = (EmptyRecyclerView) view.findViewById(R.id.accountsList);
         btnAddAccount = (CardView) view.findViewById(R.id.add_new_account);
@@ -102,10 +95,10 @@ public class AccountsFragment extends Fragment {
         });
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
 
-        adapter = new AccountsAdapter(getActivity(), data);
+        adapter = new AccountsAdapter(getActivity());
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        SetTotalBalance();
+        CheckWallet();
         return view;
     }
 
@@ -121,7 +114,7 @@ public class AccountsFragment extends Fragment {
         data.clear();
         totalBalance = 0;
         for (Account acc : accounts) {
-            data.add(new AccountRow(acc.getId(),acc.getName(),acc.getBalance(),0));
+            data.add(new AccountRow(acc.getId(),acc.getName(),acc.getBalance(),0,acc.getType()));
             totalBalance += acc.getBalance();
         }
         SetTotalBalance();

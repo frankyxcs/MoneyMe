@@ -104,11 +104,12 @@
             <ImageView android:id="@+id/add_outcome_calendar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignTop="@+id/TextView07"
+                android:layout_alignTop="@+id/add_outcome_date"
+                android:layout_centerVertical="true"
                 android:layout_toRightOf="@+id/add_outcome_date"
                 android:layout_marginLeft="15dp"
                 android:onClick="showDatePickerDialog"
-                android:src="@drawable/ic_calendar_dark"/>
+                android:src="@drawable/ic_calendar_gray"/>
 
             <TextView
                 android:id="@+id/TextView06"
@@ -143,7 +144,7 @@
         android:layout_height="match_parent"
         android:id="@+id/coordinator_outcome">
 
-        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

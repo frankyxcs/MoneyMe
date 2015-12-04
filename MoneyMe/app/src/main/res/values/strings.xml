@@ -115,10 +115,13 @@
     <string name="choose_photo">Выберите изображение</string>
     <string name="add_amount_to_goal">Добавить сумму</string>
     <string name="remove_goal">Удалить цель</string>
+    <string name="remove_item_confirm">Удалить эту запись?</string>
     <string name="text_total_income">Суммарный доход</string>
     <string name="text_total_outcome">Суммарный расход</string>
     <string name="type">Тип</string>
     <string name="balance_formatted" formatted="false">Баланс %s</string>
+    <string name="edit">Редактировать</string>
+    <string name="remove">Удалить</string>
      <string name="application_info_text" formatted="false">
         <![CDATA[
             <p>Version: %s</p>

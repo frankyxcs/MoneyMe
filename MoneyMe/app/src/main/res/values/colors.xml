@@ -18,6 +18,7 @@
     <color name="holo_red_dark">#DD2C00</color>
     <color name="holo_gray_dark">@android:color/secondary_text_light</color>
     <color name="disable_gray">#BDBDBD</color>
+    <color name="colorPressedButton">#999999</color>
     <color name="material_teal_a400">#1DE9B6</color>
     <color name="colorBlack">#000</color>
 

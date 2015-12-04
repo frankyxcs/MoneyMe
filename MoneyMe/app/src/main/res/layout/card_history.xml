@@ -2,7 +2,7 @@
 <android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:id="@+id/card_view_main"
@@ -11,12 +11,21 @@
     card_view:cardPreventCornerOverlap="false"
     card_view:cardUseCompatPadding="true">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/colorWhite">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp" >
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorWhite"
-        android:id="@+id/card_view_main_color"
-        android:padding="16dp">
+        android:id="@+id/card_view_main_color">
 
         <TextView
             android:id="@+id/card_main_icon"
@@ -35,6 +44,7 @@
 
 
         <LinearLayout
+            android:id="@+id/card_linear_1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
@@ -47,7 +57,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Medium Text"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:textColor="@color/colorPrimaryText"
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/card_main_date"
@@ -66,7 +77,50 @@
             android:text="ddfsd"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true" />
-
-
     </RelativeLayout>
+            <TextView
+                android:id="@+id/card_main_notes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:textColor="@color/colorSecondaryText"
+                android:visibility="gone"/>
+        </LinearLayout>
+
+        <com.devmoroz.moneyme.widgets.AspectRatioImageView
+            android:id="@+id/card_main_attachedPhoto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            card_view:aspectRatioEnabled="true"
+            card_view:aspectRatio="1.78"
+            android:visibility="gone"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/line_top"
+            android:gravity="right"
+            android:padding="8dp">
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_edit_gray"
+                android:background="@drawable/white_button"
+                android:padding="8dp"
+                android:id="@+id/card_main_editButton"
+                android:layout_marginRight="8dp"
+                android:layout_marginEnd="8dp"/>
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_delete_gray"
+                android:padding="8dp"
+                android:id="@+id/card_main_deleteButton"
+                android:background="@drawable/white_button"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
 </android.support.v7.widget.CardView>

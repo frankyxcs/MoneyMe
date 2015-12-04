@@ -86,7 +86,7 @@
             android:layout_toRightOf="@+id/add_income_date"
             android:layout_marginLeft="15dp"
             android:onClick="showDatePickerDialog"
-            android:src="@drawable/ic_calendar_dark"/>
+            android:src="@drawable/ic_calendar_gray"/>
 
         <TextView
             android:id="@+id/TextView16"
