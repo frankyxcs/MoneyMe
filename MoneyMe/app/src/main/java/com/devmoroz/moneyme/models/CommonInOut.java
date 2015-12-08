@@ -56,7 +56,7 @@ public class CommonInOut implements Parcelable{
         return account;
     }
 
-    public CommonInOut(int type, int id, double amount, String category, Date dateAdded, String account, String photo, String notes) {
+    public CommonInOut(int type, int id, double amount, String category, Date dateAdded, String account, String photo, String notes, String location) {
         this.type = type;
         this.id = id;
         this.amount = amount;
@@ -65,6 +65,7 @@ public class CommonInOut implements Parcelable{
         this.category = category;
         this.photo = photo;
         this.notes = notes;
+        this.location = location;
     }
 
     public int getType() {
