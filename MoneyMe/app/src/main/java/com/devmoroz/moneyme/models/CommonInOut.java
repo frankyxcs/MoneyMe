@@ -37,6 +37,7 @@ public class CommonInOut implements Parcelable{
     String account;
     String photo;
     String notes;
+    String location;
 
     public CommonInOut(Parcel input) {
         id = input.readInt();
@@ -48,6 +49,7 @@ public class CommonInOut implements Parcelable{
         account = input.readString();
         photo = input.readString();
         notes = input.readString();
+        location = input.readString();
     }
 
     public String getAccount() {
@@ -104,6 +106,8 @@ public class CommonInOut implements Parcelable{
         return notes;
     }
 
+    public String getLocation() {return location;}
+
     public String getFormatedAmount() {
         String sign = CurrencyCache.getCurrencyOrEmpty().getSymbol();
 
@@ -132,5 +136,6 @@ public class CommonInOut implements Parcelable{
         dest.writeString(account);
         dest.writeString(photo);
         dest.writeString(notes);
+        dest.writeString(location);
     }
 }

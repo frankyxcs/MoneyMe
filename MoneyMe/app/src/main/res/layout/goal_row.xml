@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="98dp"
+    android:layout_height="100dp"
     android:padding="16dp">
 
     <LinearLayout
@@ -22,7 +22,6 @@
             android:textSize="16sp"
             android:textColor="@color/colorPrimaryText"
             android:ellipsize="end"
-            android:textStyle="bold"
             android:maxLines="1"
             tools:text="Название"/>
 
@@ -33,7 +32,7 @@
             android:gravity="center"
             android:clickable="true"
             android:focusable="true"
-            android:src="@drawable/ic_dots_vertical" />
+            android:src="@drawable/ic_more_vert_black_24dp" />
 
     </LinearLayout>
 
@@ -60,5 +59,6 @@
         android:id="@+id/goal_progress_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        style="@style/NumberProgressBar_Passing_Green"
         />
 </LinearLayout>

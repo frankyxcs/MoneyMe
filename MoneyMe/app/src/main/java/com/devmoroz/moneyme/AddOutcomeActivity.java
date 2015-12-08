@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -70,7 +71,7 @@ public class AddOutcomeActivity extends AppCompatActivity {
     private EditText description;
     private FloatingActionButton buttonAdd;
     private TextInputLayout floatingAmountLabel;
-    private TextView date;
+    private Button date;
     private Spinner categorySpin;
     private Spinner accountSpin;
     private RelativeLayout photoWrapper;
@@ -96,7 +97,7 @@ public class AddOutcomeActivity extends AppCompatActivity {
         amount = (EditText) findViewById(R.id.add_outcome_amount);
         amount.setFilters(new InputFilter[]{new DecimalDigitsInputFilter()});
         description = (EditText) findViewById(R.id.add_outcome_note);
-        date = (TextView) findViewById(R.id.add_outcome_date);
+        date = (Button) findViewById(R.id.add_outcome_date);
         categorySpin = (Spinner) findViewById(R.id.add_outcome_category);
         accountSpin = (Spinner) findViewById(R.id.add_outcome_account);
         date.setText(TimeUtils.formatShortDate(getApplicationContext(), new Date()));
@@ -321,9 +322,9 @@ public class AddOutcomeActivity extends AppCompatActivity {
 
     public static class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 
-        private TextView date;
+        private Button date;
 
-        public void setDate(TextView date) {
+        public void setDate(Button date) {
             this.date = date;
         }
 

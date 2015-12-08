@@ -69,14 +69,11 @@ public class Goal {
         return achieved;
     }
 
-    public Goal(int id, String name, String notes, Date deadlineDate, int totalAmount, int accumulated, int currency, boolean achieved) {
-        this.id = id;
+    public Goal(String name, String notes, Date deadlineDate, int totalAmount, int accumulated) {
         this.name = name;
         this.notes = notes;
         this.deadlineDate = deadlineDate;
         this.totalAmount = totalAmount;
         this.accumulated = accumulated;
-        this.currency = currency;
-        this.achieved = achieved;
     }
 }

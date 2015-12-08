@@ -24,7 +24,7 @@ import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
 import com.devmoroz.moneyme.models.Account;
 import com.devmoroz.moneyme.models.CommonInOut;
 import com.devmoroz.moneyme.models.Currency;
-import com.devmoroz.moneyme.utils.CommonInOutUtils;
+import com.devmoroz.moneyme.utils.CommonUtils;
 import com.devmoroz.moneyme.utils.CurrencyCache;
 import com.devmoroz.moneyme.utils.FormatUtils;
 import com.devmoroz.moneyme.utils.Preferences;
@@ -37,7 +37,6 @@ import com.squareup.otto.Subscribe;
 
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 public class HistoryFragment extends Fragment {
@@ -47,7 +46,7 @@ public class HistoryFragment extends Fragment {
     private List<Account> accounts;
     double totalBalance;
 
-    private CommonInOutUtils sorter = new CommonInOutUtils();
+    private CommonUtils sorter = new CommonUtils();
 
     private EmptyRecyclerView recyclerView;
     private LinearLayout mTextError;
@@ -115,7 +114,7 @@ public class HistoryFragment extends Fragment {
                         .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
                             public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                                if (CommonInOutUtils.deleteItem(itemId, itemType) == 1) {
+                                if (CommonUtils.deleteItem(itemId, itemType) == 1) {
                                     BusProvider.postOnMain(new WalletChangeEvent());
                                 }
                             }

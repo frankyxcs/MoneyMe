@@ -58,6 +58,25 @@ public class FormatUtils {
         return sb;
     }
 
+    public static String goalProgressToString(Currency c, int accumulated, int needed) {
+        StringBuilder sb = new StringBuilder();
+        if (c == null) {
+            c = Currency.EMPTY;
+        }
+        String a = c.getFormat().format(accumulated);
+        sb.append(a);
+        if (isNotEmpty(c.getSymbol())) {
+            sb.append(" ").append(c.getSymbol());
+        }
+        sb.append("/");
+        String n = c.getFormat().format(needed);
+        sb.append(n);
+        if (isNotEmpty(c.getSymbol())) {
+            sb.append(" ").append(c.getSymbol());
+        }
+        return sb.toString();
+    }
+
     public void setAmountText(TextView view, Currency c, double amount, boolean addPlus) {
         setAmountText(new StringBuilder(), view, c, amount, addPlus);
     }

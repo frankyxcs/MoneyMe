@@ -29,6 +29,9 @@ public class Outcome {
     @DatabaseField
     private String photo;
 
+    @DatabaseField
+    private String location;
+
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = ACCOUNT_ID_FIELD_NAME)
     private Account account;
 
@@ -68,6 +71,10 @@ public class Outcome {
     }
 
     public String getAccountName() { return account.getName();}
+
+    public String getLocation() {
+        return location;
+    }
 
     public Outcome(String notes, Date dateOfSpending, double amount, String category,Account account) {
         this.notes = notes;

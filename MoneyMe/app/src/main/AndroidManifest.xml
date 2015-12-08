@@ -49,6 +49,30 @@
             android:configChanges="orientation|screenSize"
             android:label="@string/option_settings" >
         </activity>
+        <activity
+            android:name=".DropboxSyncActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/synchronize" >
+        </activity>
+        <activity
+            android:name=".DropboxLoginActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|screenSize">
+        </activity>
+        <activity
+            android:name="com.dropbox.core.android.AuthActivity"
+            android:configChanges="orientation|keyboard"
+            android:launchMode="singleTask" >
+            <intent-filter>
+                <!-- Change this to be db- followed by your app key -->
+                <data android:scheme="db-app-key" />
+
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

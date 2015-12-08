@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 
-public class CommonInOutUtils {
+public class CommonUtils {
 
     public void sortWalletEntriesByDate(ArrayList<CommonInOut> inout, boolean desc) {
 
@@ -112,5 +112,14 @@ public class CommonInOutUtils {
            return 9999999;
         }
         return -1;
+    }
+
+    public static int deleteGoal(int id) {
+        DBHelper dbHelper = MoneyApplication.getInstance().GetDBHelper();
+        try {
+            return dbHelper.getGoalDAO().deleteById(id);
+        } catch (SQLException ex) {
+            return 9999999;
+        }
     }
 }

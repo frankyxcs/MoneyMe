@@ -80,6 +80,7 @@ public class Csv {
         private boolean first = true;
 
         public Writer(String fileName) { this(new File(fileName)); }
+
         public Writer(File file) {
             try {
                 appendable = new FileWriter(file);

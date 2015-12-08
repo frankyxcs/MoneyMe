@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -48,7 +49,7 @@ public class AddIncomeActivity extends AppCompatActivity {
     private EditText amount;
     private EditText description;
     private TextInputLayout floatingAmountLabel;
-    private TextView date;
+    private Button date;
     private Spinner accountSpin;
     private static Date incomeDate = new Date();
 
@@ -72,7 +73,7 @@ public class AddIncomeActivity extends AppCompatActivity {
         amount = (EditText) findViewById(R.id.add_income_amount);
         amount.setFilters(new InputFilter[]{new DecimalDigitsInputFilter()});
         description = (EditText) findViewById(R.id.add_income_note);
-        date = (TextView) findViewById(R.id.add_income_date);
+        date = (Button) findViewById(R.id.add_income_date);
         accountSpin = (Spinner) findViewById(R.id.add_income_category);
         date.setText(TimeUtils.formatShortDate(getApplicationContext(), new Date()));
         FloatingActionButton buttonAdd = (FloatingActionButton) findViewById(R.id.add_income_save);
@@ -184,7 +185,7 @@ public class AddIncomeActivity extends AppCompatActivity {
         });
     }
 
-    public void showDatePickerDialog(View v) {
+    public void showIncomeDatePickerDialog(View v) {
         DatePickerFragment newFragment = new DatePickerFragment();
         newFragment.setDate(date);
         newFragment.show(getSupportFragmentManager(), "datePicker");
@@ -192,9 +193,9 @@ public class AddIncomeActivity extends AppCompatActivity {
 
     public static class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 
-        private TextView date;
+        private Button date;
 
-        public void setDate(TextView date) {
+        public void setDate(Button date) {
             this.date = date;
         }
 

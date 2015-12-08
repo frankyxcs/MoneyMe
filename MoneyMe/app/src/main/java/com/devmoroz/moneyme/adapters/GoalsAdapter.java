@@ -16,6 +16,7 @@ import com.devmoroz.moneyme.R;
 import com.devmoroz.moneyme.models.Currency;
 import com.devmoroz.moneyme.models.Goal;
 import com.devmoroz.moneyme.utils.CurrencyCache;
+import com.devmoroz.moneyme.utils.FormatUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -25,11 +26,18 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHol
     private LayoutInflater inflater;
     private Context context;
     List<Goal> goalsData = Collections.emptyList();
+    private final Callback mCallback;
 
-    public GoalsAdapter(Context context, List<Goal> goalsData) {
+    public interface Callback {
+        void onDeleteClick(int id);
+        void onEditClick(int id);
+    }
+
+    public GoalsAdapter(Context context, List<Goal> goalsData, Callback callback) {
         this.context = context;
         inflater = LayoutInflater.from(context);
         this.goalsData = goalsData;
+        this.mCallback = callback;
     }
 
     public void setGoalsData(List<Goal> goalsData){
@@ -54,6 +62,8 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHol
         holder.goalName.setText(current.getName());
         holder.goalProgress.setMax(current.getTotalAmount());
         holder.goalProgress.setProgress(current.getAccumulated());
+        String formatted = FormatUtils.goalProgressToString(currency, current.getAccumulated(), current.getTotalAmount());
+        holder.goalCurrNeed.setText(formatted);
     }
 
     @Override
@@ -66,6 +76,7 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHol
         ImageView moreMenu;
         TextView goalName;
         TextView goalCurrNeed;
+        TextView status;
         int goalId;
 
         public GoalsViewHolder(View itemView) {
@@ -85,10 +96,10 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHol
                 public boolean onMenuItemClick(MenuItem item) {
                     switch (item.getItemId()) {
                         case R.id.fill_up_goal:
-
+                            mCallback.onEditClick(goalId);
                             return true;
                         case R.id.remove_goal:
-
+                            mCallback.onDeleteClick(goalId);
                             return true;
                         default:
                             return false;

@@ -55,6 +55,8 @@
     <string name="statistics">Статистика</string>
     <string name="csv_export">Экспорт в CSV</string>
     <string name="csv_import">CSV импорт</string>
+    <string name="synchronizeIt">Синхронизировать</string>
+    <string name="synchronize">Синхронизация</string>
     <string name="day_title_today">Сегодня</string>
     <string name="day_title_yesterday">Вчера</string>
     <string name="day_title_tomorrow">Завтра</string>
@@ -116,6 +118,7 @@
     <string name="add_amount_to_goal">Добавить сумму</string>
     <string name="remove_goal">Удалить цель</string>
     <string name="remove_item_confirm">Удалить эту запись?</string>
+    <string name="remove_goal_confirm">Удалить эту цель?</string>
     <string name="text_total_income">Суммарный доход</string>
     <string name="text_total_outcome">Суммарный расход</string>
     <string name="type">Тип</string>
@@ -186,4 +189,6 @@
         <item>Счета</item>
         <item>Цели</item>
     </string-array>
+
+    <string name="app_key">appkey</string>
 </resources>

@@ -69,24 +69,17 @@
             android:layout_marginTop="10dp"
             android:text="@string/date"/>
 
-        <TextView
+        <Button
             android:id="@+id/add_income_date"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
+            android:singleLine="true"
+            android:text="12-12-12"
             android:layout_alignTop="@+id/TextView17"
             android:layout_toRightOf="@+id/TextView16"
-            android:text="12-12-12">
-
-        </TextView>
-
-        <ImageView android:id="@+id/add_income_calendar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/TextView17"
-            android:layout_toRightOf="@+id/add_income_date"
-            android:layout_marginLeft="15dp"
-            android:onClick="showDatePickerDialog"
-            android:src="@drawable/ic_calendar_gray"/>
+            android:onClick="showIncomeDatePickerDialog"
+            android:theme="@style/BlackInput"
+            style="@style/TextAppearance.EditEvent_SpinnerButton" />
 
         <TextView
             android:id="@+id/TextView16"

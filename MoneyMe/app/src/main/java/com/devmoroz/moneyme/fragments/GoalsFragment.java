@@ -3,6 +3,7 @@ package com.devmoroz.moneyme.fragments;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
@@ -32,14 +33,17 @@ import com.devmoroz.moneyme.R;
 import com.devmoroz.moneyme.adapters.GoalsAdapter;
 import com.devmoroz.moneyme.eventBus.BusProvider;
 import com.devmoroz.moneyme.eventBus.GoalsChangeEvent;
+import com.devmoroz.moneyme.helpers.DBHelper;
 import com.devmoroz.moneyme.models.Goal;
 import com.devmoroz.moneyme.utils.AnimationUtils;
+import com.devmoroz.moneyme.utils.CommonUtils;
 import com.devmoroz.moneyme.utils.FormatUtils;
 import com.devmoroz.moneyme.utils.datetime.TimeUtils;
 import com.devmoroz.moneyme.widgets.DecimalDigitsInputFilter;
 import com.devmoroz.moneyme.widgets.EmptyRecyclerView;
 import com.squareup.otto.Subscribe;
 
+import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -84,7 +88,31 @@ public class GoalsFragment extends Fragment {
             }
         });
 
-        adapter = new GoalsAdapter(getActivity(), goals);
+        adapter = new GoalsAdapter(getActivity(), goals, new GoalsAdapter.Callback(){
+            @Override
+            public void onDeleteClick(int id) {
+                final int itemId = id;
+                new MaterialDialog.Builder(getContext())
+                        .content(R.string.remove_goal_confirm)
+                        .negativeText(R.string.cancel)
+                        .positiveText(R.string.remove)
+                        .positiveColorRes(R.color.colorPrimary)
+                        .negativeColorRes(R.color.colorPrimary)
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+                                if (CommonUtils.deleteGoal(itemId) == 1) {
+                                    BusProvider.postOnMain(new GoalsChangeEvent());
+                                }
+                            }
+                        })
+                        .show();
+            }
+            @Override
+            public void onEditClick(int id) {
+
+            }
+        });
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
@@ -106,11 +134,11 @@ public class GoalsFragment extends Fragment {
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
-                        if(FormatUtils.isEmpty(goalName) || FormatUtils.isEmpty(goalDeadlineDate.getText().toString()) || FormatUtils.isEmpty(goalRequiredInput)){
+                        if(FormatUtils.isEmpty(goalName) || FormatUtils.isEmpty(goalRequiredInput)){
                             return;
                         }
                         else{
-                            materialDialog.dismiss();
+                            createNewGoal(materialDialog);
                         }
                     }
                 })
@@ -135,9 +163,6 @@ public class GoalsFragment extends Fragment {
             }
         });
         goalName = (EditText) dialog.getCustomView().findViewById(R.id.goalAddName);
-        EditText goalAvailableInput = (EditText) dialog.getCustomView().findViewById(R.id.goalAddAvailable);
-        goalRequiredInput.setFilters(new InputFilter[]{new DecimalDigitsInputFilter()});
-        goalAvailableInput.setFilters(new InputFilter[]{new DecimalDigitsInputFilter()});
 
         dialog.show();
     }
@@ -164,8 +189,30 @@ public class GoalsFragment extends Fragment {
         adapter.setGoalsData(goals);
     }
 
-    private void createNewGoal(){
+    private void createNewGoal(MaterialDialog materialDialog){
+        View v = materialDialog.getCustomView();
+        EditText nameEditText = (EditText) v.findViewById(R.id.goalAddName);
+        EditText requiredEditText = (EditText) v.findViewById(R.id.goalAddRequired);
+        EditText availableEditText = (EditText) v.findViewById(R.id.goalAddAvailable);
+        EditText noteEditText = (EditText) v.findViewById(R.id.goalAddNote);
 
+        String name = nameEditText.getText().toString();
+        String notes = noteEditText.getText().toString();
+        int req = Integer.parseInt(requiredEditText.getText().toString());
+        int av = 0;
+        if(!FormatUtils.isEmpty(availableEditText)){
+            av = Integer.parseInt(availableEditText.getText().toString());
+        }
+
+        try {
+            DBHelper dbHelper = MoneyApplication.getInstance().GetDBHelper();
+            Goal goal = new Goal(name,notes,goalDate,req,av);
+            dbHelper.getGoalDAO().create(goal);
+        }catch (SQLException ex){
+
+        }
+        BusProvider.postOnMain(new GoalsChangeEvent());
+        materialDialog.dismiss();
     }
 
     public static class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {

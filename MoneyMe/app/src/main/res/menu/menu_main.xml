@@ -1,19 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/last_month"
+        android:id="@+id/search_main"
         android:orderInCategory="1"
-        android:title="@string/period_last_month" />
+        android:title="@string/search_title"
+        android:icon="@drawable/ic_search_white_24dp"
+        app:showAsAction="always"
+        app:actionViewClass="android.support.v7.widget.SearchView"/>
     <item
-        android:id="@+id/last_week"
+        android:id="@+id/synchronize"
         android:orderInCategory="2"
-        android:title="@string/period_last_week" />
-    <item
-        android:id="@+id/this_week"
-        android:orderInCategory="3"
-        android:title="@string/period_this_week" />
-    <item
-        android:id="@+id/this_month"
-        android:orderInCategory="4"
-        android:title="@string/period_this_month" />
+        android:title="@string/synchronizeIt" />
 </menu>
