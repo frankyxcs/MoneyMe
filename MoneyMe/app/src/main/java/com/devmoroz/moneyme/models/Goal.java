@@ -61,6 +61,10 @@ public class Goal {
         return accumulated;
     }
 
+    public void setAccumulated(int accumulated) {
+        this.accumulated = accumulated;
+    }
+
     public int getCurrency() {
         return currency;
     }

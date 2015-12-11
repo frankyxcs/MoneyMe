@@ -17,7 +17,8 @@
     <com.devmoroz.moneyme.widgets.EmptyRecyclerView
         android:id="@+id/accountsList"
         android:layout_width="match_parent"
-        android:layout_height="100dp"/>
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
 
     <android.support.v7.widget.CardView
         android:id="@+id/add_new_account"

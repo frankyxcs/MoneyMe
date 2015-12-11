@@ -13,6 +13,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.SwitchCompat;
 import android.text.Editable;
 import android.text.InputFilter;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -62,6 +63,7 @@ public class GoalsFragment extends Fragment {
     EditText goalName;
 
     List<Goal> goals;
+    private int addedAmount = 0;
 
     public static GoalsFragment getInstance() {
         Bundle args = new Bundle();
@@ -110,7 +112,37 @@ public class GoalsFragment extends Fragment {
             }
             @Override
             public void onEditClick(int id) {
-
+                final int itemId = id;
+                addedAmount = 0;
+                new MaterialDialog.Builder(getContext())
+                        .title(R.string.add_amount)
+                        .inputRangeRes(1, 9, R.color.holo_red_dark)
+                        .inputType(InputType.TYPE_CLASS_NUMBER)
+                        .negativeText(R.string.cancel)
+                        .positiveText(R.string.save)
+                        .positiveColorRes(R.color.colorPrimary)
+                        .negativeColorRes(R.color.colorPrimary)
+                        .input(null, null, new MaterialDialog.InputCallback() {
+                            @Override
+                            public void onInput(MaterialDialog dialog, CharSequence input) {
+                                addedAmount = Integer.parseInt(input.toString());
+                            }
+                        })
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+                                if(addedAmount == 0){
+                                    String value = materialDialog.getInputEditText().getText().toString();
+                                    if(FormatUtils.isNotEmpty(value)){
+                                        addedAmount = Integer.parseInt(value);
+                                    }
+                                }
+                                if (CommonUtils.updateGoal(itemId,addedAmount) == 1) {
+                                    BusProvider.postOnMain(new GoalsChangeEvent());
+                                }
+                            }
+                        })
+                        .show();
             }
         });
         recyclerView.setAdapter(adapter);
@@ -203,7 +235,6 @@ public class GoalsFragment extends Fragment {
         if(!FormatUtils.isEmpty(availableEditText)){
             av = Integer.parseInt(availableEditText.getText().toString());
         }
-
         try {
             DBHelper dbHelper = MoneyApplication.getInstance().GetDBHelper();
             Goal goal = new Goal(name,notes,goalDate,req,av);

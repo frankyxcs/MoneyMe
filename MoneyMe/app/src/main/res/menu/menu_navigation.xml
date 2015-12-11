@@ -1,28 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <group android:id="@+id/menu_top"
+    <group
+        android:id="@+id/menu_top"
         android:checkableBehavior="single">
-    <item
-        android:id="@+id/item_navigation_drawer_accounts"
-        android:icon="@drawable/ic_wallet"
-        android:title="@string/accounts" />
-    <item
-        android:id="@+id/item_navigation_drawer_history"
-        android:icon="@drawable/ic_history"
-        android:title="@string/history" />
-    <item
-        android:id="@+id/item_navigation_drawer_chart"
-        android:icon="@drawable/ic_chart_pie"
-        android:title="@string/chart" />
-    <item
-        android:id="@+id/item_navigation_drawer_goals"
-        android:icon="@drawable/ic_goals"
-        android:title="@string/goals" />
+        <item
+            android:id="@+id/item_navigation_drawer_accounts"
+            android:icon="@drawable/ic_wallet"
+            android:title="@string/accounts" />
+        <item
+            android:id="@+id/item_navigation_drawer_history"
+            android:icon="@drawable/ic_history"
+            android:title="@string/history" />
+        <item
+            android:id="@+id/item_navigation_drawer_chart"
+            android:icon="@drawable/ic_chart_pie"
+            android:title="@string/chart" />
+        <item
+            android:id="@+id/item_navigation_drawer_goals"
+            android:icon="@drawable/ic_goals"
+            android:title="@string/goals" />
     </group>
 
     <item android:title="@string/option_other">
-          <group android:id="@+id/menu_bottom1"
-                android:checkableBehavior="none">
+        <group
+            android:id="@+id/menu_bottom1"
+            android:checkableBehavior="none">
             <item
                 android:id="@+id/item_navigation_drawer_regular"
                 android:icon="@drawable/ic_regular"
@@ -31,22 +33,24 @@
                 android:id="@+id/item_navigation_drawer_statistics"
                 android:icon="@drawable/ic_statistics"
                 android:title="@string/statistics" />
-            </group>
+        </group>
 
-            <group android:id="@+id/menu_bottom2"
-                android:checkableBehavior="none">
-                <item
-                    android:id="@+id/item_navigation_drawer_export"
-                    android:icon="@drawable/ic_export"
-                    android:title="@string/csv_export" />
-                <item
-                    android:id="@+id/item_navigation_drawer_import"
-                    android:icon="@drawable/ic_import"
-                    android:title="@string/csv_import" />
-            </group>
+        <group
+            android:id="@+id/menu_bottom2"
+            android:checkableBehavior="none">
+            <item
+                android:id="@+id/item_navigation_drawer_export"
+                android:icon="@drawable/ic_export"
+                android:title="@string/csv_export" />
+            <item
+                android:id="@+id/item_navigation_drawer_import"
+                android:icon="@drawable/ic_import"
+                android:title="@string/csv_import" />
+        </group>
 
-            <group android:id="@+id/menu_bottom3"
-                android:checkableBehavior="none">
+        <group
+            android:id="@+id/menu_bottom3"
+            android:checkableBehavior="none">
             <item
                 android:id="@+id/item_navigation_drawer_settings"
                 android:icon="@drawable/ic_settings"
@@ -55,6 +59,6 @@
                 android:id="@+id/item_navigation_drawer_about"
                 android:icon="@drawable/ic_information"
                 android:title="@string/option_about_help" />
-            </group>
+        </group>
     </item>
 </menu>

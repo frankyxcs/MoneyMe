@@ -27,9 +27,11 @@ import com.devmoroz.moneyme.R;
 import com.devmoroz.moneyme.adapters.AccountsAdapter;
 import com.devmoroz.moneyme.eventBus.BusProvider;
 import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
+import com.devmoroz.moneyme.helpers.DBHelper;
 import com.devmoroz.moneyme.models.Account;
 import com.devmoroz.moneyme.models.AccountRow;
 import com.devmoroz.moneyme.models.Currency;
+import com.devmoroz.moneyme.models.Goal;
 import com.devmoroz.moneyme.utils.CurrencyCache;
 import com.devmoroz.moneyme.utils.FormatUtils;
 import com.devmoroz.moneyme.widgets.DecimalDigitsInputFilter;
@@ -37,6 +39,7 @@ import com.devmoroz.moneyme.widgets.DividerItemDecoration;
 import com.devmoroz.moneyme.widgets.EmptyRecyclerView;
 import com.squareup.otto.Subscribe;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -135,8 +138,7 @@ public class AccountsFragment extends Fragment {
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
-                        View view = materialDialog.getCustomView();
-                        CreateNewAccount(view);
+                        CreateNewAccount(materialDialog);
                     }
                 })
                 .build();
@@ -168,8 +170,28 @@ public class AccountsFragment extends Fragment {
         positiveAction.setEnabled(false);
     }
 
-    private void CreateNewAccount(View view){
+    private void CreateNewAccount(MaterialDialog materialDialog){
+        View v = materialDialog.getCustomView();
 
+        EditText nameEditText =(EditText) v.findViewById(R.id.accountAddName);
+        EditText balanceEditText =(EditText) v.findViewById(R.id.accountAddBalance);
+        Spinner typeSpinner = (Spinner) v.findViewById(R.id.accountAddType);
+
+        String name = nameEditText.getText().toString();
+        int type = typeSpinner.getSelectedItemPosition();
+        double amount = 0f;
+        if(!FormatUtils.isEmpty(balanceEditText)){
+            amount = Double.parseDouble(balanceEditText.getText().toString());
+        }
+        try {
+            DBHelper dbHelper = MoneyApplication.getInstance().GetDBHelper();
+            Account account = new Account(name,amount,type);
+            dbHelper.getAccountDAO().create(account);
+        }catch (SQLException ex){
+
+        }
+        BusProvider.postOnMain(new WalletChangeEvent());
+        materialDialog.dismiss();
     }
 
     @Subscribe

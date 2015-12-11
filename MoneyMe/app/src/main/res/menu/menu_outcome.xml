@@ -13,4 +13,10 @@
         android:orderInCategory="2"
         android:icon="@drawable/ic_image_white_24dp"
         app:showAsAction="ifRoom"/>
+
+    <item android:id="@+id/calculator_outcome_toolbar"
+        android:title="@string/calculator"
+        android:orderInCategory="2"
+        android:icon="@drawable/ic_apps_white_24dp"
+        app:showAsAction="ifRoom"/>
 </menu>

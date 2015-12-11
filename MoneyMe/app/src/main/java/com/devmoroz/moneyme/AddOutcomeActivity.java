@@ -12,11 +12,14 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.NavUtils;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
+import android.text.method.DigitsKeyListener;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -42,12 +45,14 @@ import com.devmoroz.moneyme.utils.Constants;
 import com.devmoroz.moneyme.utils.CurrencyCache;
 import com.devmoroz.moneyme.utils.FormatUtils;
 import com.devmoroz.moneyme.utils.datetime.TimeUtils;
+import com.devmoroz.moneyme.widgets.CalculatorDialog;
 import com.devmoroz.moneyme.widgets.DecimalDigitsInputFilter;
 
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -226,6 +231,9 @@ public class AddOutcomeActivity extends AppCompatActivity {
             case (android.R.id.home):
                 NavUtils.navigateUpFromSameTask(this);
                 return true;
+            case (R.id.calculator_outcome_toolbar):
+                openCalculatorDialog();
+                return true;
             case (R.id.image_outcome_toolbar):
                 final String[] items = new String[]{getString(R.string.new_picture),
                         getString(R.string.select_from_gallery)};
@@ -254,6 +262,19 @@ public class AddOutcomeActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void openCalculatorDialog() {
+       final MaterialDialog dialog = new MaterialDialog.Builder(AddOutcomeActivity.this)
+                .customView(R.layout.dialog_calculator, false).build();
+        CalculatorDialog calc = new CalculatorDialog(dialog.getCustomView(),new CalculatorDialog.Callback(){
+            @Override
+            public void onCloseClick(String result) {
+                amount.setText(result);
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
 
 

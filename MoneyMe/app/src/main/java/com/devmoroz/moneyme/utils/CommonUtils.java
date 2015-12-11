@@ -7,6 +7,7 @@ import com.devmoroz.moneyme.logging.L;
 import com.devmoroz.moneyme.models.Account;
 import com.devmoroz.moneyme.models.CommonInOut;
 import com.devmoroz.moneyme.models.Currency;
+import com.devmoroz.moneyme.models.Goal;
 import com.devmoroz.moneyme.models.Income;
 import com.devmoroz.moneyme.models.Outcome;
 
@@ -119,7 +120,18 @@ public class CommonUtils {
         try {
             return dbHelper.getGoalDAO().deleteById(id);
         } catch (SQLException ex) {
-            return 9999999;
+            return -1;
+        }
+    }
+
+    public static int updateGoal(int id, int amount) {
+        DBHelper dbHelper = MoneyApplication.getInstance().GetDBHelper();
+        try {
+            Goal goal = dbHelper.getGoalDAO().queryForId(id);
+            goal.setAccumulated(goal.getAccumulated() + amount);
+            return dbHelper.getGoalDAO().update(goal);
+        } catch (SQLException ex) {
+            return -1;
         }
     }
 }
