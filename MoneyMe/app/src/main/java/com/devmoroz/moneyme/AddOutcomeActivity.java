@@ -271,6 +271,7 @@ public class AddOutcomeActivity extends AppCompatActivity {
             @Override
             public void onCloseClick(String result) {
                 amount.setText(result);
+                amount.setSelection(result.length());
                 dialog.dismiss();
             }
         });

@@ -6,10 +6,10 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.devmoroz.moneyme.R;
+import com.devmoroz.moneyme.utils.Expression;
 import com.devmoroz.moneyme.utils.FormatUtils;
 
-import java.util.ArrayList;
-import java.util.Objects;
+import java.math.BigDecimal;
 
 
 public class CalculatorDialog {
@@ -30,16 +30,9 @@ public class CalculatorDialog {
             button_multiply, button_divide,
             button_back, button_dot, button_equals, button_clear, button_close;
 
-    ArrayList<Double> math = new ArrayList<>();
-    double first_number;
-    double second_number;
-    double third_number;
-    String intermediate_value = "";
+    String calc = "";
+    String calculationRes = "";
 
-    int currentOperation = 0;
-    int nextOperation = 0;
-    int tempOperation = 0;
-    boolean waitForThirdNumber = false;
     final static int ADD = 1;
     final static int SUBTRACT = 2;
     final static int MULTIPLY = 3;
@@ -47,7 +40,9 @@ public class CalculatorDialog {
     final static int EQUALS = 9;
     final static int CLEAR = 5;
     final static int DONT_CLEAR = 0;
+    final static int TOTAL_CLEAR = 6;
     int clearDisplay = 0;
+
     int MAX_LENGTH = 10;
 
     public CalculatorDialog(View v, Callback callback) {
@@ -82,6 +77,10 @@ public class CalculatorDialog {
     }
 
     private void setCalcText(String num) {
+        if(clearDisplay == TOTAL_CLEAR){
+            calculator_result.setText("");
+            calculator_preview.setText("");
+        }
         if (clearDisplay == CLEAR) {
             calculator_result.setText("");
         }
@@ -93,8 +92,7 @@ public class CalculatorDialog {
         button_close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String result = calculator_result.getText().toString();
-                mCallback.onCloseClick(result);
+                mCallback.onCloseClick(calculationRes);
             }
         });
         button_one.setOnClickListener(new View.OnClickListener() {
@@ -154,10 +152,14 @@ public class CalculatorDialog {
         button_zero.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (clearDisplay == CLEAR) {
+                if(clearDisplay == TOTAL_CLEAR){
+                    calculator_preview.setText("");
                     calculator_result.setText("");
                 }
-                if (calculator_result.getText().toString() == "0") {
+                if (clearDisplay == CLEAR ) {
+                    calculator_result.setText("0");
+                }
+                if (calculator_result.getText().toString().equals("0")) {
                     clearDisplay = CLEAR;
                     return;
                 }
@@ -168,12 +170,16 @@ public class CalculatorDialog {
         button_dot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (clearDisplay == CLEAR) {
+                if (clearDisplay == CLEAR || clearDisplay == TOTAL_CLEAR) {
                     calculator_result.setText("0");
                 }
                 if (calculator_result.getText().toString().contains(".")) {
                     return;
-                } else calculator_result.append(".");
+                }
+                else{
+                    calculator_result.append(".");
+                    clearDisplay = DONT_CLEAR;
+                }
             }
         });
         button_plus.setOnClickListener(new View.OnClickListener() {
@@ -203,11 +209,11 @@ public class CalculatorDialog {
         button_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (clearDisplay == CLEAR) {
+                if (clearDisplay == CLEAR || clearDisplay == TOTAL_CLEAR) {
                     return;
                 }
                 String text = calculator_result.getText().toString();
-                if (FormatUtils.isEmpty(text) || text == "0") {
+                if (FormatUtils.isEmpty(text) || text.equals("0")) {
                     return;
                 } else if (text.length() == 1) {
                     calculator_result.setText("0");
@@ -229,26 +235,51 @@ public class CalculatorDialog {
             public void onClick(View v) {
                 calculator_result.setText("0");
                 calculator_preview.setText("");
+                calculationRes = "";
                 clearDisplay = CLEAR;
-                first_number = 0;
-                second_number = 0;
-                third_number = 0;
-                math.removeAll(math);
             }
         });
     }
 
+    private void calculate(){
+        calc = calculator_preview.getText().toString();
+        if(calc.isEmpty()){
+            return;
+        }
+        try {
+            Expression e = new Expression(calc);
+            e = e.setPrecision(3);
+            BigDecimal result_bd = e.eval();
+            calculationRes = String.format("%.2f", result_bd);
+            String tmp_result = result_bd.toPlainString();
+            calculator_result.setText(tmp_result);
+            calc = "";
+            clearDisplay = TOTAL_CLEAR;
+        }catch (Exception ex){
+            calculationRes = "";
+        }
+    }
+
     private void calcLogic(int operator) {
 
+        if(operator == EQUALS){
+            if(clearDisplay == DONT_CLEAR){
+                calculator_preview.append(calculator_result.getText().toString());
+                calculate();
+                return;
+            }
+        }
+        if(clearDisplay == TOTAL_CLEAR){
+            calculator_preview.setText("");
+            clearDisplay = DONT_CLEAR;
+        }
         if (clearDisplay == DONT_CLEAR) {
             String calc_result = calculator_result.getText().toString();
             if (calc_result.endsWith(".") || calc_result.endsWith(".0") || calc_result.endsWith(".00")) {
                 String formattedText = calc_result.substring(0, calc_result.indexOf("."));
                 calculator_preview.append(formattedText);
-                math.add(Double.parseDouble(formattedText));
             } else {
                 calculator_preview.append(calc_result);
-                math.add(Double.parseDouble(calc_result));
             }
 
         }
@@ -262,117 +293,19 @@ public class CalculatorDialog {
         switch (operator) {
             case ADD:
                 calculator_preview.append(" + ");
-                calculate(ADD);
                 break;
             case SUBTRACT:
                 calculator_preview.append(" - ");
-                calculate(SUBTRACT);
                 break;
             case MULTIPLY:
                 calculator_preview.append(" * ");
-                calculate(MULTIPLY);
                 break;
             case DIVISION:
                 calculator_preview.append(" / ");
-                calculate(DIVISION);
-                break;
-            case EQUALS:
-                calculator_preview.setText("");
-                calculate(EQUALS);
                 break;
         }
-
         clearDisplay = CLEAR;
     }
 
-    private void calculate(int operator) {
-        if (operator != EQUALS) {
-            nextOperation = operator;
-        } else {
-            nextOperation = 0;
-            waitForThirdNumber = false;
-        }
-        if (math.size() == 3) {
-            if ((operator == MULTIPLY || operator == DIVISION) && !waitForThirdNumber) {
-                waitForThirdNumber = true;
-            } else{
-                waitForThirdNumber = false;
-            }
-            switch (currentOperation) {
-                case ADD:
-                    first_number = math.get(0);
-                    second_number = math.get(1);
-                    math.removeAll(math);
-                    math.add(first_number + second_number);
-                    calculator_result.setText(String.format("%.2f", math.get(0)));
-                    break;
-                case SUBTRACT:
-                    first_number = math.get(0);
-                    second_number = math.get(1);
-                    math.removeAll(math);
-                    math.add(first_number - second_number);
-                    calculator_result.setText(String.format("%.2f", math.get(0)));
-                    break;
-                case MULTIPLY:
-                    first_number = math.get(0);
-                    second_number = math.get(1);
-                    math.removeAll(math);
-                    math.add(first_number * second_number);
-                    calculator_result.setText(String.format("%.2f", math.get(0)));
-                    break;
-                case DIVISION:
-                    first_number = math.get(0);
-                    second_number = math.get(1);
-                    math.removeAll(math);
-                    math.add(first_number / second_number);
-                    calculator_result.setText(String.format("%.2f", math.get(0)));
-                    break;
-            }
-        }
-        if (math.size() == 2) {
-            if ((operator == MULTIPLY || operator == DIVISION) && !waitForThirdNumber) {
-                tempOperation = currentOperation;
-                waitForThirdNumber = true;
-            }
-        }
-        if (math.size() == 2 && !waitForThirdNumber) {
-            switch (currentOperation) {
-                case ADD:
-                    first_number = math.get(0);
-                    second_number = math.get(1);
-                    math.removeAll(math);
-                    math.add(first_number + second_number);
-                    calculator_result.setText(String.format("%.2f", math.get(0)));
-                    break;
-                case SUBTRACT:
-                    first_number = math.get(0);
-                    second_number = math.get(1);
-                    math.removeAll(math);
-                    math.add(first_number - second_number);
-                    calculator_result.setText(String.format("%.2f", math.get(0)));
-                    break;
-                case MULTIPLY:
-                    first_number = math.get(0);
-                    second_number = math.get(1);
-                    math.removeAll(math);
-                    math.add(first_number * second_number);
-                    calculator_result.setText(String.format("%.2f", math.get(0)));
-                    break;
-                case DIVISION:
-                    first_number = math.get(0);
-                    second_number = math.get(1);
-                    math.removeAll(math);
-                    math.add(first_number / second_number);
-                    calculator_result.setText(String.format("%.2f", math.get(0)));
-                    break;
-            }
-        }
-        currentOperation = nextOperation;
-        if (operator == EQUALS) {
-            first_number = 0;
-            second_number = 0;
-            third_number = 0;
-            math.removeAll(math);
-        }
-    }
+
 }

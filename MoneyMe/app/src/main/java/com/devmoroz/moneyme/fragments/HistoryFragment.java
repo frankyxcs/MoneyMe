@@ -5,6 +5,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
+import android.text.format.DateUtils;
+import android.util.SparseBooleanArray;
+import android.util.SparseIntArray;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,17 +35,22 @@ import com.devmoroz.moneyme.utils.datetime.PeriodUtils;
 import com.devmoroz.moneyme.utils.datetime.TimeUtils;
 import com.devmoroz.moneyme.widgets.CustomRecyclerScroll;
 import com.devmoroz.moneyme.widgets.EmptyRecyclerView;
+import com.devmoroz.moneyme.widgets.SectionedRecyclerViewAdapter;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.squareup.otto.Subscribe;
 
 
 import java.util.ArrayList;
+import java.util.Formatter;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 public class HistoryFragment extends Fragment {
 
     private static final String STATE_WALLET_ENTRIES = "state_wallet_entries";
     private ArrayList<CommonInOut> mListWalletEntries = new ArrayList<>();
+    private List<SectionedRecyclerViewAdapter.Section> mSections;
     private List<Account> accounts;
     double totalBalance;
 
@@ -127,25 +135,6 @@ public class HistoryFragment extends Fragment {
 
             }
         });
-        recyclerView.setAdapter(wAdapter);
-
-        recyclerView.addOnScrollListener(new CustomRecyclerScroll() {
-            @Override
-            public void show() {
-                if (fab != null) {
-                    fab.collapse();
-                    fab.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2)).start();
-                }
-            }
-
-            @Override
-            public void hide() {
-                if (fab != null) {
-                    fab.collapse();
-                    fab.animate().translationY(fab.getHeight() + TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics())).setInterpolator(new AccelerateInterpolator(2)).start();
-                }
-            }
-        });
         boolean desc = Preferences.isSortByDesc(getContext());
 
         if (savedInstanceState != null) {
@@ -156,7 +145,30 @@ public class HistoryFragment extends Fragment {
             wAdapter.setInOutData(mListWalletEntries);
         }
         initBalanceWidget(desc);
+        initHistoryAdapter();
         return view;
+    }
+
+    private void initHistoryAdapter() {
+        mSections = new ArrayList<>();
+        long previousTime = -1;
+        long time;
+        int position = 0;
+        for(CommonInOut item : mListWalletEntries){
+            time = item.getDateLong();
+            if (!TimeUtils.isSameDayDisplay(previousTime, time)) {
+                mSections.add(new SectionedRecyclerViewAdapter.Section(position,
+                        TimeUtils.formatHumanFriendlyShortDate(getContext(),time)
+                ));
+            }
+            ++position;
+            previousTime = time;
+        }
+        SectionedRecyclerViewAdapter sectionAdapter = new SectionedRecyclerViewAdapter(getContext(),R.layout.section,R.id.section_text,wAdapter);
+        SectionedRecyclerViewAdapter.Section[] dummy = new SectionedRecyclerViewAdapter.Section[mSections.size()];
+        sectionAdapter.setSections(mSections.toArray(dummy));
+
+        recyclerView.setAdapter(sectionAdapter);
     }
 
     private void initBalanceWidget(boolean order) {
@@ -202,6 +214,7 @@ public class HistoryFragment extends Fragment {
         sorter.sortWalletEntriesByDate(mListWalletEntries, desc);
         initBalanceWidget(desc);
         wAdapter.setInOutData(mListWalletEntries);
+        initHistoryAdapter();
     }
 
     @Subscribe

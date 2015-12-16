@@ -57,12 +57,6 @@ public class AccountsFragment extends Fragment {
     private TextInputLayout accountNameInput;
     private View positiveAction;
 
-
-
-
-    public AccountsFragment() {
-    }
-
     public static AccountsFragment getInstance() {
         Bundle args = new Bundle();
         AccountsFragment fragment = new AccountsFragment();

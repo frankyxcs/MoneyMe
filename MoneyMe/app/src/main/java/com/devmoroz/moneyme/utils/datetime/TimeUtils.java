@@ -107,10 +107,20 @@ public class TimeUtils {
     }
 
     public static String formatIntervalTimeString(long intervalStart, StringBuilder recycle, Context context) {
-        return formatIntervalTimeString(intervalStart,getCurrentTime(),recycle,context);
+        return formatIntervalTimeString(intervalStart, getCurrentTime(), recycle, context);
     }
 
     public static long getCurrentTime() {
        return System.currentTimeMillis();
+    }
+
+    public static boolean isSameDayDisplay(long time1, long time2) {
+        TimeZone displayTimeZone = TimeZone.getDefault();
+        Calendar cal1 = Calendar.getInstance(displayTimeZone);
+        Calendar cal2 = Calendar.getInstance(displayTimeZone);
+        cal1.setTimeInMillis(time1);
+        cal2.setTimeInMillis(time2);
+        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR)
+                && cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR);
     }
 }

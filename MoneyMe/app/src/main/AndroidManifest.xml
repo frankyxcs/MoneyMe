@@ -66,7 +66,7 @@
             android:launchMode="singleTask" >
             <intent-filter>
                 <!-- Change this to be db- followed by your app key -->
-                <data android:scheme="db-key" />
+                <data android:scheme="db-asdasdas" />
 
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.BROWSABLE" />
