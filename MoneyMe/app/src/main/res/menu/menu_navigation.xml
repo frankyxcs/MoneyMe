@@ -46,6 +46,10 @@
                 android:id="@+id/item_navigation_drawer_import"
                 android:icon="@drawable/ic_import"
                 android:title="@string/csv_import" />
+            <item
+                android:id="@+id/item_navigation_drawer_backup"
+                android:icon="@drawable/ic_database_plus"
+                android:title="@string/backup" />
         </group>
 
         <group

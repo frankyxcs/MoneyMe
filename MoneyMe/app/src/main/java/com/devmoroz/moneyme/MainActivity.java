@@ -2,6 +2,7 @@ package com.devmoroz.moneyme;
 
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -17,10 +18,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.devmoroz.moneyme.adapters.TabsPagerFragmentAdapter;
 import com.devmoroz.moneyme.eventBus.AppInitCompletedEvent;
 import com.devmoroz.moneyme.eventBus.BusProvider;
 import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
+import com.devmoroz.moneyme.export.backup.BackupTask;
 import com.devmoroz.moneyme.helpers.CurrencyHelper;
 import com.devmoroz.moneyme.helpers.DBHelper;
 import com.devmoroz.moneyme.logging.L;
@@ -183,11 +187,56 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.item_navigation_drawer_settings:
                         navigate(SettingsActivity.class);
                         return true;
+                    case R.id.item_navigation_drawer_backup:
+                        showBackupDialog();
+                        return true;
                 }
                 return true;
             }
         });
 
+    }
+
+    private void showBackupDialog() {
+        new MaterialDialog.Builder(this)
+                .title(R.string.backup)
+                .content(R.string.backup_dialog_content)
+                .positiveText(R.string.ok_continue)
+                .negativeText(R.string.cancel)
+                .positiveColorRes(R.color.colorPrimary)
+                .negativeColorRes(R.color.colorPrimary)
+                .widgetColorRes(R.color.colorPrimary)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
+
+                        final ProgressDialog dialog = new ProgressDialog(MainActivity.this);
+                        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                        dialog.setCancelable(false);
+                        dialog.setMessage(getString(R.string.backup_database_inprogress));
+                        dialog.show();
+
+                        new BackupTask(MainActivity.this, new BackupTask.CompletionListener() {
+                            @Override
+                            public void onBackupComplete() {
+                                dialog.dismiss();
+                                L.T(MainActivity.this, getString(R.string.backup_completed));
+                            }
+
+                            @Override
+                            public void onRestoreComplete() {
+                                dialog.dismiss();
+                            }
+
+                            @Override
+                            public void onError(int errorCode) {
+                                dialog.dismiss();
+                                L.T(MainActivity.this, "Something went wrong.Please,try again.");
+                            }
+                        }).execute(BackupTask.COMMAND_BACKUP);
+                    }
+                })
+                .show();
     }
 
     private void jumpToTab(int tab) {
