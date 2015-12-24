@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 
 import com.devmoroz.moneyme.eventBus.AppInitCompletedEvent;
 import com.devmoroz.moneyme.eventBus.BusProvider;
+import com.devmoroz.moneyme.eventBus.DBRestoredEvent;
 import com.devmoroz.moneyme.eventBus.GoalsChangeEvent;
 import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
 import com.devmoroz.moneyme.helpers.DBHelper;
@@ -140,6 +141,12 @@ public class MoneyApplication extends Application {
     }
     @Subscribe
     public void OnGoalsChange(GoalsChangeEvent event){
+        getInstance().GetGoals();
+    }
+
+    @Subscribe
+    public void OnDBRestore(DBRestoredEvent event){
+        getInstance().GetCommonData();
         getInstance().GetGoals();
     }
 

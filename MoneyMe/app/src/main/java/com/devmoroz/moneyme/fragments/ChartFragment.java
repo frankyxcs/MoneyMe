@@ -22,6 +22,7 @@ import com.devmoroz.moneyme.MoneyApplication;
 import com.devmoroz.moneyme.R;
 import com.devmoroz.moneyme.adapters.ChartLegendAdapter;
 import com.devmoroz.moneyme.eventBus.BusProvider;
+import com.devmoroz.moneyme.eventBus.DBRestoredEvent;
 import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
 import com.devmoroz.moneyme.models.Account;
 import com.devmoroz.moneyme.models.Income;
@@ -231,6 +232,16 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
 
     @Subscribe
     public void OnWalletChange(WalletChangeEvent event) {
+        CheckWallet();
+    }
+
+
+    @Subscribe
+    public void OnDbResore(DBRestoredEvent event) {
+        CheckWallet();
+    }
+
+    public void CheckWallet(){
         outs = MoneyApplication.outcomes;
         accounts = MoneyApplication.accounts;
         chart.setData(generatePieData());
@@ -239,4 +250,5 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
         chart.animateY(1400);
         customizeLegend();
     }
+
 }

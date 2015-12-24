@@ -23,6 +23,7 @@ import com.devmoroz.moneyme.MoneyApplication;
 import com.devmoroz.moneyme.R;
 import com.devmoroz.moneyme.adapters.HistoryAdapter;
 import com.devmoroz.moneyme.eventBus.BusProvider;
+import com.devmoroz.moneyme.eventBus.DBRestoredEvent;
 import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
 import com.devmoroz.moneyme.models.Account;
 import com.devmoroz.moneyme.models.CommonInOut;
@@ -219,6 +220,11 @@ public class HistoryFragment extends Fragment {
 
     @Subscribe
     public void OnWalletChange(WalletChangeEvent event) {
+        CheckWallet();
+    }
+
+    @Subscribe
+    public void OnDbResore(DBRestoredEvent event) {
         CheckWallet();
     }
 }

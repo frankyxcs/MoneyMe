@@ -26,6 +26,7 @@ import com.devmoroz.moneyme.MoneyApplication;
 import com.devmoroz.moneyme.R;
 import com.devmoroz.moneyme.adapters.AccountsAdapter;
 import com.devmoroz.moneyme.eventBus.BusProvider;
+import com.devmoroz.moneyme.eventBus.DBRestoredEvent;
 import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
 import com.devmoroz.moneyme.helpers.DBHelper;
 import com.devmoroz.moneyme.models.Account;
@@ -191,6 +192,12 @@ public class AccountsFragment extends Fragment {
     @Subscribe
     public void OnWalletChange(WalletChangeEvent event) {
        CheckWallet();
+    }
+
+
+    @Subscribe
+    public void OnDbResore(DBRestoredEvent event) {
+        CheckWallet();
     }
 
 

@@ -33,6 +33,7 @@ import com.devmoroz.moneyme.MoneyApplication;
 import com.devmoroz.moneyme.R;
 import com.devmoroz.moneyme.adapters.GoalsAdapter;
 import com.devmoroz.moneyme.eventBus.BusProvider;
+import com.devmoroz.moneyme.eventBus.DBRestoredEvent;
 import com.devmoroz.moneyme.eventBus.GoalsChangeEvent;
 import com.devmoroz.moneyme.helpers.DBHelper;
 import com.devmoroz.moneyme.models.Goal;
@@ -213,6 +214,11 @@ public class GoalsFragment extends Fragment {
 
     @Subscribe
     public void OnGoalsChange(GoalsChangeEvent event) {
+        CheckGoals();
+    }
+
+    @Subscribe
+    public void OnDbResore(DBRestoredEvent event) {
         CheckGoals();
     }
 

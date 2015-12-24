@@ -23,6 +23,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.devmoroz.moneyme.adapters.TabsPagerFragmentAdapter;
 import com.devmoroz.moneyme.eventBus.AppInitCompletedEvent;
 import com.devmoroz.moneyme.eventBus.BusProvider;
+import com.devmoroz.moneyme.eventBus.DBRestoredEvent;
 import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
 import com.devmoroz.moneyme.export.backup.BackupTask;
 import com.devmoroz.moneyme.helpers.CurrencyHelper;
@@ -30,6 +31,7 @@ import com.devmoroz.moneyme.helpers.DBHelper;
 import com.devmoroz.moneyme.logging.L;
 import com.devmoroz.moneyme.models.Account;
 import com.devmoroz.moneyme.models.Currency;
+import com.devmoroz.moneyme.utils.AppUtils;
 import com.devmoroz.moneyme.utils.Constants;
 import com.devmoroz.moneyme.utils.CurrencyCache;
 import com.getbase.floatingactionbutton.FloatingActionButton;
@@ -198,9 +200,42 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showBackupDialog() {
+        final String[] items = new String[]{getString(R.string.db_backup),
+                getString(R.string.db_restore)};
+
         new MaterialDialog.Builder(this)
                 .title(R.string.backup)
-                .content(R.string.backup_dialog_content)
+                .items(items)
+                .widgetColorRes(R.color.colorPrimary)
+                .itemsCallback(new MaterialDialog.ListCallback() {
+                    @Override
+                    public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                        switch (which) {
+                            case (0):
+                                dialog.dismiss();
+                                doBackup(BackupTask.COMMAND_BACKUP);
+                                break;
+                            case (1): {
+                                dialog.dismiss();
+                                doBackup(BackupTask.COMMAND_RESTORE);
+                                break;
+                            }
+                        }
+                    }
+                })
+                .show();
+    }
+
+    private void jumpToTab(int tab) {
+        viewPager.setCurrentItem(tab);
+    }
+
+    private void doBackup(final String action){
+        int content = action.equals(BackupTask.COMMAND_BACKUP) ? R.string.backup_dialog_content : R.string.restore_dialog_content;
+        final int progressContent = action.equals(BackupTask.COMMAND_BACKUP) ? R.string.backup_database_inprogress : R.string.restore_database_inprogress;
+        new MaterialDialog.Builder(this)
+                .title(R.string.backup)
+                .content(content)
                 .positiveText(R.string.ok_continue)
                 .negativeText(R.string.cancel)
                 .positiveColorRes(R.color.colorPrimary)
@@ -213,7 +248,7 @@ public class MainActivity extends AppCompatActivity {
                         final ProgressDialog dialog = new ProgressDialog(MainActivity.this);
                         dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                         dialog.setCancelable(false);
-                        dialog.setMessage(getString(R.string.backup_database_inprogress));
+                        dialog.setMessage(getString(progressContent));
                         dialog.show();
 
                         new BackupTask(MainActivity.this, new BackupTask.CompletionListener() {
@@ -226,21 +261,22 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onRestoreComplete() {
                                 dialog.dismiss();
+                                L.T(MainActivity.this, getString(R.string.restore_completed));
+                                BusProvider.postOnMain(new DBRestoredEvent());
                             }
 
                             @Override
                             public void onError(int errorCode) {
                                 dialog.dismiss();
+                                if (errorCode == BackupTask.RESTORE_NOFILEERROR) {
+                                    L.T(MainActivity.this, getString(R.string.restore_failed));
+                                }
                                 L.T(MainActivity.this, "Something went wrong.Please,try again.");
                             }
-                        }).execute(BackupTask.COMMAND_BACKUP);
+                        }).execute(action);
                     }
                 })
                 .show();
-    }
-
-    private void jumpToTab(int tab) {
-        viewPager.setCurrentItem(tab);
     }
 
     private void navigate(final Class<? extends Activity> activityClass) {
