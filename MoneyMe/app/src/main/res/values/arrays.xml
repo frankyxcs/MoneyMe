@@ -41,4 +41,15 @@
         <item>12</item>
         <item>0</item>
     </string-array>
+
+    <string-array name="pref_backup_frequency_options">
+        <item>@string/backup_frequency_everyday</item>
+        <item>@string/backup_frequency_everyweek</item>
+        <item>@string/backup_frequency_everymonth</item>
+    </string-array>
+    <string-array name="pref_backup_frequency_values">
+        <item>1</item>
+        <item>7</item>
+        <item>31</item>
+    </string-array>
 </resources>

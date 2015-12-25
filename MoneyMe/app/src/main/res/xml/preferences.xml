@@ -40,4 +40,26 @@
             android:layout="@layout/custom_pref"/>
     </android.support.v7.preference.PreferenceCategory>
 
+    <android.support.v7.preference.PreferenceCategory
+        android:title="@string/backup">
+
+        <android.support.v7.preference.CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/pref_auto_backup"
+            android:title="@string/auto_backup"
+            android:layout="@layout/custom_checkbox_pref"/>
+
+        <android.support.v7.preference.ListPreference
+            android:key="@string/pref_backup_frequency"
+            android:title="@string/pref_backup_frequency_title"
+            android:summary="%s"
+            android:entries="@array/pref_backup_frequency_options"
+            android:entryValues="@array/pref_backup_frequency_values"
+            android:defaultValue="1"
+            android:dependency="@string/pref_auto_backup"
+            android:layout="@layout/custom_pref"/>
+
+
+    </android.support.v7.preference.PreferenceCategory>
+
 </android.support.v7.preference.PreferenceScreen>

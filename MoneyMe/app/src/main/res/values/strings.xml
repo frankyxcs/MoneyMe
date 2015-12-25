@@ -155,6 +155,8 @@
     <string name="pref_history_order">pref_history_order</string>
     <string name="pref_history_period">pref_history_period</string>
     <string name="pref_month_start">pref_month_start</string>
+    <string name="pref_backup_frequency">pref_backup_frequency</string>
+    <string name="pref_auto_backup">pref_auto_backup</string>
 
 
     <string name="reset_preferences">Сброс настроек</string>
@@ -173,6 +175,12 @@
     <string name="history_period_6">6 месяцев</string>
     <string name="history_period_12">Год</string>
     <string name="history_period_all">За всё время</string>
+
+    <string name="backup_frequency_everyday">Каждый день</string>
+    <string name="backup_frequency_everyweek">Раз в неделю</string>
+    <string name="backup_frequency_everymonth">Раз в месяц</string>
+    <string name="pref_backup_frequency_title">Частота</string>
+
 
     <string name="divide">/</string>
     <string name="plus">+</string>
