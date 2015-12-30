@@ -358,6 +358,7 @@ public class AddOutcomeActivity extends AppCompatActivity {
             int year = c.get(Calendar.YEAR);
             int month = c.get(Calendar.MONTH);
             int day = c.get(Calendar.DAY_OF_MONTH);
+            outcomeDate = c.getTime();
 
             return new DatePickerDialog(getActivity(), this, year, month, day);
         }

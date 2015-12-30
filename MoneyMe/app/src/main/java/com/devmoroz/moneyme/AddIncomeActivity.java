@@ -207,6 +207,7 @@ public class AddIncomeActivity extends AppCompatActivity {
             int year = c.get(Calendar.YEAR);
             int month = c.get(Calendar.MONTH);
             int day = c.get(Calendar.DAY_OF_MONTH);
+            incomeDate = c.getTime();
 
             return new DatePickerDialog(getActivity(), this, year, month, day);
         }
