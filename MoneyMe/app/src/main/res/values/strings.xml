@@ -142,6 +142,7 @@
     <string name="type">Тип</string>
     <string name="balance_formatted" formatted="false">Баланс %s</string>
     <string name="edit">Редактировать</string>
+    <string name="edit_entity">Редактировать запись</string>
     <string name="remove">Удалить</string>
      <string name="application_info_text" formatted="false">
         <![CDATA[

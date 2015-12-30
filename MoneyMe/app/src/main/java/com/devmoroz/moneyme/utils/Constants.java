@@ -12,4 +12,7 @@ public class Constants {
     public static final int TAB_GOALS = 3;
     public static final int TAB_ACCOUNTS = 2;
     public static final int TAB_COUNT = 4;
+    public final static String DETAILS_ITEM_ID = "detailsItemId";
+    public final static String DETAILS_ITEM_TYPE = "detailsItemType";
+    public final static String IMAGE_PATH = "itemImagePath";
 }

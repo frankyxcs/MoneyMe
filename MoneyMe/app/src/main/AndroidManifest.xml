@@ -25,14 +25,26 @@
         </activity>
 
         <activity android:name=".AddOutcomeActivity" android:screenOrientation="portrait"
-            android:configChanges="orientation|screenSize" android:windowSoftInputMode="stateVisible|adjustResize">
+            android:configChanges="orientation|screenSize" android:windowSoftInputMode="adjustResize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
 
         <activity android:name=".AddIncomeActivity" android:screenOrientation="portrait"
-            android:configChanges="orientation|screenSize" android:windowSoftInputMode="stateVisible|adjustResize">
+            android:configChanges="orientation|screenSize" android:windowSoftInputMode="adjustResize">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+        <activity android:name=".DetailsActivity" android:screenOrientation="portrait"
+            android:configChanges="orientation|screenSize" android:windowSoftInputMode="adjustResize">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+        <activity android:name=".FullScreenImageActivity" android:screenOrientation="portrait"
+            android:configChanges="screenSize" android:windowSoftInputMode="adjustResize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />

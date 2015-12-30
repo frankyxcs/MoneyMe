@@ -51,6 +51,18 @@ public class Income {
 
     public String getAccountName() { return account.getName();}
 
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
+    public void setDateOfReceipt(Date dateOfReceipt) {
+        this.dateOfReceipt = dateOfReceipt;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
     public Income(String notes, Date dateOfReceipt, double amount, Account account) {
         this.notes = notes;
         this.account = account;

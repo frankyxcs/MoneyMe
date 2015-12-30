@@ -76,6 +76,18 @@ public class Outcome {
         return location;
     }
 
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
+    public void setDateOfSpending(Date dateOfSpending) {
+        this.dateOfSpending = dateOfSpending;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
     public Outcome(String notes, Date dateOfSpending, double amount, String category,Account account) {
         this.notes = notes;
         this.dateOfSpending = dateOfSpending;

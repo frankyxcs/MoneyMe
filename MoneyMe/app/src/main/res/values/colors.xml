@@ -27,10 +27,10 @@
     <color name="positive_amount">@color/holo_green_dark</color>
     <color name="negative_amount">@color/holo_red_dark</color>
 
-    <color name="fab_income_normal">#009688</color>
-    <color name="fab_income_pressed">#26A69A</color>
-    <color name="fab_outcome_normal">#e91e63</color>
-    <color name="fab_outcome_pressed">#ec407a</color>
+    <color name="fab_income_normal">#388E3C</color>
+    <color name="fab_income_pressed">#4CAF50</color>
+    <color name="fab_outcome_normal">#D32F2F</color>
+    <color name="fab_outcome_pressed">#F44336</color>
 
 
     <color name="text">#fff</color>

@@ -16,8 +16,29 @@
         <item name="preferenceTheme">@style/AppPreferenceThemeOverlay</item>
     </style>
 
+    <style name="DetailsIncome" parent="AppDefault">
+        <item name="colorPrimary">@color/fab_income_pressed</item>
+        <item name="colorPrimaryDark">@color/fab_income_normal</item>
+    </style>
+
+    <style name="DetailsOutcome" parent="AppDefault">
+        <item name="colorPrimary">@color/fab_outcome_pressed</item>
+        <item name="colorPrimaryDark">@color/fab_outcome_normal</item>
+    </style>
+
     <style name="AppDefaultOutcome" parent="AppTheme">
         <item name="colorControlActivated">@color/colorPrimaryDark</item>
+    </style>
+
+    <style name="CustomActionBar" parent="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="windowActionBarOverlay">true</item>
+    </style>
+
+    <style name="FullScreenImageStyle" parent="AppTheme">
+        <item name="colorPrimary">@color/colorPrimaryText</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryText</item>
+        <item name="colorControlNormal">@color/colorWhite</item>
     </style>
 
     <style name="AppPreferenceThemeOverlay" parent="PreferenceThemeOverlay">
@@ -73,5 +94,13 @@
         <item name="android:paddingLeft">16dp</item>
         <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
         <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="Widget.CardContent" parent="android:Widget">
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:paddingTop">24dp</item>
+        <item name="android:paddingBottom">24dp</item>
+        <item name="android:orientation">vertical</item>
     </style>
 </resources>

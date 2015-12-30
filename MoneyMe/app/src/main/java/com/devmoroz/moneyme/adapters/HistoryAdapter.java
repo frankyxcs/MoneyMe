@@ -2,6 +2,7 @@ package com.devmoroz.moneyme.adapters;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
@@ -14,8 +15,11 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.devmoroz.moneyme.DetailsActivity;
+import com.devmoroz.moneyme.FullScreenImageActivity;
 import com.devmoroz.moneyme.R;
 import com.devmoroz.moneyme.models.CommonInOut;
+import com.devmoroz.moneyme.utils.Constants;
 import com.devmoroz.moneyme.utils.FormatUtils;
 import com.devmoroz.moneyme.utils.PhotoUtil;
 import com.devmoroz.moneyme.utils.datetime.TimeUtils;
@@ -54,8 +58,8 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
     }
 
     @Override
-    public void onBindViewHolder(MainViewHolder holder, int position) {
-        CommonInOut wData = inOutData.get(position);
+    public void onBindViewHolder(final MainViewHolder holder, int position) {
+        final CommonInOut wData = inOutData.get(position);
         holder.setItemDetails(wData.getId(), wData.getType());
 
         TextView textAmount = holder.textAmount;
@@ -92,12 +96,35 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
         if(FormatUtils.isNotEmpty(wData.getPhoto())){
             PhotoUtil.setImageWithPicasso(appContext,wData.getPhoto(),photoView);
             photoView.setVisibility(View.VISIBLE);
+
+            holder.attachedPhoto.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Context context = v.getContext();
+                    Intent intent = new Intent(context, FullScreenImageActivity.class);
+                    intent.putExtra(Constants.IMAGE_PATH, wData.getPhoto());
+
+                    context.startActivity(intent);
+                }
+            });
         }
         else
         {
             photoView.setVisibility(View.GONE);
             photoView.setImageDrawable(null);
         }
+
+        holder.mView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Context context = v.getContext();
+                Intent intent = new Intent(context, DetailsActivity.class);
+                intent.putExtra(Constants.DETAILS_ITEM_TYPE, holder.itemType);
+                intent.putExtra(Constants.DETAILS_ITEM_ID, holder.itemId);
+
+                context.startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -107,6 +134,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
 
     public class MainViewHolder extends RecyclerView.ViewHolder{
 
+        View mView;
         TextView textAmount;
         TextView textCategory;
         TextView textDateAdded;
@@ -125,6 +153,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
 
         public MainViewHolder(View v) {
             super(v);
+            this.mView = v;
             this.textCircle = (TextView) v.findViewById(R.id.card_main_icon);
             this.textAmount = (TextView) v.findViewById(R.id.card_main_amount);
             this.textCategory = (TextView) v.findViewById(R.id.card_main_category);

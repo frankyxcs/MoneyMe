@@ -6,6 +6,8 @@ import com.devmoroz.moneyme.helpers.DBHelper;
 import com.devmoroz.moneyme.models.Currency;
 
 import java.sql.SQLException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.List;
 
 public class CurrencyCache {
@@ -45,5 +47,18 @@ public class CurrencyCache {
 
         }
 
+    }
+
+    public static String formatAmountWithSign(double amount) {
+        String sign = getCurrencyOrEmpty().getSymbol();
+
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+        symbols.setGroupingSeparator(',');
+        symbols.setDecimalSeparator('.');
+
+        DecimalFormat decimalFormat = new DecimalFormat("#,###.00 " + sign, symbols);
+        decimalFormat.setGroupingSize(3);
+
+        return decimalFormat.format(amount);
     }
 }

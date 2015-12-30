@@ -21,4 +21,6 @@ public class CustomColorTemplate {
     };
 
     public static final int SECONDARY_TEXT = Color.rgb(114,114,114);
+    public static final int INCOME_COLOR = Color.rgb(0,150,136);
+    public static final int OUTCOME_COLOR = Color.rgb(233,30,99);
 }
