@@ -54,6 +54,11 @@ public class Preferences {
         return sharedPreferences.getString(DROPBOX_AUTH_TOKEN, null);
     }
 
+    public static String getNotificationTime(Context context) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPreferences.getString(context.getString(R.string.pref_notify_time), null);
+    }
+
     public static void removeDropboxKeys(Context context) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         sharedPreferences.edit()

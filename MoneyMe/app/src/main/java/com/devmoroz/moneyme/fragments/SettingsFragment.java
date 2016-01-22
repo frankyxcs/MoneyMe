@@ -1,6 +1,7 @@
 package com.devmoroz.moneyme.fragments;
 
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -8,8 +9,11 @@ import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 
 import com.devmoroz.moneyme.R;
+import com.devmoroz.moneyme.StartOnBoot;
 import com.devmoroz.moneyme.utils.preference.NumberPickerPreference;
 import com.devmoroz.moneyme.utils.preference.NumberPickerPreferenceDialog;
+import com.devmoroz.moneyme.utils.preference.TimePickerPreference;
+import com.devmoroz.moneyme.utils.preference.TimePickerPreferenceDialog;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
 
@@ -26,7 +30,17 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             final DialogFragment fragment = NumberPickerPreferenceDialog.newInstance(preference.getKey());
             fragment.setTargetFragment(this, 0);
             fragment.show(getFragmentManager(), DIALOG_FRAGMENT_TAG);
-        } else {
+        }
+        else if( preference instanceof TimePickerPreference) {
+            // Inherit the same behaviour as parent
+            if (getFragmentManager().findFragmentByTag(DIALOG_FRAGMENT_TAG) != null) {
+                return;
+            }
+            final DialogFragment fragment = TimePickerPreferenceDialog.newInstance(preference.getKey());
+            fragment.setTargetFragment(this, 0);
+            fragment.show(getFragmentManager(), DIALOG_FRAGMENT_TAG);
+        }
+        else {
             super.onDisplayPreferenceDialog(preference);
         }
     }
@@ -42,7 +56,11 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         mListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-
+                if(key.equals(getString(R.string.pref_notify_time))){
+                    Context context = getContext();
+                    StartOnBoot.cancelAlarm(context);
+                    StartOnBoot.setAlarm(context);
+                }
             }
         };
     }

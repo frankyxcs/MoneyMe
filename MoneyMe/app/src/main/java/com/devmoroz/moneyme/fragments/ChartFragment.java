@@ -24,6 +24,7 @@ import com.devmoroz.moneyme.adapters.ChartLegendAdapter;
 import com.devmoroz.moneyme.eventBus.BusProvider;
 import com.devmoroz.moneyme.eventBus.DBRestoredEvent;
 import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
+import com.devmoroz.moneyme.helpers.DBHelper;
 import com.devmoroz.moneyme.models.Account;
 import com.devmoroz.moneyme.models.Income;
 import com.devmoroz.moneyme.models.LegendDetails;
@@ -44,6 +45,7 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.squareup.otto.Subscribe;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -105,7 +107,7 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
 
 
 
-        outs = MoneyApplication.outcomes;
+        getDataForCurrentMonth();
         accounts = MoneyApplication.accounts;
 
         chart.setData(generatePieData());
@@ -120,8 +122,17 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
         return view;
     }
 
+    private void getDataForCurrentMonth(){
+        try {
+            int monthStart = Preferences.getMonthStart(getContext());
+            DBHelper helper = MoneyApplication.getInstance().GetDBHelper();
+            outs = helper.getOutcomeDAO().queryForCurrentMonth(monthStart-1);
+        }catch (SQLException ex){
+
+        }
+    }
+
     private void customizeLegend() {
-        int period = Preferences.getHistoryPeriod(getContext());
         int monthStart = Preferences.getMonthStart(getContext());
         ArrayList<LegendDetails> legendData = new ArrayList<>();
         Legend l = chart.getLegend();
@@ -142,7 +153,7 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
         if (legendData.size() != 0){
             adapter.setData(legendData);
             tableDetails.setVisibility(View.VISIBLE);
-            chart.setDescription(PeriodUtils.GetPeriodString(period, monthStart, getContext(), false));
+            chart.setDescription(PeriodUtils.GetPeriodString(1, monthStart, getContext(), false));
         }else{
             tableDetails.setVisibility(View.GONE);
             chart.setDescription("");
@@ -242,7 +253,7 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
     }
 
     public void CheckWallet(){
-        outs = MoneyApplication.outcomes;
+        getDataForCurrentMonth();
         accounts = MoneyApplication.accounts;
         chart.setData(generatePieData());
         chart.setCenterText(generateCenterText());

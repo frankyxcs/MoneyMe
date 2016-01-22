@@ -59,6 +59,5 @@
         android:id="@+id/goal_progress_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/NumberProgressBar_Passing_Green"
-        />
+        style="@style/NumberProgressBar_Passing_Green" />
 </LinearLayout>

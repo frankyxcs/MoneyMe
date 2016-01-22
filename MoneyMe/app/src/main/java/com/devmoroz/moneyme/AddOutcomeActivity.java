@@ -12,6 +12,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.NavUtils;
+import android.support.v4.widget.SlidingPaneLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -84,6 +85,7 @@ public class AddOutcomeActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private ImageView chequeImage;
     private ImageView imageDeletePhoto;
+    private SlidingPaneLayout slidingPane;
 
 
     private DBHelper dbHelper;
@@ -111,6 +113,7 @@ public class AddOutcomeActivity extends AppCompatActivity {
         chequeImage = (ImageView) findViewById(R.id.add_outcome_cheque);
         imageDeletePhoto = (ImageView) findViewById(R.id.delete_outcome_cheque);
         photoWrapper = (RelativeLayout) findViewById(R.id.photoWrapper);
+        slidingPane = (SlidingPaneLayout) findViewById(R.id.sliding_pane_outcome);
         imageDeletePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -327,6 +330,7 @@ public class AddOutcomeActivity extends AppCompatActivity {
         if (FormatUtils.isNotEmpty(photoPath)) {
             setImageWithPicasso(getApplicationContext(), photoPath, chequeImage);
             photoWrapper.setVisibility(View.VISIBLE);
+            slidingPane.openPane();
         }
     }
 
@@ -335,7 +339,8 @@ public class AddOutcomeActivity extends AppCompatActivity {
             return;
         }
         if (photoPath != null && photoWrapper != null) {
-            photoWrapper.setVisibility(View.GONE);
+            photoWrapper.setVisibility(View.INVISIBLE);
+            slidingPane.closePane();
             photoFileName = null;
             photoPath = null;
             chequeImage.setImageBitmap(null);

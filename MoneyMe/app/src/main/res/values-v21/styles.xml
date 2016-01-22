@@ -16,6 +16,10 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     </style>
 
+    <style name="AppSettings" parent="AppDefault">
+        <item name="colorControlNormal">@color/colorPrimaryText</item>
+    </style>
+
     <style name="DetailsIncome" parent="AppDefault">
         <item name="colorPrimary">@color/fab_income_pressed</item>
         <item name="colorPrimaryDark">@color/fab_income_normal</item>
@@ -44,12 +48,16 @@
     <style name="AppPreferenceThemeOverlay" parent="PreferenceThemeOverlay">
         <item name="preferenceHelpStyle">@style/Preference.PreferenceHelp</item>
         <item name="numberPickerPreferenceStyle">@style/Preference.DialogPreference.NumberPickerPreference</item>
+        <item name="timePickerPreferenceStyle">@style/Preference.DialogPreference.TimePickerPreference</item>
     </style>
     <style name="Preference.PreferenceHelp" parent="Preference">
         <item name="android:layout">@layout/preference_help</item>
     </style>
     <style name="Preference.DialogPreference.NumberPickerPreference">
         <item name="dialogLayout">@layout/preference_numberpicker_dialog</item>
+    </style>
+    <style name="Preference.DialogPreference.TimePickerPreference">
+        <item name="dialogLayout">@layout/preference_timepicker_dialog</item>
     </style>
 
     <style name="BlackInput">

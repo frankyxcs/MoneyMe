@@ -62,4 +62,14 @@
 
     </android.support.v7.preference.PreferenceCategory>
 
+    <android.support.v7.preference.PreferenceCategory
+        android:title="@string/notifications">
+
+        <com.devmoroz.moneyme.utils.preference.TimePickerPreference
+            android:defaultValue="18:00"
+            android:key="@string/pref_notify_time"
+            android:title="@string/pref_notify_time_title"
+            android:layout="@layout/custom_pref"/>
+    </android.support.v7.preference.PreferenceCategory>
+
 </android.support.v7.preference.PreferenceScreen>

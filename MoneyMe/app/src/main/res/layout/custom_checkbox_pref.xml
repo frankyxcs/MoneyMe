@@ -1,35 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+android:layout_width="match_parent" android:layout_height="wrap_content"
+android:gravity="center_vertical"
+android:padding="10dp"
+android:background="?android:attr/selectableItemBackground">
+
+<RelativeLayout android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="10dp"
-    android:layout_gravity="center"    >
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_weight="8"
+    android:layout_weight="1">
+
+    <TextView android:id="@+android:id/title"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:baselineAligned="false"
-        android:orientation="vertical"
-        android:layout_gravity="center">
-        <TextView
-            android:id="@+android:id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/colorPrimaryText"
-            android:textSize="16sp" />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_weight="2"
-        android:layout_height="wrap_content"
-        android:gravity="right|end"
-        android:layout_gravity="center"
-        android:orientation="horizontal">
-        <CheckBox
-            android:id="@+android:id/checkbox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:theme="@style/BlackInput"/>
-    </LinearLayout>
+        android:singleLine="true"
+        android:fadingEdge="horizontal"
+        android:textColor="@color/colorPrimaryText"
+        android:textSize="16sp" />
+
+    <TextView android:id="@android:id/summary"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_below="@android:id/title" android:layout_alignLeft="@android:id/title"
+        android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+</RelativeLayout>
+
+<!-- Preference should place its actual preference widget here. -->
+<LinearLayout android:id="@android:id/widget_frame"
+    android:layout_width="wrap_content" android:layout_height="match_parent"
+    android:gravity="center_vertical" android:orientation="vertical"/>
+
 </LinearLayout>

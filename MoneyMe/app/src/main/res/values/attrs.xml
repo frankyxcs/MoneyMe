@@ -3,6 +3,7 @@
     <declare-styleable name="Theme">
         <attr name="preferenceHelpStyle" format="reference" />
         <attr name="numberPickerPreferenceStyle" format="reference" />
+        <attr name="timePickerPreferenceStyle" format="reference" />
     </declare-styleable>
 
     <declare-styleable name="PreferenceHelp">

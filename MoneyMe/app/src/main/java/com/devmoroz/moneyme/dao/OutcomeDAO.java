@@ -27,14 +27,14 @@ public class OutcomeDAO extends BaseDaoImpl<Outcome, Integer> {
         return result;
     }
 
-    public List<Outcome> queryForCurrentMonth() throws SQLException{
+    public List<Outcome> queryForCurrentMonth(int monthStart) throws SQLException{
         QueryBuilder<Outcome,Integer> queryBuilder = queryBuilder();
 
         Calendar dateStart = Calendar.getInstance();
-        dateStart.set(Calendar.DAY_OF_MONTH, 1);
+        dateStart.set(Calendar.DAY_OF_MONTH, monthStart);
 
         Calendar dateEnd = Calendar.getInstance();
-        dateEnd.set(Calendar.DAY_OF_MONTH, 1);
+        dateEnd.set(Calendar.DAY_OF_MONTH, monthStart);
         dateEnd.add(Calendar.MONTH, 1);
 
         queryBuilder.where().between("dateOfSpending", dateStart.getTime(), dateEnd.getTime());

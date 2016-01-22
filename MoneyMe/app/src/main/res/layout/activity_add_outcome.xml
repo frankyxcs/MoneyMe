@@ -136,31 +136,52 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/coordinator_outcome">
-
-        <RelativeLayout
+        <android.support.v4.widget.SlidingPaneLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:padding="8dp"
-            android:id="@+id/photoWrapper"
-            android:visibility="gone">
-
-            <ImageView
-                android:id="@+id/add_outcome_cheque"
+            android:id="@+id/sliding_pane_outcome">
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_gravity="center"/>
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="8dp"
+                android:id="@+id/photoWrapper"
+                android:visibility="gone">
 
-            <ImageView
-                android:id="@+id/delete_outcome_cheque"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_alignParentRight="true"
-                android:layout_margin="8dp"
-                android:src="@drawable/ic_close" />
-        </RelativeLayout>
+                <ImageView
+                    android:id="@+id/add_outcome_cheque"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_gravity="center"/>
 
+                <ImageView
+                    android:id="@+id/delete_outcome_cheque"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_margin="8dp"
+                    android:src="@drawable/ic_close" />
+            </RelativeLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/fab_outcome_normal"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Pane B"
+                    android:textColor="#C0C0C0"
+                    android:textStyle="italic|bold" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                     />
+            </LinearLayout>
+        </android.support.v4.widget.SlidingPaneLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/add_outcome_save"

@@ -52,11 +52,10 @@ public class SettingsActivity  extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.AppDefault);
+        setTheme(R.style.AppSettings);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings_activity);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarSettings);
-        toolbar.setTitleTextColor(Color.WHITE);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
                 ActionBar.DISPLAY_HOME_AS_UP | ActionBar.DISPLAY_SHOW_TITLE);
