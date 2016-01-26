@@ -4,10 +4,11 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.util.Calendar;
 import java.util.Date;
 
 @DatabaseTable(tableName = "outcomes")
-public class Outcome {
+public class Outcome{
 
     public static final String ACCOUNT_ID_FIELD_NAME = "account_id";
 

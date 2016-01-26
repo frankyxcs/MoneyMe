@@ -193,6 +193,9 @@
     <string name="backspace">del</string>
     <string name="close_calc">ok</string>
 
+    <string name="main_notification_content_small">Добавьте операции за сегодняшний день.</string>
+    <string name="main_notification_content_large">Нажмите, чтобы добавить операции за сегодняшний день.</string>
+
     <string-array name="transaction_categories">
         <item>Одежда</item>
         <item>Гигиена и косметика</item>

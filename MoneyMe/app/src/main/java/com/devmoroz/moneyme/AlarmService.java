@@ -37,21 +37,22 @@ public class AlarmService extends Service {
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(this);
 
-        builder.setSmallIcon(R.mipmap.ic_launcher)
-                .setTicker("Something Happened")
+        String text_small = getString(R.string.main_notification_content_small);
+        String text_large = getString(R.string.main_notification_content_large);
+
+        builder.setSmallIcon(R.drawable.ic_notification_moneyme)
+                .setTicker("MoneyMe")
                 .setWhen(System.currentTimeMillis())
                 .setAutoCancel(true)
                 .setDefaults(Notification.DEFAULT_SOUND)
                 .setContentTitle("MoneyMe")
-                .setContentText("Click Here!")
+                .setContentText(text_small)
                 .setContentIntent(contentIntent);
 
         //Apply an expanded style
         NotificationCompat.BigTextStyle expandedStyle =
                 new NotificationCompat.BigTextStyle(builder);
-        expandedStyle.bigText("Here is some additional text to be displayed when"
-                + " the notification is in expanded mode. "
-                + " I can fit so much more content into this giant view!");
+        expandedStyle.bigText(text_large);
         Notification note = expandedStyle.build();
 
         return note;

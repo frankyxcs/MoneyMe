@@ -13,14 +13,31 @@ import com.devmoroz.moneyme.models.Outcome;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 public class CommonUtils {
 
-    public void sortWalletEntriesByDate(ArrayList<CommonInOut> inout, boolean desc) {
+    public static void sortOutcomesByDate(List<Outcome> out){
+        Collections.sort(out, new Comparator<Outcome>() {
+            @Override
+            public int compare(Outcome lhs, Outcome rhs) {
+                Date lhsDate = lhs.getDateOfSpending();
+                Date rhsDate = rhs.getDateOfSpending();
+                if (lhsDate != null && rhsDate != null) {
+                    return rhsDate.compareTo(lhsDate);
+                } else {
+                    return 0;
+                }
+            }
+        });
+    }
 
+    public void sortWalletEntriesByDate(ArrayList<CommonInOut> inout, boolean desc) {
         if (desc) {
             Collections.sort(inout, new Comparator<CommonInOut>() {
                 @Override

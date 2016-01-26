@@ -116,53 +116,10 @@
                         android:text="Palette"
                         android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
 
-                    <TextView
-                        android:id="@+id/palette_vibrant"
+                    <com.github.mikephil.charting.charts.LineChart
+                        android:id="@+id/details_chart"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="8dp"
-                        android:text="Vibrant"
-                        android:textColor="@android:color/white"/>
-
-                    <TextView
-                        android:id="@+id/palette_vibrant_dark"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="8dp"
-                        android:text="Vibrant Dark"
-                        android:textColor="@android:color/white"/>
-
-                    <TextView
-                        android:id="@+id/palette_vibrant_light"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="8dp"
-                        android:text="Vibrant Light"
-                        android:textColor="@android:color/white"/>
-
-                    <TextView
-                        android:id="@+id/palette_muted"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="8dp"
-                        android:text="Muted"
-                        android:textColor="@android:color/white"/>
-
-                    <TextView
-                        android:id="@+id/palette_muted_dark"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="8dp"
-                        android:text="Muted Dark"
-                        android:textColor="@android:color/white"/>
-
-                    <TextView
-                        android:id="@+id/palette_muted_light"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="8dp"
-                        android:text="Muted Light"
-                        android:textColor="@android:color/white"/>
+                        android:layout_height="200dp"/>
 
                 </LinearLayout>
 
@@ -192,10 +149,7 @@
                         android:text="PercentageLayout"
                         android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
 
-                    <com.github.mikephil.charting.charts.PieChart
-                        android:id="@+id/details_chart"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
+
 
                 </LinearLayout>
 

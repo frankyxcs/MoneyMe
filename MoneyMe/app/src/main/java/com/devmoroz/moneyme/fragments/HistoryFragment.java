@@ -24,6 +24,8 @@ import com.devmoroz.moneyme.R;
 import com.devmoroz.moneyme.adapters.HistoryAdapter;
 import com.devmoroz.moneyme.eventBus.BusProvider;
 import com.devmoroz.moneyme.eventBus.DBRestoredEvent;
+import com.devmoroz.moneyme.eventBus.SearchCanceled;
+import com.devmoroz.moneyme.eventBus.SearchTriggered;
 import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
 import com.devmoroz.moneyme.models.Account;
 import com.devmoroz.moneyme.models.CommonInOut;
@@ -146,16 +148,16 @@ public class HistoryFragment extends Fragment {
             wAdapter.setInOutData(mListWalletEntries);
         }
         initBalanceWidget(desc);
-        initHistoryAdapter();
+        initHistoryAdapter(mListWalletEntries);
         return view;
     }
 
-    private void initHistoryAdapter() {
+    private void initHistoryAdapter(ArrayList<CommonInOut> list) {
         mSections = new ArrayList<>();
         long previousTime = -1;
         long time;
         int position = 0;
-        for(CommonInOut item : mListWalletEntries){
+        for(CommonInOut item : list){
             time = item.getDateLong();
             if (!TimeUtils.isSameDayDisplay(previousTime, time)) {
                 mSections.add(new SectionedRecyclerViewAdapter.Section(position,
@@ -215,7 +217,7 @@ public class HistoryFragment extends Fragment {
         sorter.sortWalletEntriesByDate(mListWalletEntries, desc);
         initBalanceWidget(desc);
         wAdapter.setInOutData(mListWalletEntries);
-        initHistoryAdapter();
+        initHistoryAdapter(mListWalletEntries);
     }
 
     @Subscribe
@@ -225,6 +227,27 @@ public class HistoryFragment extends Fragment {
 
     @Subscribe
     public void OnDbResore(DBRestoredEvent event) {
+        CheckWallet();
+    }
+
+    @Subscribe
+    public void OnSearchTriggered(SearchTriggered event) {
+        String term = event.term.toLowerCase();
+        ArrayList<CommonInOut> searchedItems = new ArrayList<>();
+        mListWalletEntries = MoneyApplication.inout;
+        for (CommonInOut item : mListWalletEntries){
+            String notes = item.getNotes()!= null ? item.getNotes(): "";
+            String category = item.getCategory() != null ? item.getCategory() : item.getAccount();
+            if(category.toLowerCase().contains(term) || notes.toLowerCase().contains(term)){
+                searchedItems.add(item);
+            }
+        }
+        wAdapter.setInOutData(searchedItems);
+        initHistoryAdapter(searchedItems);
+    }
+
+    @Subscribe
+    public void OnSearchCanceled(SearchCanceled event) {
         CheckWallet();
     }
 }

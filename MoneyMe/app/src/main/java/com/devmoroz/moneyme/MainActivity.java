@@ -3,8 +3,11 @@ package com.devmoroz.moneyme;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -13,8 +16,10 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -24,6 +29,8 @@ import com.devmoroz.moneyme.adapters.TabsPagerFragmentAdapter;
 import com.devmoroz.moneyme.eventBus.AppInitCompletedEvent;
 import com.devmoroz.moneyme.eventBus.BusProvider;
 import com.devmoroz.moneyme.eventBus.DBRestoredEvent;
+import com.devmoroz.moneyme.eventBus.SearchCanceled;
+import com.devmoroz.moneyme.eventBus.SearchTriggered;
 import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
 import com.devmoroz.moneyme.export.backup.BackupTask;
 import com.devmoroz.moneyme.helpers.CurrencyHelper;
@@ -34,6 +41,7 @@ import com.devmoroz.moneyme.models.Currency;
 import com.devmoroz.moneyme.utils.AppUtils;
 import com.devmoroz.moneyme.utils.Constants;
 import com.devmoroz.moneyme.utils.CurrencyCache;
+import com.devmoroz.moneyme.utils.FormatUtils;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.squareup.otto.Subscribe;
@@ -138,6 +146,7 @@ public class MainActivity extends AppCompatActivity {
     private void initToolbar() {
         toolbar.setTitle(R.string.app_name);
         toolbar.setTitleTextColor(Color.WHITE);
+        setSupportActionBar(toolbar);
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -151,8 +160,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
-        toolbar.inflateMenu(R.menu.menu_main);
     }
 
     private void initNavigationView() {
@@ -428,7 +435,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
             }
         } else {
-            L.t(this, "Something went wrong.Please,try again.");
+
         }
     }
 
@@ -437,5 +444,50 @@ public class MainActivity extends AppCompatActivity {
         return getResources().getStringArray(R.array.drawer_tabs);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
 
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+
+        SearchManager manager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView search = (SearchView) menu.findItem(R.id.search_main).getActionView();
+
+        search.setSearchableInfo(manager.getSearchableInfo(getComponentName()));
+
+        search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                String term = query.trim();
+                if (FormatUtils.isNotEmpty(term)) {
+                    jumpToTab(Constants.TAB_HISTORY);
+                    BusProvider.postOnMain(new SearchTriggered(term));
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+                String term = query.trim();
+                if (FormatUtils.isNotEmpty(term)) {
+                    jumpToTab(Constants.TAB_HISTORY);
+                    BusProvider.postOnMain(new SearchTriggered(term));
+                }
+                return false;
+
+            }
+
+        });
+
+        search.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                BusProvider.postOnMain(new SearchCanceled());
+                return false;
+            }
+        });
+
+        return true;
+    }
 }

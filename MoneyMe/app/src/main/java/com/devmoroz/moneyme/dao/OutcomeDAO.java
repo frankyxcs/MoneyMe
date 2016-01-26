@@ -27,6 +27,15 @@ public class OutcomeDAO extends BaseDaoImpl<Outcome, Integer> {
         return result;
     }
 
+    public List<Outcome> queryOutcomesForCategory(String category) throws SQLException{
+        QueryBuilder<Outcome,Integer> queryBuilder = queryBuilder();
+        queryBuilder.where().eq("category",category);
+        PreparedQuery<Outcome> preparedQuery = queryBuilder.prepare();
+        List<Outcome> result = query(preparedQuery);
+
+        return result;
+    }
+
     public List<Outcome> queryForCurrentMonth(int monthStart) throws SQLException{
         QueryBuilder<Outcome,Integer> queryBuilder = queryBuilder();
 

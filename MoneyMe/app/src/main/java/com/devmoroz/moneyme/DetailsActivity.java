@@ -31,6 +31,7 @@ import com.devmoroz.moneyme.helpers.DBHelper;
 import com.devmoroz.moneyme.models.Currency;
 import com.devmoroz.moneyme.models.Income;
 import com.devmoroz.moneyme.models.Outcome;
+import com.devmoroz.moneyme.utils.CommonUtils;
 import com.devmoroz.moneyme.utils.Constants;
 import com.devmoroz.moneyme.utils.CurrencyCache;
 import com.devmoroz.moneyme.utils.CustomColorTemplate;
@@ -38,10 +39,21 @@ import com.devmoroz.moneyme.utils.FormatUtils;
 import com.devmoroz.moneyme.utils.PhotoUtil;
 import com.devmoroz.moneyme.utils.datetime.TimeUtils;
 import com.devmoroz.moneyme.widgets.DecimalDigitsInputFilter;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.LimitLine;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class DetailsActivity extends AppCompatActivity {
 
@@ -51,12 +63,13 @@ public class DetailsActivity extends AppCompatActivity {
     private TextView amountTextView;
     private TextView dateTextView;
     private TextView notesTextView;
+    private LineChart chart;
     private int itemId;
     private int itemType;
     private static Date entityDate = new Date();
     private static double amount = 0f;
     private static String note = "";
-    private static String photoPath = "";
+    private static String category = "";
     Currency currency = CurrencyCache.getCurrencyOrEmpty();
     private EditText editAmountInput;
     private EditText editNotesInput;
@@ -67,12 +80,11 @@ public class DetailsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         itemId = intent.getIntExtra(Constants.DETAILS_ITEM_ID, -1);
         itemType = intent.getIntExtra(Constants.DETAILS_ITEM_TYPE, -1);
-        if(itemType == 1){
+        if (itemType == 1) {
             setTheme(R.style.DetailsIncome);
-        }else if (itemType == 2) {
+        } else if (itemType == 2) {
             setTheme(R.style.DetailsOutcome);
-        }
-        else{
+        } else {
             setTheme(R.style.AppDefault);
         }
         super.onCreate(savedInstanceState);
@@ -87,6 +99,7 @@ public class DetailsActivity extends AppCompatActivity {
         amountTextView = (TextView) findViewById(R.id.details_amount);
         dateTextView = (TextView) findViewById(R.id.details_date);
         notesTextView = (TextView) findViewById(R.id.details_notes);
+        chart = (LineChart) findViewById(R.id.details_chart);
 
         loadEntity();
         setupFab();
@@ -107,8 +120,7 @@ public class DetailsActivity extends AppCompatActivity {
         if (FormatUtils.isNotEmpty(note)) {
             notesTextView.setText(note);
             notesTextView.setVisibility(View.VISIBLE);
-        }
-        else{
+        } else {
             notesTextView.setText(note);
             notesTextView.setVisibility(View.GONE);
         }
@@ -123,14 +135,14 @@ public class DetailsActivity extends AppCompatActivity {
         if (FormatUtils.isNotEmpty(current.getPhoto())) {
             loadImage(current.getPhoto());
         }
-        collapsingToolbar.setTitle(current.getCategory());
+        category = current.getCategory();
+        collapsingToolbar.setTitle(category);
         amountTextView.setText(CurrencyCache.formatAmountWithSign(amount));
         dateTextView.setText(TimeUtils.formatHumanFriendlyShortDate(getApplicationContext(), entityDate.getTime()));
         if (FormatUtils.isNotEmpty(note)) {
             notesTextView.setText(note);
             notesTextView.setVisibility(View.VISIBLE);
-        }
-        else{
+        } else {
             notesTextView.setText(note);
             notesTextView.setVisibility(View.GONE);
         }
@@ -151,7 +163,82 @@ public class DetailsActivity extends AppCompatActivity {
     }
 
     private void setupChart() {
+        chart.setDragEnabled(true);
+        chart.setScaleEnabled(true);
+        chart.setPinchZoom(true);
+        chart.setDrawGridBackground(false);
 
+        LimitLine llXAxis = new LimitLine(10f, "Index 10");
+        llXAxis.setLineWidth(4f);
+        llXAxis.enableDashedLine(10f, 10f, 0f);
+        llXAxis.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_BOTTOM);
+        llXAxis.setTextSize(10f);
+
+        HashMap<String, Float> dataMap = getDataForChart();
+
+        ArrayList<String> xVals = new ArrayList<String>();
+
+        ArrayList<Entry> yVals = new ArrayList<Entry>();
+
+        if (!dataMap.isEmpty()) {
+            int j = 0;
+            Set<Map.Entry<String, Float>> set = dataMap.entrySet();
+            for (Map.Entry<String, Float> entry : set) {
+                xVals.add(entry.getKey());
+                yVals.add(new Entry(entry.getValue(), j));
+                j++;
+            }
+        }
+
+        LineDataSet set1 = new LineDataSet(yVals, "");
+
+        ArrayList<LineDataSet> dataSets = new ArrayList<LineDataSet>();
+        dataSets.add(set1);
+        LineData data = new LineData(xVals, dataSets);
+
+        chart.setData(data);
+
+        Legend l = chart.getLegend();
+        l.setEnabled(true);
+        l.setForm(Legend.LegendForm.LINE);
+
+        chart.getAxisLeft().setEnabled(true);
+        chart.getAxisLeft().setStartAtZero(false);
+        chart.getAxisLeft().removeAllLimitLines();
+        chart.getAxisRight().setEnabled(false);
+
+        chart.getXAxis().setEnabled(true);
+
+        chart.animateX(2500);
+    }
+
+    private HashMap<String, Float> getDataForChart() {
+        try {
+            DBHelper dbHelper = MoneyApplication.getInstance().GetDBHelper();
+            if (FormatUtils.isNotEmpty(category)) {
+                List<Outcome> outcomes = dbHelper.getOutcomeDAO().queryOutcomesForCategory(category);
+                CommonUtils.sortOutcomesByDate(outcomes);
+                HashMap<String, Float> hashMap = new HashMap<>();
+                for(Outcome o : outcomes){
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTime(o.getDateOfSpending());
+                    int month = cal.get(Calendar.MONTH) + 1;
+                    int year = cal.get(Calendar.YEAR);
+                    String key = String.valueOf(month)+"-"+String.valueOf(year);
+                    float val = (float)o.getAmount();
+                    if(hashMap.containsKey(key)){
+                        hashMap.put(key, hashMap.get(key) + val);
+                    }
+                    else{
+                        hashMap.put(key, val);
+                    }
+                }
+                return hashMap;
+            }
+        } catch (SQLException ex) {
+
+        }
+        return new HashMap<>();
     }
 
     private void setupFab() {
