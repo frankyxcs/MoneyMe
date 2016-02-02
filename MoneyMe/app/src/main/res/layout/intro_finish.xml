@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    android:layout_weight="10"
+    android:id="@+id/main">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:paddingLeft="32dp"
+        android:layout_weight="2"
+        android:textColor="@color/colorWhite"
+        android:paddingRight="32dp"
+        android:textSize="28sp"
+        android:text="Добро пожаловать"/>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:paddingRight="16dp"
+        android:paddingLeft="16dp"
+        android:layout_weight="6">
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColorHint="@color/colorWhite"
+            android:minHeight="?android:attr/listPreferredItemHeight"
+            android:hint="@string/account_name">
+
+            <EditText android:id="@+id/intro_accountAddName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:padding="16dp"
+                android:textSize="16sp"
+                android:theme="@style/WhiteInput"/>
+        </android.support.design.widget.TextInputLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:textSize="16sp"
+                android:textColor="@color/colorWhite"
+                android:layout_gravity="center"
+                android:text="@string/type"/>
+            <Spinner
+                android:id="@+id/intro_accountAddType"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:theme="@style/WhiteInput"
+                android:minHeight="?android:attr/listPreferredItemHeight"/>
+        </LinearLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/text_input_layout_add_accont_balance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColorHint="@color/colorWhite"
+            android:hint="@string/opening_amount"
+            android:minHeight="?android:attr/listPreferredItemHeight">
+
+            <EditText android:id="@+id/intro_accountAddBalance"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:padding="16dp"
+                android:textSize="16sp"
+                android:inputType="number|numberDecimal"
+                android:maxLength="9"
+                android:theme="@style/WhiteInput"/>
+
+        </android.support.design.widget.TextInputLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:minHeight="?android:attr/listPreferredItemHeight">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:textSize="16sp"
+                android:layout_gravity="center"
+                android:textColor="@color/colorWhite"
+                android:text="@string/currency"/>
+
+            <Button
+                android:id="@+id/intro_accountCurrency"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:layout_gravity="center"
+                android:gravity="center_vertical"
+                android:theme="@style/WhiteInput"
+                android:textSize="14sp"
+                style="@style/TextAppearance.EditEvent_SpinnerButton" />
+        </LinearLayout>
+    </LinearLayout>
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="64dp" />
+</LinearLayout>

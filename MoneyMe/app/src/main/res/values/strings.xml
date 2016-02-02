@@ -159,6 +159,7 @@
     <string name="pref_backup_frequency">pref_backup_frequency</string>
     <string name="pref_auto_backup">pref_auto_backup</string>
     <string name="pref_notify_time">pref_notify_time</string>
+    <string name="pref_first_time_run">pref_first_time_run</string>
 
 
     <string name="reset_preferences">Сброс настроек</string>

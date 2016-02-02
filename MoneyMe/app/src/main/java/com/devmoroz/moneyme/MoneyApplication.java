@@ -37,8 +37,8 @@ public class MoneyApplication extends Application {
     }
 
     public static List<Goal> goals = Collections.emptyList();
-    public static List<Income> incomes =Collections.emptyList();
-    public static List<Outcome> outcomes =Collections.emptyList();
+    public static List<Income> incomes = Collections.emptyList();
+    public static List<Outcome> outcomes = Collections.emptyList();
     public static ArrayList<CommonInOut> inout = new ArrayList<>(0);
     public static List<Account> accounts = Collections.emptyList();
 
@@ -57,7 +57,7 @@ public class MoneyApplication extends Application {
             int period = Preferences.getHistoryPeriod(this);
             int monthStart = Preferences.getMonthStart(this);
             accounts = dbHelper.getAccountDAO().queryForAll();
-            incomes = dbHelper.getIncomeDAO().queryForPeriod(period,monthStart);
+            incomes = dbHelper.getIncomeDAO().queryForPeriod(period, monthStart);
             outcomes = dbHelper.getOutcomeDAO().queryForPeriod(period, monthStart);
 
             inout = new ArrayList<>();
@@ -78,11 +78,19 @@ public class MoneyApplication extends Application {
         }
     }
 
-    public void GetGoals() {
-        try{
-            goals = dbHelper.getGoalDAO().queryForInProgress();
+    public List<Account> getAccounts() {
+        try {
+            accounts = dbHelper.getAccountDAO().queryForAll();
+            return accounts;
+        } catch (SQLException ex) {
+            return accounts;
         }
-        catch (SQLException ex) {
+    }
+
+    public void GetGoals() {
+        try {
+            goals = dbHelper.getGoalDAO().queryForInProgress();
+        } catch (SQLException ex) {
             L.t(this, "Something went wrong.Please,try again.");
         }
     }
@@ -136,16 +144,17 @@ public class MoneyApplication extends Application {
     }
 
     @Subscribe
-    public void OnWalletChange(WalletChangeEvent event){
+    public void OnWalletChange(WalletChangeEvent event) {
         getInstance().GetCommonData();
     }
+
     @Subscribe
-    public void OnGoalsChange(GoalsChangeEvent event){
+    public void OnGoalsChange(GoalsChangeEvent event) {
         getInstance().GetGoals();
     }
 
     @Subscribe
-    public void OnDBRestore(DBRestoredEvent event){
+    public void OnDBRestore(DBRestoredEvent event) {
         getInstance().GetCommonData();
         getInstance().GetGoals();
     }

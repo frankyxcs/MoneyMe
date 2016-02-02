@@ -48,47 +48,59 @@
 
         </LinearLayout>
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="10dp">
-
+            android:orientation="horizontal"
+            android:minHeight="?android:attr/listPreferredItemHeight">
             <TextView
                 android:id="@+id/TextView03"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:layout_margin="4dp"
                 android:text="@string/category" />
 
             <Spinner
                 android:id="@+id/add_outcome_category"
-                android:layout_width="fill_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@+id/TextView03"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
                 android:entries="@array/transaction_categories" />
-
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:minHeight="?android:attr/listPreferredItemHeight">
             <TextView
                 android:id="@+id/TextView04"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/add_outcome_category"
-                android:layout_marginLeft="4dp"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:layout_margin="4dp"
                 android:text="@string/account" />
 
             <Spinner
                 android:id="@+id/add_outcome_account"
-                android:layout_width="fill_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/add_outcome_category"
-                android:layout_toRightOf="@+id/TextView03"/>
+                android:layout_weight="1"
+                android:gravity="center_vertical"/>
+        </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:minHeight="?android:attr/listPreferredItemHeight">
             <TextView
                 android:id="@+id/TextView07"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/add_outcome_account"
-                android:layout_marginLeft="4dp"
-                android:layout_marginTop="10dp"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:layout_margin="4dp"
                 android:text="@string/date"/>
 
             <Button
@@ -97,39 +109,30 @@
                 android:layout_height="40dp"
                 android:singleLine="true"
                 android:text="12-12-12"
-                android:layout_alignTop="@+id/TextView07"
-                android:layout_toRightOf="@+id/TextView03"
+                android:gravity="center_vertical"
+                android:layout_gravity="center_vertical"
                 android:onClick="showDatePickerDialog"
                 android:theme="@style/BlackInput"
                 style="@style/TextAppearance.EditEvent_SpinnerButton" />
 
-
-            <TextView
-                android:id="@+id/TextView06"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/add_outcome_date"
-                android:layout_marginLeft="4dp"
-                android:layout_marginTop="10dp"
-                android:text="@string/note"/>
-
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/add_outcome_note1111"
+        </LinearLayout>
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/add_outcome_note1111"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:counterEnabled="true"
+            android:layout_marginLeft="4dp"
+            app:counterMaxLength="200">
+            <EditText
+                android:id="@+id/add_outcome_note"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignTop="@+id/TextView06"
-                android:layout_toRightOf="@+id/TextView03"
-                app:counterEnabled="true"
-                app:counterMaxLength="200">
-                <EditText
-                    android:id="@+id/add_outcome_note"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textAutoCorrect|textMultiLine|textAutoComplete"
-                    android:maxLength="200"
-                    android:maxLines="2"/>
-            </android.support.design.widget.TextInputLayout>
-        </RelativeLayout>
+                android:hint="@string/note"
+                android:inputType="textAutoCorrect|textMultiLine|textAutoComplete"
+                android:maxLength="200"
+                android:maxLines="2"/>
+        </android.support.design.widget.TextInputLayout>
+
     </LinearLayout>
 </ScrollView>
     <android.support.design.widget.CoordinatorLayout
@@ -166,20 +169,100 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/fab_outcome_normal"
-                android:orientation="vertical" >
+                android:orientation="vertical"
+                android:background="#434343">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Pane B"
-                    android:textColor="#C0C0C0"
+                    android:text="@string/category"
+                    android:textColor="#fff"
                     android:textStyle="italic|bold" />
 
-                <ImageView
-                    android:layout_width="wrap_content"
+                <com.devmoroz.moneyme.widgets.CategoryLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                     />
+                    android:id="@+id/category_layout"
+                    android:columnCount="4"
+                    android:rowCount="3"
+                    android:background="#434343">
+
+                    <Button
+                        android:id="@+id/digit_7"
+                        style="@style/CategoryButtonStyle"
+                        android:onClick="onButtonClick"
+                        android:text="7"
+                        android:drawableTop="@drawable/ic_wallet"/>
+
+                    <Button
+                        android:id="@+id/digit_8"
+                        style="@style/CategoryButtonStyle"
+                        android:onClick="onButtonClick"
+                        android:text="8" />
+
+                    <Button
+                        android:id="@+id/digit_9"
+                        style="@style/CategoryButtonStyle"
+                        android:onClick="onButtonClick"
+                        android:text="9" />
+
+                    <Button
+                        android:id="@+id/digit_4"
+                        style="@style/CategoryButtonStyle"
+                        android:onClick="onButtonClick"
+                        android:text="4" />
+
+                    <Button
+                        android:id="@+id/digit_5"
+                        style="@style/CategoryButtonStyle"
+                        android:onClick="onButtonClick"
+                        android:text="5" />
+
+                    <Button
+                        android:id="@+id/digit_6"
+                        style="@style/CategoryButtonStyle"
+                        android:onClick="onButtonClick"
+                        android:text="6" />
+
+                    <Button
+                        android:id="@+id/digit_1"
+                        android:gravity="center"
+                        android:onClick="onButtonClick"
+                        style="@style/CategoryButtonStyle"
+                        android:text="1" />
+
+                    <Button
+                        android:id="@+id/digit_2"
+                        style="@style/CategoryButtonStyle"
+                        android:onClick="onButtonClick"
+                        android:text="2" />
+
+                    <Button
+                        android:id="@+id/digit_3"
+                        style="@style/CategoryButtonStyle"
+                        android:onClick="onButtonClick"
+                        android:text="3" />
+
+                    <Button
+                        android:id="@+id/dec_point"
+                        style="@style/CategoryButtonStyle"
+                        android:onClick="onButtonClick"
+                        android:text="." />
+
+                    <Button
+                        android:id="@+id/digit_0"
+                        style="@style/CategoryButtonStyle"
+                        android:onClick="onButtonClick"
+                        android:text="0" />
+
+                    <Button
+                        android:id="@+id/eq"
+                        style="@style/CategoryButtonStyle"
+                        android:onClick="onButtonClick"
+                        android:text="=" />
+
+                </com.devmoroz.moneyme.widgets.CategoryLayout>
+
             </LinearLayout>
         </android.support.v4.widget.SlidingPaneLayout>
 

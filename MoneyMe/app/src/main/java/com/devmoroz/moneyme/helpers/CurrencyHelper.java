@@ -5,6 +5,7 @@ import android.view.View;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.devmoroz.moneyme.R;
+import com.devmoroz.moneyme.dao.CurrencyDAO;
 import com.devmoroz.moneyme.logging.L;
 import com.devmoroz.moneyme.models.Currency;
 import com.devmoroz.moneyme.utils.CurrencyCache;
@@ -23,15 +24,21 @@ public class CurrencyHelper {
     private DBHelper dbHelper;
     private final List<List<String>> currencies;
     private int selectedCurrency = 0;
+    private final Callback mCallback;
 
-    public CurrencyHelper(Context context, DBHelper dbHelper) {
+    public interface Callback {
+        void onSelectClick(String currencyText);
+    }
+
+    public CurrencyHelper(Context context, DBHelper dbHelper, Callback callback) {
         this.context = context;
         this.dbHelper = dbHelper;
+        this.mCallback = callback;
         this.currencies = readCurrenciesFromAsset();
     }
 
     public void show() {
-        String[] items = createItemsList(currencies);
+        final String[] items = createItemsList(currencies);
         new MaterialDialog.Builder(context)
                 .title(R.string.currencies)
                 .positiveText(R.string.ok)
@@ -45,6 +52,7 @@ public class CurrencyHelper {
                     public boolean onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
                         selectedCurrency = i;
                         addSelectedCurrency(selectedCurrency);
+                        mCallback.onSelectClick(items[selectedCurrency]);
                         return true;
                     }
                 })
@@ -61,8 +69,18 @@ public class CurrencyHelper {
     private void addSelectedCurrency(List<String> list) {
         Currency c = new Currency(list.get(0), list.get(1), list.get(2));
         try {
-            dbHelper.getCurrencyDAO().create(c);
-            CurrencyCache.initialize(dbHelper);
+            List<Currency> currencies;
+            CurrencyDAO cDAO = dbHelper.getCurrencyDAO();
+            currencies = cDAO.queryForAll();
+            if (currencies.size() != 0) {
+                Currency lastC = currencies.get(0);
+                c.setId(lastC.getId());
+                cDAO.update(c);
+                CurrencyCache.initialize(dbHelper);
+            } else {
+                cDAO.create(c);
+                CurrencyCache.initialize(dbHelper);
+            }
         } catch (SQLException ex) {
             L.t(context, "Something went wrong.Please,try again.");
         }

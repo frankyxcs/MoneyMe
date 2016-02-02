@@ -178,7 +178,7 @@ public class HistoryFragment extends Fragment {
         if (!mListWalletEntries.isEmpty()) {
             int period = Preferences.getHistoryPeriod(getContext());
             int monthStart = Preferences.getMonthStart(getContext());
-            accounts = MoneyApplication.accounts;
+            accounts = MoneyApplication.getInstance().getAccounts();
             totalBalance = 0f;
             for (Account acc : accounts) {
                 totalBalance += acc.getBalance();

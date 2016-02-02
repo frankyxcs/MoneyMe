@@ -51,7 +51,6 @@ public class DBHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTable(connectionSource, Outcome.class);
             TableUtils.createTable(connectionSource, Currency.class);
             TableUtils.createTable(connectionSource, Account.class);
-            initData();
         } catch (SQLException e) {
             Log.e(TAG, "error creating DB " + DATABASE_NAME);
             throw new RuntimeException(e);
@@ -119,12 +118,4 @@ public class DBHelper extends OrmLiteSqliteOpenHelper {
         return accountDAO;
     }
 
-    private void initData() {
-        try {
-            Account initialAccount = new Account("Default",0f,0);
-            getAccountDAO().create(initialAccount);
-        } catch (SQLException ex) {
-
-        }
-    }
 }

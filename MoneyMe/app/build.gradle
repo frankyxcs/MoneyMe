@@ -21,6 +21,7 @@ android {
 
 repositories {
     maven { url "https://jitpack.io" }
+    mavenCentral()
 }
 
 dependencies {
@@ -42,6 +43,7 @@ dependencies {
     compile 'com.daimajia.numberprogressbar:library:1.2@aar'
     compile 'com.romainpiel.shimmer:library:1.4.0@aar'
     compile 'com.dropbox.core:dropbox-core-sdk:2.0-beta-2'
+    compile 'com.github.paolorotolo:appintro:3.4.0'
     compile files('libs/ormlite-android-4.48.jar')
     compile files('libs/ormlite-core-4.48.jar')
 }

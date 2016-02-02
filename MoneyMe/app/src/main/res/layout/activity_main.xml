@@ -5,86 +5,96 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/mainBackground"
-    android:fitsSystemWindows="true" >
+    android:fitsSystemWindows="true">
 
-
-
-<android.support.design.widget.CoordinatorLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/coordinator">
-
-<android.support.design.widget.AppBarLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/colorPrimary"
-        app:layout_scrollFlags="snap"/>
-
-    <android.support.design.widget.TabLayout
-        android:id="@+id/tab_layout"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="@color/colorPrimary"
-        app:tabIndicatorColor="@android:color/white"
-        app:tabIndicatorHeight="6dp"
-        app:tabSelectedTextColor="@android:color/white"
-        app:tabTextColor="@android:color/white"/>
-
-
-</android.support.design.widget.AppBarLayout>
-
-        <android.support.v4.view.ViewPager
-        android:id="@+id/view_pager"
+    <ViewFlipper
+        android:id="@+id/mainViewFlipper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+        android:measureAllChildren="true">
+
+        <include
+            layout="@layout/splash_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <android.support.design.widget.CoordinatorLayout
+            android:id="@+id/coordinator"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <android.support.design.widget.AppBarLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:background="@color/colorPrimary"
+                    app:layout_scrollFlags="snap" />
+
+                <android.support.design.widget.TabLayout
+                    android:id="@+id/tab_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@color/colorPrimary"
+                    app:tabIndicatorColor="@android:color/white"
+                    app:tabIndicatorHeight="6dp"
+                    app:tabSelectedTextColor="@android:color/white"
+                    app:tabTextColor="@android:color/white" />
 
 
-    <com.getbase.floatingactionbutton.FloatingActionsMenu
-        android:id="@+id/fab_main"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:layout_gravity="bottom|right|end"
-        app:fab_addButtonColorNormal="#fafafa"
-        app:fab_addButtonColorPressed="#f1f1f1"
-        app:fab_addButtonPlusIconColor="#808080"
-        app:layout_behavior="com.devmoroz.moneyme.widgets.FloatingActionMenuBehavior">
+            </android.support.design.widget.AppBarLayout>
 
-        <com.getbase.floatingactionbutton.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/fab_main_income"
-            app:fab_icon="@drawable/ic_fab_income"
-            app:fab_colorNormal="@color/fab_income_normal"
-            app:fab_colorPressed="@color/fab_income_pressed"
-            app:fab_size="mini"
-            app:fab_title="Доход"/>
+            <android.support.v4.view.ViewPager
+                android:id="@+id/view_pager"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-        <com.getbase.floatingactionbutton.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/fab_main_outcome"
-            app:fab_icon="@drawable/ic_fab_outcome"
-            app:fab_colorNormal="@color/fab_outcome_normal"
-            app:fab_colorPressed="@color/fab_outcome_pressed"
-            app:fab_size="mini"
-            app:fab_title="Расход"/>
+            <com.getbase.floatingactionbutton.FloatingActionsMenu
+                android:id="@+id/fab_main"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|right|end"
+                android:layout_margin="16dp"
+                app:fab_addButtonColorNormal="#fafafa"
+                app:fab_addButtonColorPressed="#f1f1f1"
+                app:fab_addButtonPlusIconColor="#808080"
+                app:layout_behavior="com.devmoroz.moneyme.widgets.FloatingActionMenuBehavior">
 
-    </com.getbase.floatingactionbutton.FloatingActionsMenu>
+                <com.getbase.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/fab_main_income"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:fab_colorNormal="@color/fab_income_normal"
+                    app:fab_colorPressed="@color/fab_income_pressed"
+                    app:fab_icon="@drawable/ic_fab_income"
+                    app:fab_size="mini"
+                    app:fab_title="Доход" />
 
-    </android.support.design.widget.CoordinatorLayout>
+                <com.getbase.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/fab_main_outcome"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:fab_colorNormal="@color/fab_outcome_normal"
+                    app:fab_colorPressed="@color/fab_outcome_pressed"
+                    app:fab_icon="@drawable/ic_fab_outcome"
+                    app:fab_size="mini"
+                    app:fab_title="Расход" />
+
+            </com.getbase.floatingactionbutton.FloatingActionsMenu>
+
+        </android.support.design.widget.CoordinatorLayout>
+    </ViewFlipper>
+
     <android.support.design.widget.NavigationView
+        android:id="@+id/navigation"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:id="@+id/navigation"
         android:layout_gravity="start"
-        app:menu="@menu/menu_navigation"
-        app:headerLayout="@layout/navigation_header" />
+        app:headerLayout="@layout/navigation_header"
+        app:menu="@menu/menu_navigation" />
 
 </android.support.v4.widget.DrawerLayout>

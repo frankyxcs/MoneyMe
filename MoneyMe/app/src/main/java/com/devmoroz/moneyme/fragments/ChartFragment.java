@@ -108,7 +108,7 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
 
 
         getDataForCurrentMonth();
-        accounts = MoneyApplication.accounts;
+        accounts = MoneyApplication.getInstance().getAccounts();
 
         chart.setData(generatePieData());
         chart.setCenterText(generateCenterText());
@@ -254,7 +254,7 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
 
     public void CheckWallet(){
         getDataForCurrentMonth();
-        accounts = MoneyApplication.accounts;
+        accounts = MoneyApplication.getInstance().getAccounts();
         chart.setData(generatePieData());
         chart.setCenterText(generateCenterText());
         chart.invalidate();

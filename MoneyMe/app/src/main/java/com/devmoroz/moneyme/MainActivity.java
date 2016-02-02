@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,12 +17,14 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ViewFlipper;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -55,6 +58,9 @@ public class MainActivity extends AppCompatActivity {
     private int createdOutcomeId = -1;
     private int createdIncomeId = -1;
 
+    public static final int VIEW_SPLASH = 0;
+    public static final int VIEW_CONTENT = 1;
+
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private TabLayout tabLayout;
@@ -63,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton fabOut;
     private FloatingActionsMenu fab;
     private View coordinator;
+    private ViewFlipper viewFlipper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,16 +85,25 @@ public class MainActivity extends AppCompatActivity {
         fabIn = (FloatingActionButton) findViewById(R.id.fab_main_income);
         fabOut = (FloatingActionButton) findViewById(R.id.fab_main_outcome);
         coordinator = findViewById(R.id.coordinator);
+        viewFlipper = (ViewFlipper) findViewById(R.id.mainViewFlipper);
 
-        start();
+        checkForFirstRun();
     }
 
-    private void selectCurrency() {
-        Currency c = CurrencyCache.getCurrencyOrEmpty();
-        if (c.isEmpty()) {
-            CurrencyHelper ch = new CurrencyHelper(MainActivity.this, MoneyApplication.getInstance().GetDBHelper());
-            ch.show();
-        }
+    private void checkForFirstRun(){
+                SharedPreferences getPrefs = PreferenceManager
+                        .getDefaultSharedPreferences(getBaseContext());
+
+                boolean isFirstStart = getPrefs.getBoolean(getString(R.string.pref_first_time_run), true);
+                if (isFirstStart) {
+                    //  Launch app intro
+                    Intent i = new Intent(MainActivity.this, FirstRunIntro.class);
+                    startActivity(i);
+
+                }else {
+                    start();
+                }
+
     }
 
     private void start() {
@@ -104,20 +120,16 @@ public class MainActivity extends AppCompatActivity {
         initNavigationView();
         initTabs();
         initFloatingActionMenu();
-
-        selectCurrency();
     }
 
     private void switchToSplashView() {
-        toolbar.setVisibility(View.GONE);
-        fab.setVisibility(View.GONE);
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        viewFlipper.setDisplayedChild(VIEW_SPLASH);
     }
 
     private void switchToContentView() {
-        toolbar.setVisibility(View.VISIBLE);
-        fab.setVisibility(View.VISIBLE);
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        viewFlipper.setDisplayedChild(VIEW_CONTENT);
     }
 
     @Subscribe

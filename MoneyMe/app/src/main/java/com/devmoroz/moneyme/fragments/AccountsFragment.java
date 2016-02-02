@@ -25,6 +25,7 @@ import com.afollestad.materialdialogs.Theme;
 import com.devmoroz.moneyme.MoneyApplication;
 import com.devmoroz.moneyme.R;
 import com.devmoroz.moneyme.adapters.AccountsAdapter;
+import com.devmoroz.moneyme.adapters.SpinnerWithIconsAdapter;
 import com.devmoroz.moneyme.eventBus.BusProvider;
 import com.devmoroz.moneyme.eventBus.DBRestoredEvent;
 import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
@@ -108,7 +109,7 @@ public class AccountsFragment extends Fragment {
     }
 
     private void CheckWallet(){
-        accounts = MoneyApplication.accounts;
+        accounts = MoneyApplication.getInstance().getAccounts();
         data.clear();
         totalBalance = 0;
         for (Account acc : accounts) {
@@ -200,40 +201,4 @@ public class AccountsFragment extends Fragment {
         CheckWallet();
     }
 
-
-    class SpinnerWithIconsAdapter extends ArrayAdapter<String> {
-
-        int[] typesOfAccountIcons = {R.drawable.ic_cash_multiple,R.drawable.ic_credit_card,R.drawable.ic_bank};
-        String[] typesOfAccount;
-
-        public SpinnerWithIconsAdapter(Context context, int textViewResourceId,
-                                       String[] objects) {
-            super(context, textViewResourceId, objects);
-            typesOfAccount = objects;
-        }
-
-        @Override
-        public View getDropDownView(int position, View convertView,
-                                    ViewGroup parent) {
-            return getCustomView(position, convertView, parent);
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            return getCustomView(position, convertView, parent);
-        }
-
-        public View getCustomView(int position, View convertView,
-                                  ViewGroup parent) {
-            LayoutInflater inflater = LayoutInflater.from(getContext());
-            View row = inflater.inflate(R.layout.account_type_row, parent, false);
-            TextView label = (TextView) row.findViewById(R.id.accountTypeText);
-            label.setText(typesOfAccount[position]);
-
-            ImageView icon = (ImageView) row.findViewById(R.id.accountTypeIcon);
-            icon.setImageResource(typesOfAccountIcons[position]);
-
-            return row;
-        }
-    }
 }
