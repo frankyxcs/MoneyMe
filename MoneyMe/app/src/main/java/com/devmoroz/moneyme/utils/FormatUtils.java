@@ -46,7 +46,7 @@ public class FormatUtils {
         if (c == null) {
             c = Currency.EMPTY;
         }
-        if (addMinus) {
+        if (addMinus && amount < 0) {
             sb.append("-");
         }
         String s = c.getFormat().format(amount);

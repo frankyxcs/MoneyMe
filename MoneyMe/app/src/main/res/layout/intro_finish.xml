@@ -15,13 +15,12 @@
         android:textColor="@color/colorWhite"
         android:paddingRight="32dp"
         android:textSize="28sp"
-        android:text="Добро пожаловать"/>
+        android:text="@string/greeting"/>
 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:orientation="vertical"
-        android:gravity="center"
         android:paddingRight="16dp"
         android:paddingLeft="16dp"
         android:layout_weight="6">
@@ -39,6 +38,8 @@
                 android:gravity="center_vertical"
                 android:padding="16dp"
                 android:textSize="16sp"
+                android:lines="1"
+                android:maxLength="20"
                 android:theme="@style/WhiteInput"/>
         </android.support.design.widget.TextInputLayout>
 
@@ -78,6 +79,7 @@
                 android:padding="16dp"
                 android:textSize="16sp"
                 android:inputType="number|numberDecimal"
+                android:lines="1"
                 android:maxLength="9"
                 android:theme="@style/WhiteInput"/>
 

@@ -21,10 +21,12 @@ import java.util.List;
 public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.AccountsViewHolder> {
 
     private LayoutInflater inflater;
+    private Context context;
     List<AccountRow> accountData = Collections.emptyList();
     final int[] typesOfAccountIcons = {R.drawable.ic_cash_multiple,R.drawable.ic_credit_card,R.drawable.ic_bank};
 
     public AccountsAdapter(Context context) {
+        this.context = context;
         inflater = LayoutInflater.from(context);
     }
 
@@ -47,8 +49,8 @@ public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.Accoun
         AccountRow current = accountData.get(position);
 
         holder.accountName.setText(current.name);
-        holder.accountAvailable.setText(FormatUtils.amountToString(currency,current.total));
-        holder.accountExpense.setText(FormatUtils.amountToString(currency, current.expense));
+        holder.accountAvailable.setText(FormatUtils.attachAmountToTextWithoutBrackets(context.getString(R.string.balance),currency, current.total,true));
+        holder.accountExpense.setText(FormatUtils.attachAmountToTextWithoutBrackets(context.getString(R.string.header_expenses),currency, current.expense, false));
         holder.accountIcon.setImageResource(typesOfAccountIcons[current.type]);
     }
 

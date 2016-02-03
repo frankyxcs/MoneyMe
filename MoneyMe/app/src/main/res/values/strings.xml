@@ -232,4 +232,5 @@
     </string-array>
 
     <string name="app_key">sdasdas</string>
+    <string name="greeting">Добро пожаловать</string>
 </resources>

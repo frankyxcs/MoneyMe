@@ -5,16 +5,19 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.preference.PreferenceManager;
+import android.view.WindowManager;
 
 import com.devmoroz.moneyme.fragments.Intro.FinishFragment;
 import com.github.paolorotolo.appintro.AppIntro;
+import com.github.paolorotolo.appintro.AppIntro2;
 
-public class FirstRunIntro extends AppIntro {
+public class FirstRunIntro extends AppIntro2 {
 
     private FinishFragment finishFragment;
 
     @Override
     public void init(Bundle savedInstanceState) {
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         doneButton.setEnabled(false);
         finishFragment = FinishFragment.newInstance(doneButton);
         addSlide(finishFragment);
@@ -29,13 +32,6 @@ public class FirstRunIntro extends AppIntro {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();
-    }
-
-    @Override
-    public void onSkipPressed() {
-        if (pager.isNextPagingEnabled()) {
-            pager.setCurrentItem(fragments.size() - 1);
-        }
     }
 
     @Override

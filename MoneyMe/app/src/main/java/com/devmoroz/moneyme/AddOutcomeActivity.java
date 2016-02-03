@@ -24,6 +24,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
@@ -96,6 +97,7 @@ public class AddOutcomeActivity extends AppCompatActivity {
         setTheme(R.style.AppDefaultOutcome);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_outcome);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         Animation animation = AnimationUtils.loadAnimation(this, R.anim.fab_grow);
 
         toolbar = (Toolbar) findViewById(R.id.add_outcome_toolbar);

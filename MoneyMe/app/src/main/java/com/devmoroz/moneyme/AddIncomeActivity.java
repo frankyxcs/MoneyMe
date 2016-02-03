@@ -18,6 +18,7 @@ import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
@@ -60,6 +61,7 @@ public class AddIncomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_add_income);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         Animation animation = AnimationUtils.loadAnimation(this, R.anim.fab_grow);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.add_income_toolbar);

@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
                     //  Launch app intro
                     Intent i = new Intent(MainActivity.this, FirstRunIntro.class);
                     startActivity(i);
-
+                    finish();
                 }else {
                     start();
                 }
