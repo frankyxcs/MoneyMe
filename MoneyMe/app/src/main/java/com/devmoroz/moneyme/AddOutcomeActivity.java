@@ -86,7 +86,6 @@ public class AddOutcomeActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private ImageView chequeImage;
     private ImageView imageDeletePhoto;
-    private SlidingPaneLayout slidingPane;
 
 
     private DBHelper dbHelper;
@@ -115,7 +114,6 @@ public class AddOutcomeActivity extends AppCompatActivity {
         chequeImage = (ImageView) findViewById(R.id.add_outcome_cheque);
         imageDeletePhoto = (ImageView) findViewById(R.id.delete_outcome_cheque);
         photoWrapper = (RelativeLayout) findViewById(R.id.photoWrapper);
-        slidingPane = (SlidingPaneLayout) findViewById(R.id.sliding_pane_outcome);
         imageDeletePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -171,7 +169,7 @@ public class AddOutcomeActivity extends AppCompatActivity {
     }
 
     private void initCategorySpinner() {
-        String[] categories = getResources().getStringArray(R.array.transaction_categories);
+        String[] categories = getResources().getStringArray(R.array.outcome_categories);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, categories);
         categorySpin.setAdapter(adapter);
     }
@@ -332,7 +330,6 @@ public class AddOutcomeActivity extends AppCompatActivity {
         if (FormatUtils.isNotEmpty(photoPath)) {
             setImageWithPicasso(getApplicationContext(), photoPath, chequeImage);
             photoWrapper.setVisibility(View.VISIBLE);
-            slidingPane.openPane();
         }
     }
 
@@ -342,7 +339,6 @@ public class AddOutcomeActivity extends AppCompatActivity {
         }
         if (photoPath != null && photoWrapper != null) {
             photoWrapper.setVisibility(View.INVISIBLE);
-            slidingPane.closePane();
             photoFileName = null;
             photoPath = null;
             chequeImage.setImageBitmap(null);

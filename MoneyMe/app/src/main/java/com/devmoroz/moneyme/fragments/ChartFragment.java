@@ -26,6 +26,7 @@ import com.devmoroz.moneyme.eventBus.DBRestoredEvent;
 import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
 import com.devmoroz.moneyme.helpers.DBHelper;
 import com.devmoroz.moneyme.models.Account;
+import com.devmoroz.moneyme.models.CustomLegends;
 import com.devmoroz.moneyme.models.Income;
 import com.devmoroz.moneyme.models.LegendDetails;
 import com.devmoroz.moneyme.models.Outcome;
@@ -64,6 +65,7 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
     private List<Account> accounts;
     private String totalOut;
     private String balance;
+    private CustomLegends myLegends;
 
 
     public static ChartFragment getInstance() {
@@ -105,16 +107,17 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
         chart.setExtraOffsets(5, 10, 5, 5);
         chart.setDragDecelerationFrictionCoef(0.95f);
 
-
-
         getDataForCurrentMonth();
         accounts = MoneyApplication.getInstance().getAccounts();
 
         chart.setData(generatePieData());
+
         chart.setCenterText(generateCenterText());
         chart.setCenterTextSize(16f);
         chart.setDescription("");
         chart.setOnChartValueSelectedListener(this);
+        Legend l = chart.getLegend();
+        l.setCustom(myLegends.colors, myLegends.titles);
         chart.invalidate();
 
         customizeLegend();
@@ -141,7 +144,7 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
         PieData data = chart.getData();
         List<Entry> entries = data.getDataSet().getYVals();
 
-        for (int i = 0; i < l.getColors().length - 1; i++) {
+        for (int i = 0; i < l.getColors().length; i++) {
             Entry entry = entries.get(i);
             String label = l.getLabel(i);
             int colorCode = colorCodes[i];
@@ -215,6 +218,10 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
         ds1.setDrawValues(false);
 
 
+        int[] colors = CustomColorTemplate.getCategoriesColors(getContext(),xVals);
+        myLegends = new CustomLegends(xVals,colors);
+
+
         PieData d = new PieData(xVals, ds1);
 
         return d;
@@ -257,6 +264,8 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
         accounts = MoneyApplication.getInstance().getAccounts();
         chart.setData(generatePieData());
         chart.setCenterText(generateCenterText());
+        Legend l = chart.getLegend();
+        l.setCustom(myLegends.colors, myLegends.titles);
         chart.invalidate();
         chart.animateY(1400);
         customizeLegend();

@@ -1,8 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/balanceContainerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:gravity="center_vertical"
+        android:minHeight="72dp"
+        android:padding="16dp"
+        tools:ignore="UnusedAttribute">
+
+        <me.grantland.widget.AutofitTextView
+            android:id="@+id/balanceTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="56dp"
+            android:singleLine="true"
+            android:textColor="?android:textColorPrimaryInverse"
+            android:textAppearance="@style/Text.Display2"
+            tools:ignore="RtlHardcoded"
+            tools:text="20,461.39 $" />
+
+    </LinearLayout>
 
     <android.support.v7.widget.CardView
         android:id="@+id/add_new_account"
@@ -33,22 +57,10 @@
         </RelativeLayout>
     </android.support.v7.widget.CardView>
 
-    <TextView
-        android:id="@+id/accountsTotalAmount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginRight="16dp"
-        android:textSize="17sp"
-        android:layout_gravity="right|end"
-        android:text="@string/total_amount"/>
-
     <com.devmoroz.moneyme.widgets.EmptyRecyclerView
         android:id="@+id/accountsList"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"/>
-
-
 
 </LinearLayout>

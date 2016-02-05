@@ -44,6 +44,7 @@ dependencies {
     compile 'com.romainpiel.shimmer:library:1.4.0@aar'
     compile 'com.dropbox.core:dropbox-core-sdk:2.0-beta-2'
     compile 'com.github.paolorotolo:appintro:3.4.0'
+    compile 'me.grantland:autofittextview:0.2.+'
     compile files('libs/ormlite-android-4.48.jar')
     compile files('libs/ormlite-core-4.48.jar')
 }

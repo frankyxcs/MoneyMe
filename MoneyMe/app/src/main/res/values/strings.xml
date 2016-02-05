@@ -187,15 +187,28 @@
     <string name="notifications">Уведомления</string>
 
 
-    <string name="divide">/</string>
-    <string name="plus">+</string>
-    <string name="minus">-</string>
-    <string name="multiply">*</string>
     <string name="backspace">del</string>
     <string name="close_calc">ok</string>
 
     <string name="main_notification_content_small">Добавьте операции за сегодняшний день.</string>
     <string name="main_notification_content_large">Нажмите, чтобы добавить операции за сегодняшний день.</string>
+
+
+    <string name="c_wear">Одежда</string>
+    <string name="c_beauty">Гигиена и косметика</string>
+    <string name="c_health">Здоровье</string>
+    <string name="c_mobile">Связь</string>
+    <string name="c_food">Продукты</string>
+    <string name="c_car">Машина</string>
+    <string name="c_presents">Подарки</string>
+    <string name="c_food_out">Еда вне дома</string>
+    <string name="c_credit">Кредит</string>
+    <string name="c_rent">Аренда</string>
+    <string name="c_tech">Техника</string>
+    <string name="c_transport">Транспорт</string>
+    <string name="c_home">Товары для дома</string>
+    <string name="c_rest">Развлечения</string>
+    <string name="c_other">Другое</string>
 
     <string-array name="transaction_categories">
         <item>Одежда</item>

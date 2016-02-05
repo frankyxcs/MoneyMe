@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="divide" translatable="false">÷</string>
+    <string name="multiply" translatable="false">×</string>
+    <string name="plus" translatable="false">+</string>
+    <string name="minus" translatable="false">-</string>
+    <string name="equals" translatable="false">=</string>
+    <string name="decimal" translatable="false">.</string>
+    <string name="number_0" translatable="false">0</string>
+    <string name="number_1" translatable="false">1</string>
+    <string name="number_2" translatable="false">2</string>
+    <string name="number_3" translatable="false">3</string>
+    <string name="number_4" translatable="false">4</string>
+    <string name="number_5" translatable="false">5</string>
+    <string name="number_6" translatable="false">6</string>
+    <string name="number_7" translatable="false">7</string>
+    <string name="number_8" translatable="false">8</string>
+    <string name="number_9" translatable="false">9</string>
+
+
+    <string-array name="outcome_categories" translatable="false">
+        <item>@string/c_wear</item>
+        <item>@string/c_beauty</item>
+        <item>@string/c_health</item>
+        <item>@string/c_mobile</item>
+        <item>@string/c_food</item>
+        <item>@string/c_car</item>
+        <item>@string/c_presents</item>
+        <item>@string/c_food_out</item>
+        <item>@string/c_credit</item>
+        <item>@string/c_rent</item>
+        <item>@string/c_transport</item>
+        <item>@string/c_home</item>
+        <item>@string/c_rest</item>
+        <item>@string/c_other</item>
+    </string-array>
+
+</resources>

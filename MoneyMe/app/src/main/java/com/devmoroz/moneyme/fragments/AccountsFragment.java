@@ -50,7 +50,7 @@ public class AccountsFragment extends Fragment {
     private View view;
     private EmptyRecyclerView recyclerView;
     private AccountsAdapter adapter;
-    private TextView textTotalBalance;
+    private TextView balanceTextView;
     private ArrayList<AccountRow> data = new ArrayList<>();
     private List<Account> accounts;
     private double totalBalance = 0;
@@ -85,7 +85,7 @@ public class AccountsFragment extends Fragment {
         view = inflater.inflate(R.layout.accounts_fragment, container, false);
         recyclerView = (EmptyRecyclerView) view.findViewById(R.id.accountsList);
         btnAddAccount = (CardView) view.findViewById(R.id.add_new_account);
-        textTotalBalance = (TextView) view.findViewById(R.id.accountsTotalAmount);
+        balanceTextView = (TextView) view.findViewById(R.id.balanceTextView);
         btnAddAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -103,9 +103,8 @@ public class AccountsFragment extends Fragment {
 
     private void SetTotalBalance(){
         Currency currency = CurrencyCache.getCurrencyOrEmpty();
-        String text = getString(R.string.total_amount);
-        String value = FormatUtils.attachAmountToTextWithoutBrackets(text,currency, totalBalance,false);
-        textTotalBalance.setText(value);
+        String value = FormatUtils.amountToString(currency, totalBalance,true);
+        balanceTextView.setText(value);
     }
 
     private void CheckWallet(){
