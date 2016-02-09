@@ -43,7 +43,7 @@ public class BackupTask extends AsyncTask<String, Void, Integer> {
         File dbFile = mContext.getDatabasePath("moneyme.db");
         //Get a reference to the directory location for the backup
         File exportDir =
-                new File(Environment.getExternalStorageDirectory(), "MoneymeBackups");
+                new File(Environment.getExternalStorageDirectory()+"/MoneyMe/Backups");
         if (!exportDir.exists()) {
             exportDir.mkdirs();
         }

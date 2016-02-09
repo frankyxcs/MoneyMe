@@ -14,16 +14,13 @@ import com.devmoroz.moneyme.helpers.DBHelper;
 import com.devmoroz.moneyme.helpers.DBHelperFactory;
 import com.devmoroz.moneyme.logging.L;
 import com.devmoroz.moneyme.models.Account;
-import com.devmoroz.moneyme.models.CommonInOut;
 import com.devmoroz.moneyme.models.Goal;
-import com.devmoroz.moneyme.models.Income;
-import com.devmoroz.moneyme.models.Outcome;
+import com.devmoroz.moneyme.models.Transaction;
 import com.devmoroz.moneyme.utils.CurrencyCache;
 import com.devmoroz.moneyme.utils.Preferences;
 import com.squareup.otto.Subscribe;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -37,9 +34,7 @@ public class MoneyApplication extends Application {
     }
 
     public static List<Goal> goals = Collections.emptyList();
-    public static List<Income> incomes = Collections.emptyList();
-    public static List<Outcome> outcomes = Collections.emptyList();
-    public static ArrayList<CommonInOut> inout = new ArrayList<>(0);
+    public static List<Transaction> transactions = Collections.emptyList();
     public static List<Account> accounts = Collections.emptyList();
 
     private DBHelper dbHelper;
@@ -57,21 +52,7 @@ public class MoneyApplication extends Application {
             int period = Preferences.getHistoryPeriod(this);
             int monthStart = Preferences.getMonthStart(this);
             accounts = dbHelper.getAccountDAO().queryForAll();
-            incomes = dbHelper.getIncomeDAO().queryForPeriod(period, monthStart);
-            outcomes = dbHelper.getOutcomeDAO().queryForPeriod(period, monthStart);
-
-            inout = new ArrayList<>();
-
-            if (incomes != null) {
-                for (Income in : incomes) {
-                    inout.add(new CommonInOut(1, in.getId(), in.getAmount(), null, in.getDateOfReceipt(), in.getAccountName(), null, in.getNotes(), ""));
-                }
-            }
-            if (outcomes != null) {
-                for (Outcome out : outcomes) {
-                    inout.add(new CommonInOut(2, out.getId(), out.getAmount(), out.getCategory(), out.getDateOfSpending(), out.getAccountName(), out.getPhoto(), out.getNotes(), out.getLocation()));
-                }
-            }
+            transactions = dbHelper.getTransactionDAO().queryAllForPeriod(period, monthStart);
 
         } catch (SQLException ex) {
             L.t(this, "Something went wrong.Please,try again.");

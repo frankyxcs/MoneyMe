@@ -3,7 +3,6 @@ package com.devmoroz.moneyme.adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,31 +10,31 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.devmoroz.moneyme.DetailsActivity;
 import com.devmoroz.moneyme.FullScreenImageActivity;
 import com.devmoroz.moneyme.R;
-import com.devmoroz.moneyme.models.CommonInOut;
+import com.devmoroz.moneyme.models.Transaction;
+import com.devmoroz.moneyme.models.TransactionType;
 import com.devmoroz.moneyme.utils.Constants;
 import com.devmoroz.moneyme.utils.FormatUtils;
 import com.devmoroz.moneyme.utils.PhotoUtil;
 import com.devmoroz.moneyme.utils.datetime.TimeUtils;
 
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainViewHolder> {
 
-    private ArrayList<CommonInOut> inOutData = new ArrayList<>();
+    private List<Transaction> transactions = Collections.emptyList();
     private LayoutInflater wInflater;
     private Context appContext;
     private final Callback mCallback;
 
     public interface Callback {
-        void onDeleteClick(int id, int type);
-        void onEditClick(int id, int type);
+        void onDeleteClick(int id, TransactionType type);
+        void onEditClick(int id, TransactionType type);
     }
 
     public HistoryAdapter(Context context, Callback callback) {
@@ -44,8 +43,8 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
         mCallback = callback;
     }
 
-    public void setInOutData(ArrayList<CommonInOut> inOutData) {
-        this.inOutData = inOutData;
+    public void setInOutData(List<Transaction> transactions) {
+        this.transactions = transactions;
 
         notifyDataSetChanged();
     }
@@ -59,7 +58,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
 
     @Override
     public void onBindViewHolder(final MainViewHolder holder, int position) {
-        final CommonInOut wData = inOutData.get(position);
+        final Transaction wData = transactions.get(position);
         holder.setItemDetails(wData.getId(), wData.getType());
 
         TextView textAmount = holder.textAmount;
@@ -71,15 +70,15 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
 
         final int sdk = android.os.Build.VERSION.SDK_INT;
         if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-            Drawable background = wData.getType() == 1 ? appContext.getResources().getDrawable(R.drawable.circle_green) : appContext.getResources().getDrawable(R.drawable.circle_red);
+            Drawable background = wData.getType() == TransactionType.INCOME ? appContext.getResources().getDrawable(R.drawable.circle_green) : appContext.getResources().getDrawable(R.drawable.circle_red);
             textCircle.setBackgroundDrawable(background);
         } else {
-            Drawable background = wData.getType() == 1 ? appContext.getDrawable(R.drawable.circle_green) : appContext.getDrawable(R.drawable.circle_red);
+            Drawable background = wData.getType() == TransactionType.INCOME ? appContext.getDrawable(R.drawable.circle_green) : appContext.getDrawable(R.drawable.circle_red);
             textCircle.setBackground(background);
         }
 
         textAmount.setText(wData.getFormatedAmount());
-        String categ = wData.getCategory() != null ? wData.getCategory() : wData.getAccount();
+        String categ = wData.getType() == TransactionType.OUTCOME ? wData.getCategory() : wData.getAccountName();
         textCategory.setText(categ);
         textCircle.setText(categ.substring(0, 1));
         textDateAdded.setText(TimeUtils.formatHumanFriendlyShortDate(appContext, wData.getDateLong()));
@@ -94,9 +93,8 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
         }
 
         if(FormatUtils.isNotEmpty(wData.getPhoto())){
-            PhotoUtil.setImageWithPicasso(appContext,wData.getPhoto(),photoView);
+            PhotoUtil.setImageWithGlide(appContext,wData.getPhoto(),photoView);
             photoView.setVisibility(View.VISIBLE);
-
             holder.attachedPhoto.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -119,7 +117,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
             public void onClick(View v) {
                 Context context = v.getContext();
                 Intent intent = new Intent(context, DetailsActivity.class);
-                intent.putExtra(Constants.DETAILS_ITEM_TYPE, holder.itemType);
+                intent.putExtra(Constants.DETAILS_ITEM_TYPE, holder.itemType.toString());
                 intent.putExtra(Constants.DETAILS_ITEM_ID, holder.itemId);
 
                 context.startActivity(intent);
@@ -129,7 +127,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
 
     @Override
     public int getItemCount() {
-        return inOutData.size();
+        return transactions.size();
     }
 
     public class MainViewHolder extends RecyclerView.ViewHolder{
@@ -144,9 +142,9 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
         ImageButton deleteButton;
         ImageButton editButton;
         int itemId;
-        int itemType;
+        TransactionType itemType;
 
-        public void setItemDetails(int id,int type){
+        public void setItemDetails(int id, TransactionType type){
             itemId = id;
             itemType = type;
         }

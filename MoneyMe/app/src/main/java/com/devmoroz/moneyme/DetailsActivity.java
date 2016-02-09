@@ -24,17 +24,15 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.afollestad.materialdialogs.Theme;
 import com.devmoroz.moneyme.eventBus.BusProvider;
 import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
 import com.devmoroz.moneyme.helpers.DBHelper;
+import com.devmoroz.moneyme.models.Account;
 import com.devmoroz.moneyme.models.Currency;
-import com.devmoroz.moneyme.models.Income;
-import com.devmoroz.moneyme.models.Outcome;
-import com.devmoroz.moneyme.utils.CommonUtils;
+import com.devmoroz.moneyme.models.Transaction;
+import com.devmoroz.moneyme.models.TransactionType;
 import com.devmoroz.moneyme.utils.Constants;
 import com.devmoroz.moneyme.utils.CurrencyCache;
-import com.devmoroz.moneyme.utils.CustomColorTemplate;
 import com.devmoroz.moneyme.utils.FormatUtils;
 import com.devmoroz.moneyme.utils.PhotoUtil;
 import com.devmoroz.moneyme.utils.datetime.TimeUtils;
@@ -65,7 +63,7 @@ public class DetailsActivity extends AppCompatActivity {
     private TextView notesTextView;
     private LineChart chart;
     private int itemId;
-    private int itemType;
+    private TransactionType itemType;
     private static Date entityDate = new Date();
     private static double amount = 0f;
     private static String note = "";
@@ -79,10 +77,11 @@ public class DetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         Intent intent = getIntent();
         itemId = intent.getIntExtra(Constants.DETAILS_ITEM_ID, -1);
-        itemType = intent.getIntExtra(Constants.DETAILS_ITEM_TYPE, -1);
-        if (itemType == 1) {
+        String type = intent.getStringExtra(Constants.DETAILS_ITEM_TYPE);
+        itemType = TransactionType.valueOf(type);
+        if (itemType == TransactionType.INCOME) {
             setTheme(R.style.DetailsIncome);
-        } else if (itemType == 2) {
+        } else if (itemType == TransactionType.OUTCOME) {
             setTheme(R.style.DetailsOutcome);
         } else {
             setTheme(R.style.AppDefault);
@@ -107,59 +106,35 @@ public class DetailsActivity extends AppCompatActivity {
 
     }
 
-    private void prepareIncomesData(int id) throws SQLException {
-        DBHelper dbHelper = MoneyApplication.getInstance().GetDBHelper();
-        Income current = dbHelper.getIncomeDAO().queryForId(id);
-        entityDate = current.getDateOfReceipt();
-        note = current.getNotes();
-        amount = current.getAmount();
-        collapsingToolbar.setTitle(getString(R.string.income_toolbar_name));
-
-        amountTextView.setText(CurrencyCache.formatAmountWithSign(amount));
-        dateTextView.setText(TimeUtils.formatHumanFriendlyShortDate(getApplicationContext(), entityDate.getTime()));
-        if (FormatUtils.isNotEmpty(note)) {
-            notesTextView.setText(note);
-            notesTextView.setVisibility(View.VISIBLE);
-        } else {
-            notesTextView.setText(note);
-            notesTextView.setVisibility(View.GONE);
-        }
-    }
-
-    private void prepareOutcomesData(int id) throws SQLException {
-        DBHelper dbHelper = MoneyApplication.getInstance().GetDBHelper();
-        Outcome current = dbHelper.getOutcomeDAO().queryForId(id);
-        entityDate = current.getDateOfSpending();
-        note = current.getNotes();
-        amount = current.getAmount();
-        if (FormatUtils.isNotEmpty(current.getPhoto())) {
-            loadImage(current.getPhoto());
-        }
-        category = current.getCategory();
-        collapsingToolbar.setTitle(category);
-        amountTextView.setText(CurrencyCache.formatAmountWithSign(amount));
-        dateTextView.setText(TimeUtils.formatHumanFriendlyShortDate(getApplicationContext(), entityDate.getTime()));
-        if (FormatUtils.isNotEmpty(note)) {
-            notesTextView.setText(note);
-            notesTextView.setVisibility(View.VISIBLE);
-        } else {
-            notesTextView.setText(note);
-            notesTextView.setVisibility(View.GONE);
-        }
-    }
-
     private void loadEntity() {
-        if (itemType != -1 && itemId != -1) {
-            try {
-                if (itemType == 1) {
-                    prepareIncomesData(itemId);
-                } else {
-                    prepareOutcomesData(itemId);
+        try {
+            DBHelper dbHelper = MoneyApplication.getInstance().GetDBHelper();
+            Transaction transaction = dbHelper.getTransactionDAO().queryForId(itemId);
+            entityDate = transaction.getDateAdded();
+            note = transaction.getNotes();
+            amount = transaction.getAmount();
+            if (itemType == TransactionType.INCOME) {
+                collapsingToolbar.setTitle(getString(R.string.income_toolbar_name));
+            } else {
+                category = transaction.getCategory();
+                collapsingToolbar.setTitle(category);
+                if (FormatUtils.isNotEmpty(transaction.getPhoto())) {
+                    loadImage(transaction.getPhoto());
                 }
-            } catch (SQLException ex) {
-
             }
+            amountTextView.setText(CurrencyCache.formatAmountWithSign(amount));
+            dateTextView.setText(TimeUtils.formatHumanFriendlyShortDate(getApplicationContext(), entityDate.getTime()));
+            if (FormatUtils.isNotEmpty(note)) {
+                notesTextView.setText(note);
+                notesTextView.setVisibility(View.VISIBLE);
+            } else {
+                notesTextView.setText(note);
+                notesTextView.setVisibility(View.GONE);
+            }
+        } catch (SQLException ex) {
+
         }
+
     }
 
     private void setupChart() {
@@ -167,6 +142,9 @@ public class DetailsActivity extends AppCompatActivity {
         chart.setScaleEnabled(true);
         chart.setPinchZoom(true);
         chart.setDrawGridBackground(false);
+        chart.setDescription("");
+        chart.getXAxis().setDrawGridLines(false);
+        chart.getAxisRight().setEnabled(false);
 
         LimitLine llXAxis = new LimitLine(10f, "Index 10");
         llXAxis.setLineWidth(4f);
@@ -200,36 +178,37 @@ public class DetailsActivity extends AppCompatActivity {
 
         Legend l = chart.getLegend();
         l.setEnabled(true);
-        l.setForm(Legend.LegendForm.LINE);
+        l.setPosition(Legend.LegendPosition.BELOW_CHART_CENTER);
+        l.setTextSize(14);
+        l.setForm(Legend.LegendForm.CIRCLE);
 
         chart.getAxisLeft().setEnabled(true);
         chart.getAxisLeft().setStartAtZero(false);
         chart.getAxisLeft().removeAllLimitLines();
-        chart.getAxisRight().setEnabled(false);
 
         chart.getXAxis().setEnabled(true);
 
         chart.animateX(2500);
+
+        chart.invalidate();
     }
 
     private HashMap<String, Float> getDataForChart() {
         try {
             DBHelper dbHelper = MoneyApplication.getInstance().GetDBHelper();
             if (FormatUtils.isNotEmpty(category)) {
-                List<Outcome> outcomes = dbHelper.getOutcomeDAO().queryOutcomesForCategory(category);
-                CommonUtils.sortOutcomesByDate(outcomes);
+                List<Transaction> outcomes = dbHelper.getTransactionDAO().queryTransactionsForCategory(category);
                 HashMap<String, Float> hashMap = new HashMap<>();
-                for(Outcome o : outcomes){
+                for (Transaction o : outcomes) {
                     Calendar cal = Calendar.getInstance();
-                    cal.setTime(o.getDateOfSpending());
+                    cal.setTime(o.getDateAdded());
                     int month = cal.get(Calendar.MONTH) + 1;
                     int year = cal.get(Calendar.YEAR);
-                    String key = String.valueOf(month)+"-"+String.valueOf(year);
-                    float val = (float)o.getAmount();
-                    if(hashMap.containsKey(key)){
+                    String key = String.valueOf(month) + "-" + String.valueOf(year);
+                    float val = (float) o.getAmount();
+                    if (hashMap.containsKey(key)) {
                         hashMap.put(key, hashMap.get(key) + val);
-                    }
-                    else{
+                    } else {
                         hashMap.put(key, val);
                     }
                 }
@@ -312,19 +291,21 @@ public class DetailsActivity extends AppCompatActivity {
             if (newAmount != amount || !note.equals(notes)) {
                 DBHelper dbHelper = MoneyApplication.getInstance().GetDBHelper();
                 try {
-                    if (itemType == 1) {
-                        Income in = dbHelper.getIncomeDAO().queryForId(itemId);
-                        in.setAmount(newAmount);
-                        in.setNotes(notes);
-                        in.setDateOfReceipt(entityDate);
-                        dbHelper.getIncomeDAO().update(in);
+                    Transaction t = dbHelper.getTransactionDAO().queryForId(itemId);
+                    t.setAmount(newAmount);
+                    t.setNotes(notes);
+                    t.setDateAdded(entityDate);
+                    Account acc = dbHelper.getAccountDAO().queryForId(t.getAccount().getId());
+                    if (itemType == TransactionType.INCOME) {
+                        acc.setBalance(acc.getBalance() - amount);
+                        acc.setBalance(acc.getBalance() + newAmount);
                     } else {
-                        Outcome out = dbHelper.getOutcomeDAO().queryForId(itemId);
-                        out.setAmount(newAmount);
-                        out.setNotes(notes);
-                        out.setDateOfSpending(entityDate);
-                        dbHelper.getOutcomeDAO().update(out);
+                        acc.setBalance(acc.getBalance() + amount);
+                        acc.setBalance(acc.getBalance() - newAmount);
                     }
+                    dbHelper.getTransactionDAO().update(t);
+                    dbHelper.getAccountDAO().update(acc);
+
                     BusProvider.postOnMain(new WalletChangeEvent());
                 } catch (SQLException ex) {
 
@@ -335,7 +316,7 @@ public class DetailsActivity extends AppCompatActivity {
 
     private void loadImage(String path) {
         final ImageView imageView = (ImageView) findViewById(R.id.details_backdrop);
-        PhotoUtil.setImageWithPicasso(getApplicationContext(), path, imageView);
+        PhotoUtil.setImageWithGlide(getApplicationContext(), path, imageView);
     }
 
     public static class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {

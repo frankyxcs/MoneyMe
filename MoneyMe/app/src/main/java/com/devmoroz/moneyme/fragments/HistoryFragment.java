@@ -5,15 +5,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
-import android.text.format.DateUtils;
-import android.util.SparseBooleanArray;
-import android.util.SparseIntArray;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -28,15 +22,15 @@ import com.devmoroz.moneyme.eventBus.SearchCanceled;
 import com.devmoroz.moneyme.eventBus.SearchTriggered;
 import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
 import com.devmoroz.moneyme.models.Account;
-import com.devmoroz.moneyme.models.CommonInOut;
 import com.devmoroz.moneyme.models.Currency;
+import com.devmoroz.moneyme.models.Transaction;
+import com.devmoroz.moneyme.models.TransactionType;
 import com.devmoroz.moneyme.utils.CommonUtils;
 import com.devmoroz.moneyme.utils.CurrencyCache;
 import com.devmoroz.moneyme.utils.FormatUtils;
 import com.devmoroz.moneyme.utils.Preferences;
 import com.devmoroz.moneyme.utils.datetime.PeriodUtils;
 import com.devmoroz.moneyme.utils.datetime.TimeUtils;
-import com.devmoroz.moneyme.widgets.CustomRecyclerScroll;
 import com.devmoroz.moneyme.widgets.EmptyRecyclerView;
 import com.devmoroz.moneyme.widgets.SectionedRecyclerViewAdapter;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
@@ -44,15 +38,12 @@ import com.squareup.otto.Subscribe;
 
 
 import java.util.ArrayList;
-import java.util.Formatter;
+import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
 
 public class HistoryFragment extends Fragment {
 
-    private static final String STATE_WALLET_ENTRIES = "state_wallet_entries";
-    private ArrayList<CommonInOut> mListWalletEntries = new ArrayList<>();
+    private List<Transaction> mListWalletEntries = Collections.emptyList();
     private List<SectionedRecyclerViewAdapter.Section> mSections;
     private List<Account> accounts;
     double totalBalance;
@@ -113,9 +104,9 @@ public class HistoryFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         wAdapter = new HistoryAdapter(getActivity(), new HistoryAdapter.Callback() {
             @Override
-            public void onDeleteClick(int id, int type) {
+            public void onDeleteClick(int id, TransactionType type) {
                 final int itemId = id;
-                final int itemType = type;
+                final TransactionType itemType = type;
                 new MaterialDialog.Builder(getContext())
                         .content(R.string.remove_item_confirm)
                         .negativeText(R.string.cancel)
@@ -134,40 +125,37 @@ public class HistoryFragment extends Fragment {
             }
 
             @Override
-            public void onEditClick(int id, int type) {
+            public void onEditClick(int id, TransactionType type) {
 
             }
         });
         boolean desc = Preferences.isSortByDesc(getContext());
 
-        if (savedInstanceState != null) {
-            mListWalletEntries = savedInstanceState.getParcelableArrayList(STATE_WALLET_ENTRIES);
-        } else {
-            mListWalletEntries = MoneyApplication.inout;
-            sorter.sortWalletEntriesByDate(mListWalletEntries, desc);
-            wAdapter.setInOutData(mListWalletEntries);
-        }
+        mListWalletEntries = MoneyApplication.transactions;
+        sorter.sortWalletEntriesByDate(mListWalletEntries, desc);
+        wAdapter.setInOutData(mListWalletEntries);
+
         initBalanceWidget(desc);
         initHistoryAdapter(mListWalletEntries);
         return view;
     }
 
-    private void initHistoryAdapter(ArrayList<CommonInOut> list) {
+    private void initHistoryAdapter(List<Transaction> list) {
         mSections = new ArrayList<>();
         long previousTime = -1;
         long time;
         int position = 0;
-        for(CommonInOut item : list){
+        for (Transaction item : list) {
             time = item.getDateLong();
             if (!TimeUtils.isSameDayDisplay(previousTime, time)) {
                 mSections.add(new SectionedRecyclerViewAdapter.Section(position,
-                        TimeUtils.formatHumanFriendlyShortDate(getContext(),time)
+                        TimeUtils.formatHumanFriendlyShortDate(getContext(), time)
                 ));
             }
             ++position;
             previousTime = time;
         }
-        SectionedRecyclerViewAdapter sectionAdapter = new SectionedRecyclerViewAdapter(getContext(),R.layout.section,R.id.section_text,wAdapter);
+        SectionedRecyclerViewAdapter sectionAdapter = new SectionedRecyclerViewAdapter(getContext(), R.layout.section, R.id.section_text, wAdapter);
         SectionedRecyclerViewAdapter.Section[] dummy = new SectionedRecyclerViewAdapter.Section[mSections.size()];
         sectionAdapter.setSections(mSections.toArray(dummy));
 
@@ -207,12 +195,10 @@ public class HistoryFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        //save the wallet entries list to a parcelable prior to rotation or configuration change
-        outState.putParcelableArrayList(STATE_WALLET_ENTRIES, mListWalletEntries);
     }
 
     public void CheckWallet() {
-        mListWalletEntries = MoneyApplication.inout;
+        mListWalletEntries = MoneyApplication.transactions;
         boolean desc = Preferences.isSortByDesc(getContext());
         sorter.sortWalletEntriesByDate(mListWalletEntries, desc);
         initBalanceWidget(desc);
@@ -233,12 +219,12 @@ public class HistoryFragment extends Fragment {
     @Subscribe
     public void OnSearchTriggered(SearchTriggered event) {
         String term = event.term.toLowerCase();
-        ArrayList<CommonInOut> searchedItems = new ArrayList<>();
-        mListWalletEntries = MoneyApplication.inout;
-        for (CommonInOut item : mListWalletEntries){
-            String notes = item.getNotes()!= null ? item.getNotes(): "";
-            String category = item.getCategory() != null ? item.getCategory() : item.getAccount();
-            if(category.toLowerCase().contains(term) || notes.toLowerCase().contains(term)){
+        ArrayList<Transaction> searchedItems = new ArrayList<>();
+        mListWalletEntries = MoneyApplication.transactions;
+        for (Transaction item : mListWalletEntries) {
+            String notes = item.getNotes() != null ? item.getNotes() : "";
+            String category = item.getCategory() != null ? item.getCategory() : item.getAccountName();
+            if (category.toLowerCase().contains(term) || notes.toLowerCase().contains(term)) {
                 searchedItems.add(item);
             }
         }

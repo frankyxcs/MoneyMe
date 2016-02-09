@@ -9,8 +9,15 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.view.View;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
+import com.devmoroz.moneyme.logging.L;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -47,10 +54,10 @@ public class PhotoUtil {
         return b;
     }
 
-    public static String checkExistAndTakePath(String photoName){
+    public static String checkExistAndTakePath(String photoName) {
         File pictureFile = new File(PICTURES_DIR, photoName);
         if (pictureFile.exists()) {
-            return  pictureFile.getPath();
+            return pictureFile.getAbsolutePath();
         }
         return null;
     }
@@ -61,18 +68,30 @@ public class PhotoUtil {
 
         Cursor cursor = context.getContentResolver().query(selectedImage,
                 filePathColumn, null, null, null);
-        cursor.moveToFirst();
-
-        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-
-        String fileName = cursor.getString(columnIndex);
-        cursor.close();
+        String fileName = "";
+        if (cursor != null) {
+            cursor.moveToFirst();
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            fileName = cursor.getString(columnIndex);
+            cursor.close();
+        }
 
         return fileName;
     }
 
-    public static void setImageWithPicasso(Context context, String path, ImageView target){
-        String photoPath = "file://" + path;
-        Picasso.with(context).load(photoPath).fit().into(target);
+    public static void setImageWithPicasso(Context context, String path, ImageView target) {
+        if (!path.contains("file:")) {
+            Picasso.with(context).load("file://" + path).fit().into(target);
+        } else {
+            Picasso.with(context).load(path).fit().into(target);
+        }
+    }
+
+    public static void setImageWithGlide(Context context, String path, ImageView targetImage) {
+        if (!path.contains("file:")) {
+            Glide.with(context).load("file://" + path).centerCrop().into(targetImage);
+        } else {
+            Glide.with(context).load(path).centerCrop().into(targetImage);
+        }
     }
 }

@@ -4,17 +4,14 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.devmoroz.moneyme.R;
 import com.devmoroz.moneyme.dao.AccountDAO;
 import com.devmoroz.moneyme.dao.CurrencyDAO;
 import com.devmoroz.moneyme.dao.GoalDAO;
-import com.devmoroz.moneyme.dao.IncomeDAO;
-import com.devmoroz.moneyme.dao.OutcomeDAO;
+import com.devmoroz.moneyme.dao.TransactionDAO;
 import com.devmoroz.moneyme.models.Account;
 import com.devmoroz.moneyme.models.Currency;
 import com.devmoroz.moneyme.models.Goal;
-import com.devmoroz.moneyme.models.Income;
-import com.devmoroz.moneyme.models.Outcome;
+import com.devmoroz.moneyme.models.Transaction;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
@@ -33,8 +30,7 @@ public class DBHelper extends OrmLiteSqliteOpenHelper {
     private Context con;
 
     private GoalDAO goalDao = null;
-    private IncomeDAO incomeDAO = null;
-    private OutcomeDAO outcomeDAO = null;
+    private TransactionDAO transactionDAO = null;
     private CurrencyDAO currencyDAO = null;
     private AccountDAO accountDAO = null;
 
@@ -47,8 +43,7 @@ public class DBHelper extends OrmLiteSqliteOpenHelper {
     public void onCreate(SQLiteDatabase db, ConnectionSource connectionSource) {
         try {
             TableUtils.createTable(connectionSource, Goal.class);
-            TableUtils.createTable(connectionSource, Income.class);
-            TableUtils.createTable(connectionSource, Outcome.class);
+            TableUtils.createTable(connectionSource, Transaction.class);
             TableUtils.createTable(connectionSource, Currency.class);
             TableUtils.createTable(connectionSource, Account.class);
         } catch (SQLException e) {
@@ -62,8 +57,7 @@ public class DBHelper extends OrmLiteSqliteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, ConnectionSource connectionSource, int oldVersion, int newVersion) {
         try {
             TableUtils.dropTable(connectionSource, Goal.class, true);
-            TableUtils.dropTable(connectionSource, Income.class, true);
-            TableUtils.dropTable(connectionSource, Outcome.class, true);
+            TableUtils.dropTable(connectionSource, Transaction.class, true);
             TableUtils.dropTable(connectionSource, Currency.class, true);
             TableUtils.dropTable(connectionSource, Account.class, true);
             onCreate(db, connectionSource);
@@ -77,8 +71,6 @@ public class DBHelper extends OrmLiteSqliteOpenHelper {
     public void close() {
         super.close();
         goalDao = null;
-        incomeDAO = null;
-        outcomeDAO = null;
         currencyDAO = null;
         accountDAO = null;
     }
@@ -90,18 +82,11 @@ public class DBHelper extends OrmLiteSqliteOpenHelper {
         return goalDao;
     }
 
-    public IncomeDAO getIncomeDAO() throws SQLException {
-        if (incomeDAO == null) {
-            incomeDAO = new IncomeDAO(getConnectionSource(), Income.class);
+    public TransactionDAO getTransactionDAO() throws SQLException {
+        if (transactionDAO == null) {
+            transactionDAO = new TransactionDAO(getConnectionSource(), Transaction.class);
         }
-        return incomeDAO;
-    }
-
-    public OutcomeDAO getOutcomeDAO() throws SQLException {
-        if (outcomeDAO == null) {
-            outcomeDAO = new OutcomeDAO(getConnectionSource(), Outcome.class);
-        }
-        return outcomeDAO;
+        return transactionDAO;
     }
 
     public CurrencyDAO getCurrencyDAO() throws SQLException {

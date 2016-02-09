@@ -38,10 +38,7 @@ public class Account {
     private boolean includeInTotal;
 
     @ForeignCollectionField
-    private ForeignCollection<Income> incomes;
-
-    @ForeignCollectionField
-    private ForeignCollection<Outcome> outcomes;
+    private ForeignCollection<Transaction> transactions;
 
     public Account(String name, double balance, int type) {
         this.name = name;
@@ -108,20 +105,12 @@ public class Account {
         this.currency = currency;
     }
 
-    public ForeignCollection<Income> getIncomes() {
-        return incomes;
+    public ForeignCollection<Transaction> getTransactions() {
+        return transactions;
     }
 
-    public void setIncomes(ForeignCollection<Income> incomes) {
-        this.incomes = incomes;
-    }
-
-    public ForeignCollection<Outcome> getOutcomes() {
-        return outcomes;
-    }
-
-    public void setOutcomes(ForeignCollection<Outcome> outcomes) {
-        this.outcomes = outcomes;
+    public void setTransactions(ForeignCollection<Transaction> transactions) {
+        this.transactions = transactions;
     }
 
     public boolean isIncludeInTotal() {

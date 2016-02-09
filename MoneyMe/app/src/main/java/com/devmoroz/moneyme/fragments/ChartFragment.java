@@ -1,7 +1,6 @@
 package com.devmoroz.moneyme.fragments;
 
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,13 +9,10 @@ import android.support.v7.widget.RecyclerView;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
-import android.text.style.RelativeSizeSpan;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.devmoroz.moneyme.MoneyApplication;
 import com.devmoroz.moneyme.R;
@@ -27,9 +23,9 @@ import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
 import com.devmoroz.moneyme.helpers.DBHelper;
 import com.devmoroz.moneyme.models.Account;
 import com.devmoroz.moneyme.models.CustomLegends;
-import com.devmoroz.moneyme.models.Income;
 import com.devmoroz.moneyme.models.LegendDetails;
-import com.devmoroz.moneyme.models.Outcome;
+import com.devmoroz.moneyme.models.Transaction;
+import com.devmoroz.moneyme.models.TransactionType;
 import com.devmoroz.moneyme.utils.CurrencyCache;
 import com.devmoroz.moneyme.utils.CustomColorTemplate;
 import com.devmoroz.moneyme.utils.Preferences;
@@ -43,7 +39,6 @@ import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
-import com.github.mikephil.charting.utils.ColorTemplate;
 import com.squareup.otto.Subscribe;
 
 import java.sql.SQLException;
@@ -61,7 +56,7 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
     ChartLegendAdapter adapter;
     LinearLayout tableDetails;
 
-    private List<Outcome> outs;
+    private List<Transaction> outs;
     private List<Account> accounts;
     private String totalOut;
     private String balance;
@@ -129,7 +124,7 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
         try {
             int monthStart = Preferences.getMonthStart(getContext());
             DBHelper helper = MoneyApplication.getInstance().GetDBHelper();
-            outs = helper.getOutcomeDAO().queryForCurrentMonth(monthStart-1);
+            outs = helper.getTransactionDAO().queryByTypeForCurrentMonth(monthStart - 1, TransactionType.OUTCOME);
         }catch (SQLException ex){
 
         }
@@ -184,7 +179,7 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
         }
 
         for (int i = 0; i < outs.size(); i++) {
-            Outcome elem = outs.get(i);
+            Transaction elem = outs.get(i);
             String key = elem.getCategory();
             float val = (float) elem.getAmount();
 

@@ -6,27 +6,25 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.NavUtils;
-import android.support.v4.widget.SlidingPaneLayout;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
-import android.text.method.DigitsKeyListener;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -34,17 +32,19 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.devmoroz.moneyme.adapters.CategorySpinnerWithIconsAdapter;
 import com.devmoroz.moneyme.helpers.DBHelper;
 import com.devmoroz.moneyme.logging.L;
 import com.devmoroz.moneyme.models.Account;
 import com.devmoroz.moneyme.models.CreatedItem;
 import com.devmoroz.moneyme.models.Currency;
-import com.devmoroz.moneyme.models.Outcome;
+import com.devmoroz.moneyme.models.Transaction;
+import com.devmoroz.moneyme.models.TransactionType;
 import com.devmoroz.moneyme.utils.Constants;
 import com.devmoroz.moneyme.utils.CurrencyCache;
+import com.devmoroz.moneyme.utils.CustomColorTemplate;
 import com.devmoroz.moneyme.utils.FormatUtils;
 import com.devmoroz.moneyme.utils.datetime.TimeUtils;
 import com.devmoroz.moneyme.widgets.CalculatorDialog;
@@ -54,15 +54,14 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import static com.devmoroz.moneyme.utils.PhotoUtil.PICTURES_DIR;
+
 import static com.devmoroz.moneyme.utils.PhotoUtil.extractImageUrlFromGallery;
-import static com.devmoroz.moneyme.utils.PhotoUtil.checkExistAndTakePath;
-import static com.devmoroz.moneyme.utils.PhotoUtil.setImageWithPicasso;
+import static com.devmoroz.moneyme.utils.PhotoUtil.setImageWithGlide;
 
 public class AddOutcomeActivity extends AppCompatActivity {
 
@@ -71,7 +70,6 @@ public class AddOutcomeActivity extends AppCompatActivity {
 
     private String photoFileName;
     private String photoPath;
-    private File photoFile;
     private static Date outcomeDate = new Date();
 
     private EditText amount;
@@ -80,6 +78,7 @@ public class AddOutcomeActivity extends AppCompatActivity {
     private TextInputLayout floatingAmountLabel;
     private Button date;
     private Spinner categorySpin;
+    private ImageView categoryColor;
     private Spinner accountSpin;
     private RelativeLayout photoWrapper;
 
@@ -107,6 +106,7 @@ public class AddOutcomeActivity extends AppCompatActivity {
         description = (EditText) findViewById(R.id.add_outcome_note);
         date = (Button) findViewById(R.id.add_outcome_date);
         categorySpin = (Spinner) findViewById(R.id.add_outcome_category);
+        categoryColor = (ImageView) findViewById(R.id.add_outcome_category_color);
         accountSpin = (Spinner) findViewById(R.id.add_outcome_account);
         date.setText(TimeUtils.formatShortDate(getApplicationContext(), new Date()));
         buttonAdd = (FloatingActionButton) findViewById(R.id.add_outcome_save);
@@ -170,8 +170,22 @@ public class AddOutcomeActivity extends AppCompatActivity {
 
     private void initCategorySpinner() {
         String[] categories = getResources().getStringArray(R.array.outcome_categories);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, categories);
+        CategorySpinnerWithIconsAdapter adapter = new CategorySpinnerWithIconsAdapter(this, R.layout.category_row, categories, CustomColorTemplate.PIECHART_COLORS);
         categorySpin.setAdapter(adapter);
+        categoryColor.setColorFilter(CustomColorTemplate.PIECHART_COLORS[0]);
+        categorySpin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position <= CustomColorTemplate.PIECHART_COLORS.length) {
+                    categoryColor.setColorFilter(CustomColorTemplate.PIECHART_COLORS[position]);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     private void initAccountSpinner() {
@@ -212,16 +226,16 @@ public class AddOutcomeActivity extends AppCompatActivity {
         double outcomeAmount = Double.parseDouble(amount.getText().toString());
         String selectedCategory = categorySpin.getSelectedItem().toString();
 
-        dateAdded = outcomeDate == null ? new Date():outcomeDate;
+        dateAdded = outcomeDate == null ? new Date() : outcomeDate;
 
         int id = accountSpin.getSelectedItemPosition();
         Account account = dbHelper.getAccountDAO().queryForAll().get(id);
         account.setBalance(account.getBalance() - outcomeAmount);
 
-        Outcome outcome = new Outcome(outcomeNote, dateAdded, outcomeAmount, selectedCategory, account);
+        Transaction outcome = new Transaction(TransactionType.OUTCOME,outcomeNote,selectedCategory,dateAdded,outcomeAmount,account);
         outcome.setPhoto(photoPath);
 
-        dbHelper.getOutcomeDAO().create(outcome);
+        dbHelper.getTransactionDAO().create(outcome);
         dbHelper.getAccountDAO().update(account);
 
         return new CreatedItem(outcome.getId(), selectedCategory, outcomeAmount, account.getId());
@@ -268,9 +282,9 @@ public class AddOutcomeActivity extends AppCompatActivity {
     }
 
     private void openCalculatorDialog() {
-       final MaterialDialog dialog = new MaterialDialog.Builder(AddOutcomeActivity.this)
+        final MaterialDialog dialog = new MaterialDialog.Builder(AddOutcomeActivity.this)
                 .customView(R.layout.dialog_calculator, false).build();
-        CalculatorDialog calc = new CalculatorDialog(dialog.getCustomView(),new CalculatorDialog.Callback(){
+        CalculatorDialog calc = new CalculatorDialog(dialog.getCustomView(), new CalculatorDialog.Callback() {
             @Override
             public void onCloseClick(String result) {
                 amount.setText(result);
@@ -287,10 +301,14 @@ public class AddOutcomeActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK) {
             if (requestCode == FROM_GALLERY_REQUEST_CODE) {
                 photoPath = extractImageUrlFromGallery(this, data);
+                L.appendLog("from gallery");
+                L.appendLog(photoPath);
             } else if (requestCode == SAVE_REQUEST_CODE) {
-                photoPath = checkExistAndTakePath(photoFileName);
+                File f = new File(photoPath);
+                Uri contentUri = Uri.fromFile(f);
+                L.appendLog("take photo");
+                L.appendLog(photoPath);
                 Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-                Uri contentUri = Uri.fromFile(photoFile);
                 intent.setData(contentUri);
                 this.sendBroadcast(intent);
             }
@@ -301,7 +319,7 @@ public class AddOutcomeActivity extends AppCompatActivity {
     private void takePhoto() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            photoFile = null;
+            File photoFile = null;
             try {
                 photoFile = filename();
             } catch (IOException ex) {
@@ -323,13 +341,19 @@ public class AddOutcomeActivity extends AppCompatActivity {
     private File filename() throws IOException {
         String time = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         photoFileName = time + ".jpg";
-        return new File(PICTURES_DIR, photoFileName);
+        File photoDir =
+                new File(Environment.getExternalStorageDirectory()+"/MoneyMe/Receipts");
+        if (!photoDir.exists()) {
+            photoDir.mkdirs();
+        }
+        File image = new File(photoDir, photoFileName);
+        photoPath = "file:" + image.getAbsolutePath();
+        return  image;
     }
 
     private void setPic() {
         if (FormatUtils.isNotEmpty(photoPath)) {
-            setImageWithPicasso(getApplicationContext(), photoPath, chequeImage);
-            photoWrapper.setVisibility(View.VISIBLE);
+            setImageWithGlide(getApplicationContext(), photoPath, chequeImage);
         }
     }
 
@@ -369,10 +393,10 @@ public class AddOutcomeActivity extends AppCompatActivity {
         public void onDateSet(DatePicker view, int year, int month, int day) {
             Calendar cal = Calendar.getInstance();
             cal.set(Calendar.YEAR, year);
-            cal.set(Calendar.MONTH,month);
+            cal.set(Calendar.MONTH, month);
             cal.set(Calendar.DAY_OF_MONTH, day);
             outcomeDate = cal.getTime();
-            date.setText(TimeUtils.formatShortDate(getContext(),outcomeDate));
+            date.setText(TimeUtils.formatShortDate(getContext(), outcomeDate));
         }
     }
 

@@ -59,9 +59,10 @@
             android:paddingRight="16dp">
 
             <ImageView
-                android:id="@+id/TextView03"
+                android:id="@+id/add_outcome_category_color"
                 style="@style/ImageView.Form"
-                android:src="@drawable/ic_checkbox_blank_circle"
+                android:padding="2dp"
+                android:src="@drawable/circle"
                 tools:ignore="RtlHardcoded"  />
 
             <Spinner

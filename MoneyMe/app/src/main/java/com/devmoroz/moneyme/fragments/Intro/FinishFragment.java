@@ -15,7 +15,7 @@ import android.widget.Spinner;
 
 import com.devmoroz.moneyme.MoneyApplication;
 import com.devmoroz.moneyme.R;
-import com.devmoroz.moneyme.adapters.SpinnerWithIconsAdapter;
+import com.devmoroz.moneyme.adapters.AccountSpinnerWithIconsAdapter;
 import com.devmoroz.moneyme.helpers.CurrencyHelper;
 import com.devmoroz.moneyme.helpers.DBHelper;
 import com.devmoroz.moneyme.models.Account;
@@ -60,7 +60,7 @@ public class FinishFragment extends Fragment {
         accountNameText.addTextChangedListener(createTextWatcher());
 
         String[] types = getContext().getResources().getStringArray(R.array.account_types);
-        SpinnerWithIconsAdapter adapter = new SpinnerWithIconsAdapter(getContext(),R.layout.account_type_row,types);
+        AccountSpinnerWithIconsAdapter adapter = new AccountSpinnerWithIconsAdapter(getContext(),R.layout.account_type_row,types);
         accountTypeSpinner.setAdapter(adapter);
         startBalanceText.setFilters(new InputFilter[]{new DecimalDigitsInputFilter()});
 

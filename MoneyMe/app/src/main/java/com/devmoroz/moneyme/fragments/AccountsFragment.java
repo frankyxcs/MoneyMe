@@ -1,6 +1,5 @@
 package com.devmoroz.moneyme.fragments;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
@@ -13,9 +12,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -25,7 +22,7 @@ import com.afollestad.materialdialogs.Theme;
 import com.devmoroz.moneyme.MoneyApplication;
 import com.devmoroz.moneyme.R;
 import com.devmoroz.moneyme.adapters.AccountsAdapter;
-import com.devmoroz.moneyme.adapters.SpinnerWithIconsAdapter;
+import com.devmoroz.moneyme.adapters.AccountSpinnerWithIconsAdapter;
 import com.devmoroz.moneyme.eventBus.BusProvider;
 import com.devmoroz.moneyme.eventBus.DBRestoredEvent;
 import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
@@ -33,7 +30,6 @@ import com.devmoroz.moneyme.helpers.DBHelper;
 import com.devmoroz.moneyme.models.Account;
 import com.devmoroz.moneyme.models.AccountRow;
 import com.devmoroz.moneyme.models.Currency;
-import com.devmoroz.moneyme.models.Goal;
 import com.devmoroz.moneyme.utils.CurrencyCache;
 import com.devmoroz.moneyme.utils.FormatUtils;
 import com.devmoroz.moneyme.widgets.DecimalDigitsInputFilter;
@@ -103,7 +99,7 @@ public class AccountsFragment extends Fragment {
 
     private void SetTotalBalance(){
         Currency currency = CurrencyCache.getCurrencyOrEmpty();
-        String value = FormatUtils.amountToString(currency, totalBalance,true);
+        String value = FormatUtils.amountToString(currency, totalBalance, true);
         balanceTextView.setText(value);
     }
 
@@ -143,7 +139,7 @@ public class AccountsFragment extends Fragment {
         accountNameInput = (TextInputLayout) dialog.getCustomView().findViewById(R.id.text_input_layout_add_account_name);
         EditText accountBalanceInput = (EditText) dialog.getCustomView().findViewById(R.id.accountAddBalance);
         Spinner accountTypesSpinner = (Spinner) dialog.getCustomView().findViewById(R.id.accountAddType);
-        SpinnerWithIconsAdapter adapter = new SpinnerWithIconsAdapter(getContext(),R.layout.account_type_row,types);
+        AccountSpinnerWithIconsAdapter adapter = new AccountSpinnerWithIconsAdapter(getContext(),R.layout.account_type_row,types);
         accountTypesSpinner.setAdapter(adapter);
         accountBalanceInput.setFilters(new InputFilter[]{new DecimalDigitsInputFilter()});
         accountNameInput.getEditText().addTextChangedListener(new TextWatcher() {

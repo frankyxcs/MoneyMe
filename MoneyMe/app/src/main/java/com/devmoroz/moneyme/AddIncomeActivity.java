@@ -26,14 +26,14 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.devmoroz.moneyme.helpers.DBHelper;
 import com.devmoroz.moneyme.logging.L;
 import com.devmoroz.moneyme.models.Account;
 import com.devmoroz.moneyme.models.CreatedItem;
 import com.devmoroz.moneyme.models.Currency;
-import com.devmoroz.moneyme.models.Income;
+import com.devmoroz.moneyme.models.Transaction;
+import com.devmoroz.moneyme.models.TransactionType;
 import com.devmoroz.moneyme.utils.Constants;
 import com.devmoroz.moneyme.utils.CurrencyCache;
 import com.devmoroz.moneyme.utils.FormatUtils;
@@ -123,9 +123,9 @@ public class AddIncomeActivity extends AppCompatActivity {
         Account account = dbHelper.getAccountDAO().queryForAll().get(id);
         account.setBalance(account.getBalance() + incomeAmount);
 
-        Income income = new Income(incomeNote,dateAdded, incomeAmount, account);
+        Transaction income = new Transaction(TransactionType.INCOME,incomeNote,dateAdded, incomeAmount, account);
 
-        dbHelper.getIncomeDAO().create(income);
+        dbHelper.getTransactionDAO().create(income);
         dbHelper.getAccountDAO().update(account);
 
         return new CreatedItem(income.getId(),account.getName(),incomeAmount, account.getId());

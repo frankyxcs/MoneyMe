@@ -10,13 +10,13 @@ import android.widget.TextView;
 
 import com.devmoroz.moneyme.R;
 
-public class SpinnerWithIconsAdapter extends ArrayAdapter<String> {
+public class AccountSpinnerWithIconsAdapter extends ArrayAdapter<String> {
 
     int[] typesOfAccountIcons = {R.drawable.ic_cash_multiple,R.drawable.ic_credit_card,R.drawable.ic_bank};
     String[] typesOfAccount;
 
-    public SpinnerWithIconsAdapter(Context context, int textViewResourceId,
-                                   String[] objects) {
+    public AccountSpinnerWithIconsAdapter(Context context, int textViewResourceId,
+                                          String[] objects) {
         super(context, textViewResourceId, objects);
         typesOfAccount = objects;
     }

@@ -55,8 +55,7 @@ public class MainActivity extends AppCompatActivity {
 
     final int REQUEST_CODE_INCOME = 918;
     final int REQUEST_CODE_OUTCOME = 1218;
-    private int createdOutcomeId = -1;
-    private int createdIncomeId = -1;
+    private int createdItemId = -1;
 
     public static final int VIEW_SPLASH = 0;
     public static final int VIEW_CONTENT = 1;
@@ -90,19 +89,19 @@ public class MainActivity extends AppCompatActivity {
         checkForFirstRun();
     }
 
-    private void checkForFirstRun(){
-                SharedPreferences getPrefs = PreferenceManager
-                        .getDefaultSharedPreferences(getBaseContext());
+    private void checkForFirstRun() {
+        SharedPreferences getPrefs = PreferenceManager
+                .getDefaultSharedPreferences(getBaseContext());
 
-                boolean isFirstStart = getPrefs.getBoolean(getString(R.string.pref_first_time_run), true);
-                if (isFirstStart) {
-                    //  Launch app intro
-                    Intent i = new Intent(MainActivity.this, FirstRunIntro.class);
-                    startActivity(i);
-                    finish();
-                }else {
-                    start();
-                }
+        boolean isFirstStart = getPrefs.getBoolean(getString(R.string.pref_first_time_run), true);
+        if (isFirstStart) {
+            //  Launch app intro
+            Intent i = new Intent(MainActivity.this, FirstRunIntro.class);
+            startActivity(i);
+            finish();
+        } else {
+            start();
+        }
 
     }
 
@@ -249,7 +248,7 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setCurrentItem(tab);
     }
 
-    private void doBackup(final String action){
+    private void doBackup(final String action) {
         int content = action.equals(BackupTask.COMMAND_BACKUP) ? R.string.backup_dialog_content : R.string.restore_dialog_content;
         final int progressContent = action.equals(BackupTask.COMMAND_BACKUP) ? R.string.backup_database_inprogress : R.string.restore_database_inprogress;
         new MaterialDialog.Builder(this)
@@ -344,107 +343,63 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(final int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
-            switch (requestCode) {
-                case REQUEST_CODE_INCOME:
-                    createdIncomeId = extras.getInt(Constants.CREATED_ITEM_ID);
-                    if (createdIncomeId != -1) {
-                        String accountName = extras.getString(Constants.CREATED_ITEM_CATEGORY);
-                        final int accId = extras.getInt(Constants.CREATED_ITEM_ACCOUNT);
-                        final double amount = extras.getDouble(Constants.CREATED_ITEM_AMOUNT);
-                        String sign = CurrencyCache.getCurrencyOrEmpty().getSymbol();
-                        String info = getString(R.string.added_income, accountName, amount, sign);
-                        final Snackbar snackBar = Snackbar.make(coordinator, info, Snackbar.LENGTH_LONG);
-                        snackBar.setCallback(new Snackbar.Callback() {
-                            boolean mShown = false;
+            createdItemId = extras.getInt(Constants.CREATED_ITEM_ID);
+            if (createdItemId != -1) {
+                String operationName = extras.getString(Constants.CREATED_ITEM_CATEGORY);
+                final int accId = extras.getInt(Constants.CREATED_ITEM_ACCOUNT);
+                final double amount = extras.getDouble(Constants.CREATED_ITEM_AMOUNT);
+                String sign = CurrencyCache.getCurrencyOrEmpty().getSymbol();
+                String info = "";
+                if (requestCode == REQUEST_CODE_INCOME) {
+                    info = getString(R.string.added_income, operationName, amount, sign);
+                } else if (requestCode == REQUEST_CODE_OUTCOME) {
+                    info = getString(R.string.added_outcome, operationName, amount, sign);
+                }
+                final Snackbar snackBar = Snackbar.make(coordinator, info, Snackbar.LENGTH_LONG);
+                snackBar.setCallback(new Snackbar.Callback() {
+                    boolean mShown = false;
 
-                            @Override
-                            public void onShown(Snackbar snackbar) {
-                                mShown = true;
-                            }
-
-                            @Override
-                            public void onDismissed(Snackbar snackbar, int event) {
-                                if (mShown) {
-                                    mShown = false;
-                                    if (event == Snackbar.Callback.DISMISS_EVENT_TIMEOUT || event == Snackbar.Callback.DISMISS_EVENT_SWIPE) {
-                                        BusProvider.postOnMain(new WalletChangeEvent());
-                                    }
-                                }
-                            }
-                        });
-                        snackBar.setAction(R.string.text_undo, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                try {
-                                    DBHelper dbhelper = MoneyApplication.getInstance().GetDBHelper();
-                                    Account acc = dbhelper.getAccountDAO().queryForId(accId);
-                                    acc.setBalance(acc.getBalance()-amount);
-                                    dbhelper.getAccountDAO().update(acc);
-                                    dbhelper.getIncomeDAO().deleteById(createdIncomeId);
-                                    BusProvider.postOnMain(new WalletChangeEvent());
-                                } catch (SQLException ex) {
-                                    L.t(MainActivity.this, "Something went wrong.Please,try again.");
-                                }
-                            }
-                        })
-                        .setActionTextColor(Color.RED);
-                        snackBar.show();
-                    } else {
-                        L.t(this, "Something went wrong.Please,try again.");
+                    @Override
+                    public void onShown(Snackbar snackbar) {
+                        mShown = true;
                     }
-                    break;
-                case REQUEST_CODE_OUTCOME:
-                    createdOutcomeId = extras.getInt(Constants.CREATED_ITEM_ID);
-                    if (createdOutcomeId != -1) {
-                        String category = extras.getString(Constants.CREATED_ITEM_CATEGORY);
-                        final int accId = extras.getInt(Constants.CREATED_ITEM_ACCOUNT);
-                        final double amount = extras.getDouble(Constants.CREATED_ITEM_AMOUNT);
-                        String sign = CurrencyCache.getCurrencyOrEmpty().getSymbol();
-                        String info = getString(R.string.added_outcome, category,amount,sign);
-                        final Snackbar snackBar = Snackbar.make(coordinator, info, Snackbar.LENGTH_LONG);
-                        snackBar.setCallback(new Snackbar.Callback() {
-                            boolean mShown = false;
 
-                            @Override
-                            public void onShown(Snackbar snackbar) {
-                                mShown = true;
+                    @Override
+                    public void onDismissed(Snackbar snackbar, int event) {
+                        if (mShown) {
+                            mShown = false;
+                            if (event == Snackbar.Callback.DISMISS_EVENT_TIMEOUT || event == Snackbar.Callback.DISMISS_EVENT_SWIPE) {
+                                BusProvider.postOnMain(new WalletChangeEvent());
                             }
-
-                            @Override
-                            public void onDismissed(Snackbar snackbar, int event) {
-                                if (mShown) {
-                                    mShown = false;
-                                    if (event == Snackbar.Callback.DISMISS_EVENT_TIMEOUT || event == Snackbar.Callback.DISMISS_EVENT_SWIPE) {
-                                        BusProvider.postOnMain(new WalletChangeEvent());
-                                    }
-                                }
-                            }
-                        });
-                        snackBar.setAction(R.string.text_undo, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                try {
-                                    DBHelper dbhelper = MoneyApplication.getInstance().GetDBHelper();
-                                    Account acc = dbhelper.getAccountDAO().queryForId(accId);
-                                    acc.setBalance(acc.getBalance() + amount);
-                                    dbhelper.getAccountDAO().update(acc);
-                                    dbhelper.getOutcomeDAO().deleteById(createdOutcomeId);
-                                    BusProvider.postOnMain(new WalletChangeEvent());
-                                } catch (SQLException ex) {
-                                    L.t(MainActivity.this, "Something went wrong.Please,try again.");
-                                }
-                            }
-                        })
-                        .setActionTextColor(Color.RED);
-                        snackBar.show();
-
-                    } else {
-                        L.t(this, "Something went wrong.Please,try again.");
+                        }
                     }
-                    break;
+                });
+                snackBar.setAction(R.string.text_undo, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        try {
+                            DBHelper dbhelper = MoneyApplication.getInstance().GetDBHelper();
+                            Account acc = dbhelper.getAccountDAO().queryForId(accId);
+                            if (requestCode == REQUEST_CODE_INCOME) {
+                                acc.setBalance(acc.getBalance() - amount);
+                            } else if (requestCode == REQUEST_CODE_OUTCOME) {
+                                acc.setBalance(acc.getBalance() + amount);
+                            }
+                            dbhelper.getAccountDAO().update(acc);
+                            dbhelper.getTransactionDAO().deleteById(createdItemId);
+                            BusProvider.postOnMain(new WalletChangeEvent());
+                        } catch (SQLException ex) {
+                            L.t(MainActivity.this, "Something went wrong.Please,try again.");
+                        }
+                    }
+                })
+                        .setActionTextColor(Color.RED);
+                snackBar.show();
+            } else {
+                L.t(this, "Something went wrong.Please,try again.");
             }
         } else {
 

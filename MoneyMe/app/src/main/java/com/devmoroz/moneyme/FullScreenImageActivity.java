@@ -8,14 +8,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.WindowManager;
 
+import com.bumptech.glide.Glide;
 import com.devmoroz.moneyme.utils.Constants;
 import com.devmoroz.moneyme.utils.FormatUtils;
+import com.devmoroz.moneyme.utils.PhotoUtil;
 import com.devmoroz.moneyme.widgets.TouchImageView;
 import com.squareup.picasso.Picasso;
 
 public class FullScreenImageActivity extends AppCompatActivity{
 
-    private static String photoPath = "";
     private TouchImageView entityImageView;
 
     @Override
@@ -33,10 +34,9 @@ public class FullScreenImageActivity extends AppCompatActivity{
 
         Intent intent = getIntent();
         String path = intent.getStringExtra(Constants.IMAGE_PATH);
-        String photoPath = "file://" + path;
 
         if(FormatUtils.isNotEmpty(path)){
-            Picasso.with(getApplicationContext()).load(photoPath).into(entityImageView);
+            Glide.with(this).load(path).into(entityImageView);
         }
     }
 
