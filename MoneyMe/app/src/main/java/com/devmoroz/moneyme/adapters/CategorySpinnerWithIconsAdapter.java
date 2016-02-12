@@ -9,17 +9,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.devmoroz.moneyme.R;
+import com.devmoroz.moneyme.models.Category;
+
+import java.util.List;
 
 public class CategorySpinnerWithIconsAdapter extends ArrayAdapter<String> {
 
-    int[] categoryColors;
-    String[] categoryText;
+    List<Category> categories;
 
     public CategorySpinnerWithIconsAdapter(Context context, int textViewResourceId,
-                                          String[] objectsText,int[] objectsColors) {
+                                          String[] objectsText,List<Category> categories) {
         super(context, textViewResourceId, objectsText);
-        categoryText = objectsText;
-        categoryColors = objectsColors;
+        this.categories = categories;
     }
 
     @Override
@@ -35,22 +36,24 @@ public class CategorySpinnerWithIconsAdapter extends ArrayAdapter<String> {
 
     public View getCustomView(int position, View convertView,
                               ViewGroup parent) {
+        Category model = categories.get(position);
         LayoutInflater inflater = LayoutInflater.from(getContext());
         View row = inflater.inflate(R.layout.category_row, parent, false);
         TextView label = (TextView) row.findViewById(R.id.categoryText);
-        label.setText(categoryText[position]);
+        label.setText(model.getTitle());
 
         ImageView icon = (ImageView) row.findViewById(R.id.categoryIcon);
-        icon.setColorFilter(categoryColors[position]);
+        icon.setColorFilter(model.getColor());
 
         return row;
     }
 
     public View getClosedView(int position ,View convertView, ViewGroup parent){
+        Category model = categories.get(position);
         LayoutInflater inflater = LayoutInflater.from(getContext());
         View row = inflater.inflate(android.R.layout.simple_spinner_dropdown_item, parent, false);
         TextView label = (TextView) row.findViewById(android.R.id.text1);
-        label.setText(categoryText[position]);
+        label.setText(model.getTitle());
 
         return row;
     }

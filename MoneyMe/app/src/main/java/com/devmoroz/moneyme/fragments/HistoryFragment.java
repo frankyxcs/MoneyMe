@@ -104,8 +104,8 @@ public class HistoryFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         wAdapter = new HistoryAdapter(getActivity(), new HistoryAdapter.Callback() {
             @Override
-            public void onDeleteClick(int id, TransactionType type) {
-                final int itemId = id;
+            public void onDeleteClick(String id, TransactionType type) {
+                final String itemId = id;
                 final TransactionType itemType = type;
                 new MaterialDialog.Builder(getContext())
                         .content(R.string.remove_item_confirm)
@@ -125,7 +125,7 @@ public class HistoryFragment extends Fragment {
             }
 
             @Override
-            public void onEditClick(int id, TransactionType type) {
+            public void onEditClick(String id, TransactionType type) {
 
             }
         });
@@ -223,7 +223,7 @@ public class HistoryFragment extends Fragment {
         mListWalletEntries = MoneyApplication.transactions;
         for (Transaction item : mListWalletEntries) {
             String notes = item.getNotes() != null ? item.getNotes() : "";
-            String category = item.getCategory() != null ? item.getCategory() : item.getAccountName();
+            String category = item.getCategory() != null ? item.getCategory().getTitle() : item.getAccountName();
             if (category.toLowerCase().contains(term) || notes.toLowerCase().contains(term)) {
                 searchedItems.add(item);
             }

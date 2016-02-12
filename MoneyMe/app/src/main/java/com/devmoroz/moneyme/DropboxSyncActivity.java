@@ -5,14 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.devmoroz.moneyme.export.dropbox.DropboxActivity;
-import com.devmoroz.moneyme.export.dropbox.DropboxClient;
+import com.devmoroz.moneyme.export.dropbox.DropboxClientFactory;
 import com.devmoroz.moneyme.export.dropbox.DropboxFilesAdapter;
 import com.devmoroz.moneyme.export.dropbox.ListFolderTask;
 import com.devmoroz.moneyme.utils.PicassoClient;
@@ -33,7 +32,7 @@ public class DropboxSyncActivity extends DropboxActivity {
         dialog.setMessage("Loading");
         dialog.show();
 
-        new ListFolderTask(DropboxClient.files(), new ListFolderTask.Callback() {
+        new ListFolderTask(DropboxClientFactory.files(), new ListFolderTask.Callback() {
             @Override
             public void onDataLoaded(DbxFiles.ListFolderResult result) {
                 dialog.dismiss();

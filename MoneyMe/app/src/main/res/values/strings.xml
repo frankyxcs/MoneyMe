@@ -144,6 +144,11 @@
     <string name="edit">Редактировать</string>
     <string name="edit_entity">Редактировать запись</string>
     <string name="remove">Удалить</string>
+    <string name="title_export_email">Экспорт %1$s-файла из MoneyMe</string>
+    <string name="description_export_email">MoneyMe экспорт из </string>
+    <string name="title_select_export_destination">Выберите получателя файла-экспорта</string>
+    <string name="toast_backup_folder_not_found">Каталог для резервных копий не найден. Возможно карта памяти не подключена.</string>
+    <string name="title_select_backup_to_restore">Выберите резервную копию для восстановления</string>
      <string name="application_info_text" formatted="false">
         <![CDATA[
             <p>Version: %s</p>
@@ -160,6 +165,7 @@
     <string name="pref_auto_backup">pref_auto_backup</string>
     <string name="pref_notify_time">pref_notify_time</string>
     <string name="pref_first_time_run">pref_first_time_run</string>
+    <string name="pref_default_export_email">pref_default_export_email</string>
 
 
     <string name="reset_preferences">Сброс настроек</string>

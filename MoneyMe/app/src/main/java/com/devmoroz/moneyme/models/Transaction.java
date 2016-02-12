@@ -1,25 +1,25 @@
 package com.devmoroz.moneyme.models;
 
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.devmoroz.moneyme.utils.CurrencyCache;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.UUID;
 
+@DatabaseTable(tableName = "transaction")
 public class Transaction {
 
     public static final String ACCOUNT_ID_FIELD_NAME = "account_id";
 
     @DatabaseField(generatedId = true)
-    private int id;
+    private UUID id;
 
     @DatabaseField(canBeNull = false)
     private TransactionType type;
@@ -27,10 +27,10 @@ public class Transaction {
     @DatabaseField(canBeNull = true)
     private String notes;
 
-    @DatabaseField(canBeNull = false)
-    private String category;
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, canBeNull = true)
+    private Category category;
 
-    @DatabaseField(dataType = DataType.DATE)
+    @DatabaseField(dataType = DataType.DATE_LONG)
     private Date dateAdded;
 
     @DatabaseField(canBeNull = false,dataType = DataType.DOUBLE)
@@ -45,10 +45,36 @@ public class Transaction {
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = ACCOUNT_ID_FIELD_NAME)
     private Account account;
 
-    public Transaction() {
+    @DatabaseField(foreign = true, foreignAutoRefresh = true)
+    private Payee payee;
+
+    @DatabaseField
+    private SyncState syncState;
+
+    @DatabaseField
+    private String tags;
+
+    public String getTags() {
+        return tags;
     }
 
-    public Transaction(TransactionType type, String notes, String category, Date dateAdded, double amount, String photo, String location, Account account) {
+    public void setTags(String tags) {
+        this.tags = tags;
+    }
+
+    public SyncState getSyncState() {
+        return syncState;
+    }
+
+    public void setSyncState(SyncState syncState) {
+        this.syncState = syncState;
+    }
+
+    public Transaction() {
+        this.syncState = SyncState.None;
+    }
+
+    public Transaction(TransactionType type, String notes, Category category, Date dateAdded, double amount, String photo, String location, Account account) {
         this.type = type;
         this.notes = notes;
         this.category = category;
@@ -57,6 +83,7 @@ public class Transaction {
         this.photo = photo;
         this.location = location;
         this.account = account;
+        this.syncState = SyncState.None;
     }
 
     public Transaction(TransactionType type,Date dateAdded, double amount, String photo, String location, Account account, String notes) {
@@ -67,6 +94,7 @@ public class Transaction {
         this.location = location;
         this.account = account;
         this.notes = notes;
+        this.syncState = SyncState.None;
     }
 
     public Transaction(TransactionType type, String notes, Date dateAdded, double amount, Account account) {
@@ -75,20 +103,22 @@ public class Transaction {
         this.dateAdded = dateAdded;
         this.amount = amount;
         this.account = account;
-        this.category = "";
+        this.category = null;
+        this.syncState = SyncState.None;
     }
 
-    public Transaction(TransactionType type, String notes, String category, Date dateAdded, double amount, Account account) {
+    public Transaction(TransactionType type, String notes, Category category, Date dateAdded, double amount, Account account) {
         this.type = type;
         this.notes = notes;
         this.category = category;
         this.dateAdded = dateAdded;
         this.amount = amount;
         this.account = account;
+        this.syncState = SyncState.None;
     }
 
-    public int getId() {
-        return id;
+    public String getId() {
+        return id.toString();
     }
 
     public TransactionType getType() {
@@ -99,8 +129,12 @@ public class Transaction {
         return notes;
     }
 
-    public String getCategory() {
+    public Category getCategory() {
         return category;
+    }
+
+    public String getCategoryName() {
+        return category!=null ? category.getTitle() : "";
     }
 
     public Date getDateAdded() {
@@ -133,7 +167,7 @@ public class Transaction {
         this.notes = notes;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(Category category) {
         this.category = category;
     }
 

@@ -6,6 +6,7 @@ import com.j256.ormlite.table.DatabaseTable;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.UUID;
 
 @DatabaseTable(tableName = "currency")
 public class Currency {
@@ -13,15 +14,15 @@ public class Currency {
     public static final Currency EMPTY = new Currency();
 
     static {
-        EMPTY.id = -1;
+        EMPTY.id = "";
         EMPTY.name = "";
         EMPTY.title = "Default";
         EMPTY.symbol = "";
     }
 
 
-    @DatabaseField(generatedId = true)
-    private int id;
+    @DatabaseField(generatedId = false)
+    private String id;
 
     @DatabaseField
     private String name;
@@ -36,15 +37,17 @@ public class Currency {
     private boolean isDeafult;
 
     public Currency() {
+        this.id = UUID.randomUUID().toString();
     }
 
     public Currency(String name, String title, String symbol) {
+        this.id = UUID.randomUUID().toString();
         this.name = name;
         this.title = title;
         this.symbol = symbol;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
@@ -69,7 +72,7 @@ public class Currency {
         return isDeafult;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -86,8 +89,7 @@ public class Currency {
     }
 
     public boolean isEmpty() {
-        return id == -1;
-
+        return id.isEmpty();
     }
 
     public DecimalFormat getFormat(){

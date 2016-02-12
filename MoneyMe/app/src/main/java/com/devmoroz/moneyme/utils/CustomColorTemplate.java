@@ -32,25 +32,40 @@ public class CustomColorTemplate {
             Color.rgb(121, 85, 72)
     };
 
-    public static final int SECONDARY_TEXT = Color.rgb(114,114,114);
-    public static final int INCOME_COLOR = Color.rgb(0,150,136);
-    public static final int OUTCOME_COLOR = Color.rgb(233,30,99);
+    public static final int SECONDARY_TEXT = Color.rgb(114, 114, 114);
+    public static final int INCOME_COLOR = Color.parseColor("#388E3C");
+    public static final int OUTCOME_COLOR = Color.parseColor("#D32F2F");
 
     public static int[] getCategoriesColors(Context context, ArrayList<String> categories) {
         int[] colors = new int[categories.size()];
         String[] allCategories = context.getResources().getStringArray(R.array.outcome_categories);
-        HashMap<String,Integer> catCol = new HashMap<>();
+        HashMap<String, Integer> catCol = new HashMap<>();
 
-        int i =0;
-        for(String category: allCategories){
-            catCol.put(category,PIECHART_COLORS[i]);
+        int i = 0;
+        for (String category : allCategories) {
+            catCol.put(category, PIECHART_COLORS[i]);
             i++;
         }
         int j = 0;
-        for(String cat: categories){
+        for (String cat : categories) {
             colors[j] = catCol.get(cat);
             j++;
         }
         return colors;
+    }
+
+    public static int getColorForCategory(Context context, String category) {
+        String[] allCategories = context.getResources().getStringArray(R.array.outcome_categories);
+        HashMap<String, Integer> catCol = new HashMap<>();
+        int i = 0;
+        for (String cat : allCategories) {
+            catCol.put(cat, PIECHART_COLORS[i]);
+            i++;
+        }
+        if (catCol.containsKey(category)) {
+            return catCol.get(category);
+        }
+
+        return OUTCOME_COLOR;
     }
 }

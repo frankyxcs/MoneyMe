@@ -7,6 +7,7 @@ import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.util.Date;
+import java.util.UUID;
 
 @DatabaseTable(tableName = "accounts")
 public class Account {
@@ -17,7 +18,7 @@ public class Account {
     }
 
     @DatabaseField(generatedId = true)
-    private int id;
+    private UUID id;
 
     @DatabaseField
     private String name;
@@ -40,6 +41,7 @@ public class Account {
     @ForeignCollectionField
     private ForeignCollection<Transaction> transactions;
 
+
     public Account(String name, double balance, int type) {
         this.name = name;
         this.balance = balance;
@@ -48,8 +50,8 @@ public class Account {
         this.type = type;
     }
 
-    public Account(int id) {
-        this.id = id;
+    public Account(String id) {
+        this.id = UUID.fromString(id);
         this.balance = 0f;
         this.type = 0;
         this.includeInTotal = true;
@@ -65,12 +67,12 @@ public class Account {
         this.date = new Date();
     }
 
-    public int getId() {
-        return id;
+    public String getId() {
+        return id.toString();
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setId(String id) {
+        this.id = UUID.fromString(id);
     }
 
     public String getName() {

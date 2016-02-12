@@ -7,7 +7,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.devmoroz.moneyme.export.dropbox.DropboxActivity;
-import com.devmoroz.moneyme.export.dropbox.DropboxClient;
+import com.devmoroz.moneyme.export.dropbox.DropboxClientFactory;
 import com.devmoroz.moneyme.export.dropbox.GetCurrentAccountTask;
 import com.dropbox.core.android.Auth;
 import com.dropbox.core.v2.DbxUsers;
@@ -54,7 +54,7 @@ public class DropboxLoginActivity extends DropboxActivity {
     @Override
     protected void loadData() {
 
-        new GetCurrentAccountTask(DropboxClient.users(), new GetCurrentAccountTask.Callback() {
+        new GetCurrentAccountTask(DropboxClientFactory.users(), new GetCurrentAccountTask.Callback() {
             @Override
             public void onComplete(DbxUsers.FullAccount result) {
                 ((TextView) findViewById(R.id.email_text)).setText(result.email);

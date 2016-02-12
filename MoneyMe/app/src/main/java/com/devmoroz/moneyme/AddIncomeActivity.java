@@ -90,7 +90,7 @@ public class AddIncomeActivity extends AppCompatActivity {
                     return;
                 }
                 Intent intent;
-                CreatedItem info = new CreatedItem(-1, "", 0, -1);
+                CreatedItem info = new CreatedItem("", "", 0, "");
                 try {
                     info = addIncome();
                 } catch (SQLException ex) {

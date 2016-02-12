@@ -7,7 +7,7 @@ import com.j256.ormlite.support.ConnectionSource;
 import java.sql.SQLException;
 
 
-public class CurrencyDAO extends BaseDaoImpl<Currency, Integer> {
+public class CurrencyDAO extends BaseDaoImpl<Currency, String> {
 
     public CurrencyDAO(ConnectionSource connectionSource,
                      Class<Currency> dataClass) throws SQLException {

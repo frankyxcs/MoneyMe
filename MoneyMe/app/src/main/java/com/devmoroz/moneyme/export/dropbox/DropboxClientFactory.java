@@ -1,18 +1,17 @@
 package com.devmoroz.moneyme.export.dropbox;
 
 
-import com.dropbox.core.http.OkHttpRequestor;
-import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.DbxHost;
 import com.dropbox.core.DbxRequestConfig;
+import com.dropbox.core.http.OkHttpRequestor;
+import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.DbxFiles;
 import com.dropbox.core.v2.DbxSharing;
 import com.dropbox.core.v2.DbxUsers;
 
 import java.util.Locale;
 
-
-public class DropboxClient {
+public class DropboxClientFactory {
 
     private static DbxClientV2 sDbxClient;
 
@@ -20,12 +19,19 @@ public class DropboxClient {
         if (sDbxClient == null) {
             String userLocale = Locale.getDefault().toString();
             DbxRequestConfig requestConfig = new DbxRequestConfig(
-                    "moneyMe",
+                    "MoneyMe",
                     userLocale,
                     OkHttpRequestor.Instance);
 
             sDbxClient = new DbxClientV2(requestConfig, accessToken, DbxHost.Default);
         }
+    }
+
+    public static DbxClientV2 getClient() {
+        if (sDbxClient == null) {
+            throw new IllegalStateException("Client not initialized.");
+        }
+        return sDbxClient;
     }
 
     public static DbxFiles files() {

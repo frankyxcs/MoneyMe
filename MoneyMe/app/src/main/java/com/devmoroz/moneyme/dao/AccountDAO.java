@@ -9,8 +9,9 @@ import com.j256.ormlite.support.ConnectionSource;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.UUID;
 
-public class AccountDAO extends BaseDaoImpl<Account, Integer> {
+public class AccountDAO extends BaseDaoImpl<Account, UUID> {
 
     public AccountDAO(ConnectionSource connectionSource,
                        Class<Account> dataClass) throws SQLException {
@@ -18,7 +19,7 @@ public class AccountDAO extends BaseDaoImpl<Account, Integer> {
     }
 
     public List<Account> getAccountsIncludedInTotal() throws SQLException{
-        QueryBuilder<Account,Integer> queryBuilder = queryBuilder();
+        QueryBuilder<Account,UUID> queryBuilder = queryBuilder();
         queryBuilder.where().eq(Account.INCLUDE_IN_TOTAL_FIELD_NAME,true);
         PreparedQuery<Account> preparedQuery = queryBuilder.prepare();
         List<Account> result = query(preparedQuery);

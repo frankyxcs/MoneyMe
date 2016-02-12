@@ -4,6 +4,7 @@ package com.devmoroz.moneyme;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -28,30 +29,38 @@ import com.devmoroz.moneyme.eventBus.BusProvider;
 import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
 import com.devmoroz.moneyme.helpers.DBHelper;
 import com.devmoroz.moneyme.models.Account;
+import com.devmoroz.moneyme.models.Category;
 import com.devmoroz.moneyme.models.Currency;
 import com.devmoroz.moneyme.models.Transaction;
 import com.devmoroz.moneyme.models.TransactionType;
 import com.devmoroz.moneyme.utils.Constants;
 import com.devmoroz.moneyme.utils.CurrencyCache;
+import com.devmoroz.moneyme.utils.CustomColorTemplate;
 import com.devmoroz.moneyme.utils.FormatUtils;
 import com.devmoroz.moneyme.utils.PhotoUtil;
 import com.devmoroz.moneyme.utils.datetime.TimeUtils;
 import com.devmoroz.moneyme.widgets.DecimalDigitsInputFilter;
+import com.devmoroz.moneyme.widgets.WithCurrencyValueFormatter;
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.LimitLine;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
+import org.joda.time.Months;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.UUID;
 
 public class DetailsActivity extends AppCompatActivity {
 
@@ -62,12 +71,18 @@ public class DetailsActivity extends AppCompatActivity {
     private TextView dateTextView;
     private TextView notesTextView;
     private LineChart chart;
-    private int itemId;
+    private String itemId;
     private TransactionType itemType;
     private static Date entityDate = new Date();
     private static double amount = 0f;
     private static String note = "";
-    private static String category = "";
+    private static Category category;
+    private static String accountId = "";
+    private long mEarliestTransactionTimestamp;
+    private long mLatestTransactionTimestamp;
+    private static final String X_AXIS_PATTERN = "MMM YY";
+    private static final int NO_DATA_COLOR = Color.GRAY;
+    private boolean mChartDataPresent = true;
     Currency currency = CurrencyCache.getCurrencyOrEmpty();
     private EditText editAmountInput;
     private EditText editNotesInput;
@@ -76,7 +91,7 @@ public class DetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Intent intent = getIntent();
-        itemId = intent.getIntExtra(Constants.DETAILS_ITEM_ID, -1);
+        itemId = intent.getStringExtra(Constants.DETAILS_ITEM_ID);
         String type = intent.getStringExtra(Constants.DETAILS_ITEM_TYPE);
         itemType = TransactionType.valueOf(type);
         if (itemType == TransactionType.INCOME) {
@@ -109,7 +124,8 @@ public class DetailsActivity extends AppCompatActivity {
     private void loadEntity() {
         try {
             DBHelper dbHelper = MoneyApplication.getInstance().GetDBHelper();
-            Transaction transaction = dbHelper.getTransactionDAO().queryForId(itemId);
+            Transaction transaction = dbHelper.getTransactionDAO().queryForId(UUID.fromString(itemId));
+            accountId = transaction.getAccount().getId();
             entityDate = transaction.getDateAdded();
             note = transaction.getNotes();
             amount = transaction.getAmount();
@@ -117,7 +133,7 @@ public class DetailsActivity extends AppCompatActivity {
                 collapsingToolbar.setTitle(getString(R.string.income_toolbar_name));
             } else {
                 category = transaction.getCategory();
-                collapsingToolbar.setTitle(category);
+                collapsingToolbar.setTitle(category.getTitle());
                 if (FormatUtils.isNotEmpty(transaction.getPhoto())) {
                     loadImage(transaction.getPhoto());
                 }
@@ -139,11 +155,11 @@ public class DetailsActivity extends AppCompatActivity {
 
     private void setupChart() {
         chart.setDragEnabled(true);
-        chart.setScaleEnabled(true);
+        chart.setScaleEnabled(false);
         chart.setPinchZoom(true);
         chart.setDrawGridBackground(false);
         chart.setDescription("");
-        chart.getXAxis().setDrawGridLines(false);
+        chart.getLegend().setEnabled(false);
         chart.getAxisRight().setEnabled(false);
 
         LimitLine llXAxis = new LimitLine(10f, "Index 10");
@@ -152,73 +168,130 @@ public class DetailsActivity extends AppCompatActivity {
         llXAxis.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_BOTTOM);
         llXAxis.setTextSize(10f);
 
-        HashMap<String, Float> dataMap = getDataForChart();
+        chart.setData(getDataForChart(itemType));
 
-        ArrayList<String> xVals = new ArrayList<String>();
-
-        ArrayList<Entry> yVals = new ArrayList<Entry>();
-
-        if (!dataMap.isEmpty()) {
-            int j = 0;
-            Set<Map.Entry<String, Float>> set = dataMap.entrySet();
-            for (Map.Entry<String, Float> entry : set) {
-                xVals.add(entry.getKey());
-                yVals.add(new Entry(entry.getValue(), j));
-                j++;
-            }
+        if (!mChartDataPresent) {
+            chart.getAxisLeft().setAxisMaxValue(10);
+            chart.getAxisLeft().setDrawLabels(false);
+            chart.getXAxis().setDrawLabels(false);
+            chart.setTouchEnabled(false);
+        } else {
+            YAxis y = chart.getAxisLeft();
+            y.setEnabled(false);
+            y.setStartAtZero(false);
+            y.setDrawGridLines(false);
+            y.setDrawAxisLine(false);
+            XAxis xAxis = chart.getXAxis();
+            xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+            xAxis.setTextSize(8f);
+            xAxis.setDrawAxisLine(true);
+            xAxis.setDrawGridLines(false);
+            xAxis.setAvoidFirstLastClipping(true);
+            chart.animateX(2500);
         }
-
-        LineDataSet set1 = new LineDataSet(yVals, "");
-
-        ArrayList<LineDataSet> dataSets = new ArrayList<LineDataSet>();
-        dataSets.add(set1);
-        LineData data = new LineData(xVals, dataSets);
-
-        chart.setData(data);
-
-        Legend l = chart.getLegend();
-        l.setEnabled(true);
-        l.setPosition(Legend.LegendPosition.BELOW_CHART_CENTER);
-        l.setTextSize(14);
-        l.setForm(Legend.LegendForm.CIRCLE);
-
-        chart.getAxisLeft().setEnabled(true);
-        chart.getAxisLeft().setStartAtZero(false);
-        chart.getAxisLeft().removeAllLimitLines();
-
-        chart.getXAxis().setEnabled(true);
-
-        chart.animateX(2500);
 
         chart.invalidate();
     }
 
-    private HashMap<String, Float> getDataForChart() {
+    private LineData getDataForChart(TransactionType type) {
         try {
             DBHelper dbHelper = MoneyApplication.getInstance().GetDBHelper();
-            if (FormatUtils.isNotEmpty(category)) {
-                List<Transaction> outcomes = dbHelper.getTransactionDAO().queryTransactionsForCategory(category);
-                HashMap<String, Float> hashMap = new HashMap<>();
-                for (Transaction o : outcomes) {
-                    Calendar cal = Calendar.getInstance();
-                    cal.setTime(o.getDateAdded());
-                    int month = cal.get(Calendar.MONTH) + 1;
-                    int year = cal.get(Calendar.YEAR);
-                    String key = String.valueOf(month) + "-" + String.valueOf(year);
-                    float val = (float) o.getAmount();
-                    if (hashMap.containsKey(key)) {
-                        hashMap.put(key, hashMap.get(key) + val);
-                    } else {
-                        hashMap.put(key, val);
-                    }
-                }
-                return hashMap;
+            List<Transaction> transactions = Collections.emptyList();
+            if (type == TransactionType.OUTCOME) {
+                transactions = dbHelper.getTransactionDAO().queryTransactionsForCategory(category.getId());
+            } else {
+                transactions = dbHelper.getTransactionDAO().queryTransactionsByTypeForAccount(type, accountId);
             }
+            if (!transactions.isEmpty()) {
+                mChartDataPresent = true;
+                mEarliestTransactionTimestamp = transactions.get(0).getDateLong();
+                mLatestTransactionTimestamp = transactions.get(transactions.size() - 1).getDateLong();
+
+                LocalDate startDate = new LocalDate(mEarliestTransactionTimestamp).withDayOfMonth(1);
+                LocalDate endDate = new LocalDate(mLatestTransactionTimestamp).withDayOfMonth(1);
+                int count = getDateDiff(new LocalDateTime(startDate.toDate().getTime()), new LocalDateTime(endDate.toDate().getTime()));
+
+                List<String> xValues = new ArrayList<>();
+                for (int i = 0; i <= count; i++) {
+                    xValues.add(startDate.toString(X_AXIS_PATTERN));
+                    startDate = startDate.plusMonths(1);
+                }
+
+                List<ILineDataSet> dataSets = new ArrayList<>();
+
+                LocalDateTime earliest = new LocalDateTime(mEarliestTransactionTimestamp);
+                LocalDateTime latest = new LocalDateTime(mLatestTransactionTimestamp);
+                count = getDateDiff(earliest, latest);
+                List<Entry> values = new ArrayList<>(count + 1);
+                for (int i = 0; i <= count; i++) {
+                    long start = 0;
+                    long end = 0;
+
+                    start = earliest.dayOfMonth().withMinimumValue().millisOfDay().withMinimumValue().toDate().getTime();
+                    end = earliest.dayOfMonth().withMaximumValue().millisOfDay().withMaximumValue().toDate().getTime();
+
+                    earliest = earliest.plusMonths(1);
+                    float balance = 0f;
+                    if (type == TransactionType.OUTCOME) {
+                        balance = dbHelper.getTransactionDAO().getTotalSpendingForCategoryForPeriod(category.getId(), start, end);
+                    } else {
+                        balance = dbHelper.getTransactionDAO().getTotalIncomeForAccountForPeriod(accountId, start, end);
+                    }
+                    values.add(new Entry(balance, i));
+                }
+                LineDataSet set = new LineDataSet(values, "");
+                WithCurrencyValueFormatter vFormatter = new WithCurrencyValueFormatter(currency.getSymbol());
+                set.setValueFormatter(vFormatter);
+                set.setDrawFilled(false);
+                set.setLineWidth(4);
+
+                set.setDrawCubic(true);
+                if (type == TransactionType.OUTCOME) {
+                    int col = category.getColor();
+                    set.setColor(col);
+                    set.setCircleColor(col);
+                    set.setCircleColorHole(col);
+                } else {
+                    set.setColor(CustomColorTemplate.INCOME_COLOR);
+                    set.setCircleColor(CustomColorTemplate.INCOME_COLOR);
+                    set.setCircleColorHole(CustomColorTemplate.INCOME_COLOR);
+                }
+                dataSets.add(set);
+                LineData lineData = new LineData(xValues, dataSets);
+
+                return lineData;
+            } else {
+                return getEmptyData();
+            }
+
         } catch (SQLException ex) {
 
         }
-        return new HashMap<>();
+        return getEmptyData();
     }
+
+    private int getDateDiff(LocalDateTime start, LocalDateTime end) {
+        return Months.monthsBetween(start.withDayOfMonth(1).withMillisOfDay(0), end.withDayOfMonth(1).withMillisOfDay(0)).getMonths();
+    }
+
+    private LineData getEmptyData() {
+        List<String> xValues = new ArrayList<>();
+        List<Entry> yValues = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            xValues.add("");
+            yValues.add(new Entry(i % 2 == 0 ? 5f : 4.5f, i));
+        }
+        List<ILineDataSet> dataSets = new ArrayList<>();
+        LineDataSet set = new LineDataSet(yValues, "No chart data available");
+        set.setDrawFilled(true);
+        set.setDrawValues(false);
+        set.setColor(NO_DATA_COLOR);
+        set.setFillColor(NO_DATA_COLOR);
+        mChartDataPresent = false;
+        dataSets.add(set);
+        return new LineData(xValues, dataSets);
+    }
+
 
     private void setupFab() {
         fab = (FloatingActionButton) findViewById((R.id.fab_details_edit));
@@ -291,11 +364,11 @@ public class DetailsActivity extends AppCompatActivity {
             if (newAmount != amount || !note.equals(notes)) {
                 DBHelper dbHelper = MoneyApplication.getInstance().GetDBHelper();
                 try {
-                    Transaction t = dbHelper.getTransactionDAO().queryForId(itemId);
+                    Transaction t = dbHelper.getTransactionDAO().queryForId(UUID.fromString(itemId));
                     t.setAmount(newAmount);
                     t.setNotes(notes);
                     t.setDateAdded(entityDate);
-                    Account acc = dbHelper.getAccountDAO().queryForId(t.getAccount().getId());
+                    Account acc = t.getAccount();
                     if (itemType == TransactionType.INCOME) {
                         acc.setBalance(acc.getBalance() - amount);
                         acc.setBalance(acc.getBalance() + newAmount);
@@ -305,6 +378,19 @@ public class DetailsActivity extends AppCompatActivity {
                     }
                     dbHelper.getTransactionDAO().update(t);
                     dbHelper.getAccountDAO().update(acc);
+
+                    amount = newAmount;
+                    note = notes;
+
+                    amountTextView.setText(CurrencyCache.formatAmountWithSign(amount));
+                    dateTextView.setText(TimeUtils.formatHumanFriendlyShortDate(getApplicationContext(), entityDate.getTime()));
+                    if (FormatUtils.isNotEmpty(note)) {
+                        notesTextView.setText(note);
+                        notesTextView.setVisibility(View.VISIBLE);
+                    } else {
+                        notesTextView.setText(note);
+                        notesTextView.setVisibility(View.GONE);
+                    }
 
                     BusProvider.postOnMain(new WalletChangeEvent());
                 } catch (SQLException ex) {

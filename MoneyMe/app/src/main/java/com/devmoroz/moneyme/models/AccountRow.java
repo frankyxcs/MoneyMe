@@ -3,7 +3,7 @@ package com.devmoroz.moneyme.models;
 
 public class AccountRow {
 
-    public int id;
+    public String id;
 
     public String name;
 
@@ -14,7 +14,7 @@ public class AccountRow {
     public int type;
 
 
-    public AccountRow(int id, String name, double total, double expense, int type) {
+    public AccountRow(String id, String name, double total, double expense, int type) {
         this.id = id;
         this.name = name;
         this.total = total;

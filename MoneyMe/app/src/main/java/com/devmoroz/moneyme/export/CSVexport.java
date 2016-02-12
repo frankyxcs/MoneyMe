@@ -11,6 +11,8 @@ import com.devmoroz.moneyme.utils.CurrencyCache;
 import com.devmoroz.moneyme.utils.csv.Csv;
 import com.devmoroz.moneyme.utils.csv.CsvExportOptions;
 
+import org.joda.time.DateTime;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -20,11 +22,15 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-public class CSVexport {
+public class CSVexport  {
 
     public static final String[] HEADER = "type,date,account,accountType,amount,currency,category,location,note,payee".split(",");
     public static final DateFormat FORMAT_DATE_ISO_8601 = new SimpleDateFormat("yyyy-MM-dd");
     public static final DateFormat FORMAT_TIME_ISO_8601 = new SimpleDateFormat("HH:mm:ss");
+
+    private static final String QUOTE = "\"";
+    private static final String SEPARATOR = ",";
+    private static final String TAG_SEPARATOR = ",";
 
     private final CsvExportOptions options;
     private DBHelper dbHelper;
@@ -33,6 +39,7 @@ public class CSVexport {
     public static Currency currency;
 
     public CSVexport(Context context, CsvExportOptions options) {
+
         this.options = options;
         this.context = context;
         dbHelper = MoneyApplication.getInstance().GetDBHelper();
@@ -76,7 +83,8 @@ public class CSVexport {
 
     private void writeLine(Csv.Writer w, Transaction model) {
         String payee = "";
-        writeLine(w, model.getType().toString(), model.getDateAdded(), model.getAccountName(), model.getAccount().getType(), model.getFormatedAmount(), model.getCategory(), model.getNotes(), model.getLocation(), payee);
+        String category = model.getCategory() != null ? model.getCategory().getTitle() : "";
+        writeLine(w, model.getType().toString(), model.getDateAdded(), model.getAccountName(), model.getAccount().getType(), model.getFormatedAmount(),category , model.getNotes(), model.getLocation(), payee);
     }
 
     private void writeLine(Csv.Writer w, String type, Date dt, String account,
@@ -104,4 +112,29 @@ public class CSVexport {
         w.newLine();
     }
 
+
+
+    private void writeCsv(BufferedWriter writer,String payee) throws IOException {
+        // "type,date,time,amount,currency,category,note,location,payee,accountName,accountType"
+        final StringBuilder outputLine = new StringBuilder();
+        List<Transaction> transactions = null;
+        for(Transaction transaction: transactions){
+            final DateTime dateTime = new DateTime(transaction.getDateAdded());
+            outputLine.setLength(0);
+            outputLine.append(QUOTE).append(transaction.getType()).append(QUOTE);
+            outputLine.append(SEPARATOR).append(QUOTE).append(FORMAT_DATE_ISO_8601.format(dateTime)).append(QUOTE);
+            outputLine.append(SEPARATOR).append(QUOTE).append(FORMAT_TIME_ISO_8601.format(dateTime)).append(QUOTE);
+            outputLine.append(SEPARATOR).append(QUOTE).append(transaction.getFormatedAmount()).append(QUOTE);
+            outputLine.append(SEPARATOR).append(QUOTE).append(currency.getName()).append(QUOTE);
+            outputLine.append(SEPARATOR).append(QUOTE).append(transaction.getCategory()!= null ? transaction.getCategory().getTitle() : "").append(QUOTE);
+            outputLine.append(SEPARATOR).append(QUOTE).append(transaction.getNotes()).append(QUOTE);
+            outputLine.append(SEPARATOR).append(QUOTE).append(transaction.getLocation()!= null ? transaction.getLocation() : "").append(QUOTE);
+            outputLine.append(SEPARATOR).append(QUOTE).append(transaction.getAccountName()).append(QUOTE);
+            outputLine.append(SEPARATOR).append(QUOTE).append(String.valueOf(transaction.getAccount().getType())).append(QUOTE);
+            outputLine.append(SEPARATOR).append(QUOTE).append(payee != null ? payee : "").append(QUOTE);
+            writer.write(outputLine.toString());
+            writer.newLine();
+
+        }
+    }
 }

@@ -15,4 +15,13 @@ public class Constants {
     public final static String DETAILS_ITEM_ID = "detailsItemId";
     public final static String DETAILS_ITEM_TYPE = "detailsItemType";
     public final static String IMAGE_PATH = "itemImagePath";
+    public final static String OUTCOME_DEFAULT_CATEGORY = "defaultCategory";
+    public static final String SYNC_DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
+    public static final String[] BACKUP_TABLES = {
+            "account",
+            "budget",
+            "currency",
+            "transaction",
+            "payee",
+    };
 }

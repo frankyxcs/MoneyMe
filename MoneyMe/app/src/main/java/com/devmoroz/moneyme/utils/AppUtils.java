@@ -4,6 +4,8 @@ package com.devmoroz.moneyme.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
@@ -47,5 +49,10 @@ public class AppUtils {
         res.updateConfiguration(conf, dm);
         Intent refresh = new Intent(context, MainActivity.class);
         context.startActivity(refresh);
+    }
+
+    public static PackageInfo getPackageInfo(Context context) throws PackageManager.NameNotFoundException {
+        PackageManager manager = context.getPackageManager();
+        return manager.getPackageInfo(context.getPackageName(), 0);
     }
 }

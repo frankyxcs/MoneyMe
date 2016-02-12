@@ -7,10 +7,15 @@ import android.preference.PreferenceManager;
 
 import com.devmoroz.moneyme.R;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class Preferences {
 
     public static final String DROPBOX_AUTH_TOKEN = "dropbox_auth_token";
     public static final String DROPBOX_AUTHORIZE = "dropbox_authorize";
+    public static final String DROPBOX_REMOTE_FILE = "DROPBOX_REMOTE_FILE";
+    public static final String DROPBOX_LAST_SYNC_DATE = "DROPBOX_LAST_SYNC_DATE";
 
     public static void reset(Context context) {
         PreferenceManager.getDefaultSharedPreferences(context)
@@ -52,6 +57,30 @@ public class Preferences {
     public static String getDropboxToken(Context context) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         return sharedPreferences.getString(DROPBOX_AUTH_TOKEN, null);
+    }
+
+    public static String getDropboxFilePath(Context context) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPreferences.getString(DROPBOX_REMOTE_FILE, null);
+    }
+
+    public static void storeDropboxLastSyncDate(Context context, Date date) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        sharedPreferences.edit()
+                .putString(DROPBOX_LAST_SYNC_DATE, new SimpleDateFormat(Constants.SYNC_DATE_FORMAT).format(date))
+                .apply();
+    }
+
+    public static String getDropboxLastSyncDate(Context context) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPreferences.getString(DROPBOX_LAST_SYNC_DATE, null);
+    }
+
+    public static void storeDropboxFilePath(Context context, String path) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        sharedPreferences.edit()
+                .putString(DROPBOX_REMOTE_FILE, path)
+                .apply();
     }
 
     public static String getNotificationTime(Context context) {

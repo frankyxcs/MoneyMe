@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 public class CommonUtils {
 
@@ -64,11 +65,11 @@ public class CommonUtils {
         return new String[]{"0.00", "0.00"};
     }
 
-    public static int deleteItem(int id, TransactionType type) {
+    public static int deleteItem(String id, TransactionType type) {
         DBHelper dbHelper = MoneyApplication.getInstance().GetDBHelper();
         try {
-            Transaction transaction = dbHelper.getTransactionDAO().queryForId(id);
-            Account account = dbHelper.getAccountDAO().queryForId(transaction.getAccount().getId());
+            Transaction transaction = dbHelper.getTransactionDAO().queryForId(UUID.fromString(id));
+            Account account = transaction.getAccount();
             if (type == TransactionType.INCOME) {
                 account.setBalance(account.getBalance() - transaction.getAmount());
             } else {
@@ -76,25 +77,25 @@ public class CommonUtils {
             }
             dbHelper.getAccountDAO().update(account);
 
-            return dbHelper.getTransactionDAO().deleteById(id);
+            return dbHelper.getTransactionDAO().delete(transaction);
         } catch (SQLException ex) {
             return 9999999;
         }
     }
 
-    public static int deleteGoal(int id) {
+    public static int deleteGoal(String id) {
         DBHelper dbHelper = MoneyApplication.getInstance().GetDBHelper();
         try {
-            return dbHelper.getGoalDAO().deleteById(id);
+            return dbHelper.getGoalDAO().deleteById(UUID.fromString(id));
         } catch (SQLException ex) {
             return -1;
         }
     }
 
-    public static int updateGoal(int id, int amount) {
+    public static int updateGoal(String id, int amount) {
         DBHelper dbHelper = MoneyApplication.getInstance().GetDBHelper();
         try {
-            Goal goal = dbHelper.getGoalDAO().queryForId(id);
+            Goal goal = dbHelper.getGoalDAO().queryForId(UUID.fromString(id));
             goal.setAccumulated(goal.getAccumulated() + amount);
             return dbHelper.getGoalDAO().update(goal);
         } catch (SQLException ex) {

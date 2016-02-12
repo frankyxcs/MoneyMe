@@ -11,8 +11,9 @@ import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
-public class GoalDAO extends BaseDaoImpl<Goal, Integer> {
+public class GoalDAO extends BaseDaoImpl<Goal, UUID> {
 
     public GoalDAO(ConnectionSource connectionSource,
                    Class<Goal> dataClass) throws SQLException {
@@ -20,7 +21,7 @@ public class GoalDAO extends BaseDaoImpl<Goal, Integer> {
     }
 
     public List<Goal> queryForInProgress() throws SQLException{
-        QueryBuilder<Goal,Integer> queryBuilder = queryBuilder();
+        QueryBuilder<Goal,UUID> queryBuilder = queryBuilder();
         Calendar currentDate = Calendar.getInstance();
         queryBuilder.where().gt("deadlineDate", currentDate.getTime()).and().eq("achieved",false);
         PreparedQuery<Goal> preparedQuery = queryBuilder.prepare();
@@ -29,7 +30,7 @@ public class GoalDAO extends BaseDaoImpl<Goal, Integer> {
     }
 
     public List<Goal> queryForAchived() throws SQLException{
-        QueryBuilder<Goal,Integer> queryBuilder = queryBuilder();
+        QueryBuilder<Goal,UUID> queryBuilder = queryBuilder();
         queryBuilder.where().eq("achieved",true);
         PreparedQuery<Goal> preparedQuery = queryBuilder.prepare();
         List<Goal> result = query(preparedQuery);

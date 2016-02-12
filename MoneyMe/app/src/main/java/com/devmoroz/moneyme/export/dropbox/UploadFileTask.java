@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.dropbox.core.DbxException;
+import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.DbxFiles;
 
 import java.io.File;
@@ -14,28 +15,24 @@ import java.io.InputStream;
 
 public class UploadFileTask extends AsyncTask<String, Void, DbxFiles.FileMetadata> {
 
-    private String path;
-    private Context context;
-    private File file;
-    private DbxFiles mFilesClient;
+    private Context mContext;
+    private final DbxClientV2 mDbxClient;
+    private final Callback mCallback;
     private Exception mException;
-    private Callback mCallback;
 
     public interface Callback {
         void onUploadComplete(DbxFiles.FileMetadata result);
         void onError(Exception e);
     }
 
-    public UploadFileTask(Context context, DbxFiles mFilesClient, String path, File file, Callback callback) {
-        this.path = path;
-        this.context = context;
-        this.file = file;
-        this.mFilesClient = mFilesClient;
-        this.mCallback = callback;
+    public UploadFileTask(Context context, DbxClientV2 dbxClient, Callback callback) {
+        mContext = context;
+        mDbxClient = dbxClient;
+        mCallback = callback;
     }
 
     @Override
-    protected void onPostExecute(DbxFiles.FileMetadata result) {
+    public void onPostExecute(DbxFiles.FileMetadata result) {
         super.onPostExecute(result);
         if (mException != null) {
             mCallback.onError(mException);
@@ -47,16 +44,17 @@ public class UploadFileTask extends AsyncTask<String, Void, DbxFiles.FileMetadat
     }
 
     @Override
-    protected DbxFiles.FileMetadata doInBackground(String... params) {
-
-        if (file != null) {
-            String remoteFileName = file.getName();
+    public DbxFiles.FileMetadata doInBackground(String... params) {
+        String exportedFilePath = params[0];
+        File exportedFile = new File(exportedFilePath);
+        if (exportedFile != null) {
+            String remoteFolderPath = params[1];
 
             try {
-                InputStream inputStream = new FileInputStream(file);
+                InputStream inputStream = new FileInputStream(exportedFile);
                 try {
-                    mFilesClient.uploadBuilder(path + "/" + remoteFileName)
-                            .mode(DbxFiles.WriteMode.overwrite)
+                    return mDbxClient.files.uploadBuilder(remoteFolderPath + "/" + exportedFile.getName())
+                            .mode(DbxFiles.WriteMode.add)
                             .run(inputStream);
                 } finally {
                     inputStream.close();

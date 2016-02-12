@@ -5,12 +5,13 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.util.Date;
+import java.util.UUID;
 
 @DatabaseTable(tableName = "goals")
 public class Goal {
 
     @DatabaseField(generatedId = true)
-    private int id;
+    private UUID id;
 
     @DatabaseField(canBeNull = false,dataType = DataType.STRING)
     private String name;
@@ -37,8 +38,8 @@ public class Goal {
     public Goal() {
     }
 
-    public int getId() {
-        return id;
+    public String getId() {
+        return id.toString();
     }
 
     public String getName() {

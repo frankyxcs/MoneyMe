@@ -93,8 +93,8 @@ public class GoalsFragment extends Fragment {
 
         adapter = new GoalsAdapter(getActivity(), goals, new GoalsAdapter.Callback(){
             @Override
-            public void onDeleteClick(int id) {
-                final int itemId = id;
+            public void onDeleteClick(String id) {
+                final String itemId = id;
                 new MaterialDialog.Builder(getContext())
                         .content(R.string.remove_goal_confirm)
                         .negativeText(R.string.cancel)
@@ -112,8 +112,8 @@ public class GoalsFragment extends Fragment {
                         .show();
             }
             @Override
-            public void onEditClick(int id) {
-                final int itemId = id;
+            public void onEditClick(String id) {
+                final String itemId = id;
                 addedAmount = 0;
                 new MaterialDialog.Builder(getContext())
                         .title(R.string.add_amount)

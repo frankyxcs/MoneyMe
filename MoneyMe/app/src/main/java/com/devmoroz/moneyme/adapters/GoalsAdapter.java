@@ -29,8 +29,8 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHol
     private final Callback mCallback;
 
     public interface Callback {
-        void onDeleteClick(int id);
-        void onEditClick(int id);
+        void onDeleteClick(String id);
+        void onEditClick(String id);
     }
 
     public GoalsAdapter(Context context, List<Goal> goalsData, Callback callback) {
@@ -77,7 +77,7 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHol
         TextView goalName;
         TextView goalCurrNeed;
         TextView status;
-        int goalId;
+        String goalId;
 
         public GoalsViewHolder(View itemView) {
             super(itemView);

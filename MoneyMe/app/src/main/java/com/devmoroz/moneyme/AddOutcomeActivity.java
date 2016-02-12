@@ -38,6 +38,7 @@ import com.devmoroz.moneyme.adapters.CategorySpinnerWithIconsAdapter;
 import com.devmoroz.moneyme.helpers.DBHelper;
 import com.devmoroz.moneyme.logging.L;
 import com.devmoroz.moneyme.models.Account;
+import com.devmoroz.moneyme.models.Category;
 import com.devmoroz.moneyme.models.CreatedItem;
 import com.devmoroz.moneyme.models.Currency;
 import com.devmoroz.moneyme.models.Transaction;
@@ -70,7 +71,8 @@ public class AddOutcomeActivity extends AppCompatActivity {
 
     private String photoFileName;
     private String photoPath;
-    private static Date outcomeDate = new Date();
+    private static Date outcomeDate;
+    String defaultCategory;
 
     private EditText amount;
     private EditText description;
@@ -88,10 +90,13 @@ public class AddOutcomeActivity extends AppCompatActivity {
 
 
     private DBHelper dbHelper;
+    private List<Category> categories;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Intent intent = getIntent();
+        defaultCategory = intent.getStringExtra(Constants.OUTCOME_DEFAULT_CATEGORY);
         setTheme(R.style.AppDefaultOutcome);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_outcome);
@@ -109,6 +114,7 @@ public class AddOutcomeActivity extends AppCompatActivity {
         categoryColor = (ImageView) findViewById(R.id.add_outcome_category_color);
         accountSpin = (Spinner) findViewById(R.id.add_outcome_account);
         date.setText(TimeUtils.formatShortDate(getApplicationContext(), new Date()));
+        outcomeDate = null;
         buttonAdd = (FloatingActionButton) findViewById(R.id.add_outcome_save);
         floatingAmountLabel = (TextInputLayout) findViewById(R.id.text_input_layout_out_amount);
         chequeImage = (ImageView) findViewById(R.id.add_outcome_cheque);
@@ -129,7 +135,7 @@ public class AddOutcomeActivity extends AppCompatActivity {
                     return;
                 }
                 Intent intent;
-                CreatedItem info = new CreatedItem(-1, "", 0, -1);
+                CreatedItem info = new CreatedItem("", "", 0, "");
                 try {
                     info = addOutcome();
                 } catch (SQLException ex) {
@@ -169,10 +175,25 @@ public class AddOutcomeActivity extends AppCompatActivity {
     }
 
     private void initCategorySpinner() {
-        String[] categories = getResources().getStringArray(R.array.outcome_categories);
-        CategorySpinnerWithIconsAdapter adapter = new CategorySpinnerWithIconsAdapter(this, R.layout.category_row, categories, CustomColorTemplate.PIECHART_COLORS);
+        try {
+            dbHelper = MoneyApplication.getInstance().GetDBHelper();
+            categories = dbHelper.getCategoryDAO().getSortedCategories();
+        }catch(SQLException ex){
+
+        }
+        String[] defaults = getResources().getStringArray(R.array.outcome_categories);
+        CategorySpinnerWithIconsAdapter adapter = new CategorySpinnerWithIconsAdapter(this, R.layout.category_row, defaults, categories);
         categorySpin.setAdapter(adapter);
-        categoryColor.setColorFilter(CustomColorTemplate.PIECHART_COLORS[0]);
+        categoryColor.setColorFilter(categories.get(0).getColor());
+        if (FormatUtils.isNotEmpty(defaultCategory)) {
+            for(Category category: categories){
+                if(defaultCategory.equals(category.getTitle())){
+                    categoryColor.setColorFilter(category.getColor());
+                    categorySpin.setSelection(category.getOrder());
+                    break;
+                }
+            }
+        }
         categorySpin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -224,7 +245,7 @@ public class AddOutcomeActivity extends AppCompatActivity {
         Date dateAdded;
         String outcomeNote = description.getText().toString();
         double outcomeAmount = Double.parseDouble(amount.getText().toString());
-        String selectedCategory = categorySpin.getSelectedItem().toString();
+        Category selectedCategory = categories.get(categorySpin.getSelectedItemPosition());
 
         dateAdded = outcomeDate == null ? new Date() : outcomeDate;
 
@@ -232,13 +253,13 @@ public class AddOutcomeActivity extends AppCompatActivity {
         Account account = dbHelper.getAccountDAO().queryForAll().get(id);
         account.setBalance(account.getBalance() - outcomeAmount);
 
-        Transaction outcome = new Transaction(TransactionType.OUTCOME,outcomeNote,selectedCategory,dateAdded,outcomeAmount,account);
+        Transaction outcome = new Transaction(TransactionType.OUTCOME, outcomeNote, selectedCategory, dateAdded, outcomeAmount, account);
         outcome.setPhoto(photoPath);
 
         dbHelper.getTransactionDAO().create(outcome);
         dbHelper.getAccountDAO().update(account);
 
-        return new CreatedItem(outcome.getId(), selectedCategory, outcomeAmount, account.getId());
+        return new CreatedItem(outcome.getId(), selectedCategory.getTitle(), outcomeAmount, account.getId());
     }
 
     @Override
@@ -342,18 +363,19 @@ public class AddOutcomeActivity extends AppCompatActivity {
         String time = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         photoFileName = time + ".jpg";
         File photoDir =
-                new File(Environment.getExternalStorageDirectory()+"/MoneyMe/Receipts");
+                new File(Environment.getExternalStorageDirectory() + "/MoneyMe/Receipts");
         if (!photoDir.exists()) {
             photoDir.mkdirs();
         }
         File image = new File(photoDir, photoFileName);
         photoPath = "file:" + image.getAbsolutePath();
-        return  image;
+        return image;
     }
 
     private void setPic() {
         if (FormatUtils.isNotEmpty(photoPath)) {
             setImageWithGlide(getApplicationContext(), photoPath, chequeImage);
+            photoWrapper.setVisibility(View.VISIBLE);
         }
     }
 

@@ -31,6 +31,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.devmoroz.moneyme.adapters.TabsPagerFragmentAdapter;
 import com.devmoroz.moneyme.eventBus.AppInitCompletedEvent;
 import com.devmoroz.moneyme.eventBus.BusProvider;
+import com.devmoroz.moneyme.eventBus.ChartSliceClickedEvent;
 import com.devmoroz.moneyme.eventBus.DBRestoredEvent;
 import com.devmoroz.moneyme.eventBus.SearchCanceled;
 import com.devmoroz.moneyme.eventBus.SearchTriggered;
@@ -50,12 +51,13 @@ import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.squareup.otto.Subscribe;
 
 import java.sql.SQLException;
+import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
     final int REQUEST_CODE_INCOME = 918;
     final int REQUEST_CODE_OUTCOME = 1218;
-    private int createdItemId = -1;
+    private String createdItemId = "";
 
     public static final int VIEW_SPLASH = 0;
     public static final int VIEW_CONTENT = 1;
@@ -135,6 +137,11 @@ public class MainActivity extends AppCompatActivity {
     public void onAppInitCompleted(AppInitCompletedEvent event) {
         initialize();
         switchToContentView();
+    }
+
+    @Subscribe
+    public void onChartSliceClicked(ChartSliceClickedEvent event) {
+        startAddActivity(Constants.OUTCOME_ACTIVITY,event.Category);
     }
 
     @Override
@@ -315,19 +322,19 @@ public class MainActivity extends AppCompatActivity {
         fabIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startAddActivity(Constants.INCOME_ACTIVITY);
+                startAddActivity(Constants.INCOME_ACTIVITY,null);
             }
         });
 
         fabOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startAddActivity(Constants.OUTCOME_ACTIVITY);
+                startAddActivity(Constants.OUTCOME_ACTIVITY,null);
             }
         });
     }
 
-    private void startAddActivity(String activity) {
+    private void startAddActivity(String activity, String category) {
         fab.collapse();
         Intent intent;
         switch (activity) {
@@ -337,6 +344,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case Constants.OUTCOME_ACTIVITY:
                 intent = new Intent(this, AddOutcomeActivity.class);
+                if(FormatUtils.isNotEmpty(category)){
+                    intent.putExtra(Constants.OUTCOME_DEFAULT_CATEGORY,category);
+                }
                 startActivityForResult(intent, REQUEST_CODE_OUTCOME);
                 break;
         }
@@ -346,10 +356,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(final int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
-            createdItemId = extras.getInt(Constants.CREATED_ITEM_ID);
-            if (createdItemId != -1) {
+            createdItemId = extras.getString(Constants.CREATED_ITEM_ID);
+            if (FormatUtils.isNotEmpty(createdItemId)) {
                 String operationName = extras.getString(Constants.CREATED_ITEM_CATEGORY);
-                final int accId = extras.getInt(Constants.CREATED_ITEM_ACCOUNT);
+                final String accId = extras.getString(Constants.CREATED_ITEM_ACCOUNT);
                 final double amount = extras.getDouble(Constants.CREATED_ITEM_AMOUNT);
                 String sign = CurrencyCache.getCurrencyOrEmpty().getSymbol();
                 String info = "";
@@ -382,14 +392,14 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         try {
                             DBHelper dbhelper = MoneyApplication.getInstance().GetDBHelper();
-                            Account acc = dbhelper.getAccountDAO().queryForId(accId);
+                            Account acc = dbhelper.getAccountDAO().queryForId(UUID.fromString(accId));
                             if (requestCode == REQUEST_CODE_INCOME) {
                                 acc.setBalance(acc.getBalance() - amount);
                             } else if (requestCode == REQUEST_CODE_OUTCOME) {
                                 acc.setBalance(acc.getBalance() + amount);
                             }
                             dbhelper.getAccountDAO().update(acc);
-                            dbhelper.getTransactionDAO().deleteById(createdItemId);
+                            dbhelper.getTransactionDAO().deleteById(UUID.fromString(createdItemId));
                             BusProvider.postOnMain(new WalletChangeEvent());
                         } catch (SQLException ex) {
                             L.t(MainActivity.this, "Something went wrong.Please,try again.");

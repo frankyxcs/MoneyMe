@@ -18,11 +18,11 @@ import com.devmoroz.moneyme.MoneyApplication;
 import com.devmoroz.moneyme.R;
 import com.devmoroz.moneyme.adapters.ChartLegendAdapter;
 import com.devmoroz.moneyme.eventBus.BusProvider;
+import com.devmoroz.moneyme.eventBus.ChartSliceClickedEvent;
 import com.devmoroz.moneyme.eventBus.DBRestoredEvent;
 import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
 import com.devmoroz.moneyme.helpers.DBHelper;
 import com.devmoroz.moneyme.models.Account;
-import com.devmoroz.moneyme.models.CustomLegends;
 import com.devmoroz.moneyme.models.LegendDetails;
 import com.devmoroz.moneyme.models.Transaction;
 import com.devmoroz.moneyme.models.TransactionType;
@@ -60,7 +60,6 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
     private List<Account> accounts;
     private String totalOut;
     private String balance;
-    private CustomLegends myLegends;
 
 
     public static ChartFragment getInstance() {
@@ -111,8 +110,6 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
         chart.setCenterTextSize(16f);
         chart.setDescription("");
         chart.setOnChartValueSelectedListener(this);
-        Legend l = chart.getLegend();
-        l.setCustom(myLegends.colors, myLegends.titles);
         chart.invalidate();
 
         customizeLegend();
@@ -137,9 +134,9 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
         l.setEnabled(false);
         int colorCodes[] = l.getColors();
         PieData data = chart.getData();
-        List<Entry> entries = data.getDataSet().getYVals();
+        List<Entry> entries = ((PieDataSet)data.getDataSet()).getYVals();
 
-        for (int i = 0; i < l.getColors().length; i++) {
+        for (int i = 0; i < l.getColors().length-1; i++) {
             Entry entry = entries.get(i);
             String label = l.getLabel(i);
             int colorCode = colorCodes[i];
@@ -170,6 +167,7 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
     protected PieData generatePieData() {
         float totalAmount = 0;
         float totalBalance = 0;
+        List<Integer> colors = new ArrayList<>();
         ArrayList<Entry> entries = new ArrayList<>();
         ArrayList<String> xVals = new ArrayList<>();
         HashMap<String, Float> data = new HashMap<>();
@@ -180,7 +178,7 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
 
         for (int i = 0; i < outs.size(); i++) {
             Transaction elem = outs.get(i);
-            String key = elem.getCategory();
+            String key = elem.getCategory().getTitle();
             float val = (float) elem.getAmount();
 
             totalAmount += val;
@@ -197,6 +195,7 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
             Set<Map.Entry<String, Float>> set = data.entrySet();
             for (Map.Entry<String, Float> entry : set) {
                 xVals.add(entry.getKey());
+                colors.add(CustomColorTemplate.getColorForCategory(getContext(),entry.getKey()));
                 entries.add(new Entry(entry.getValue(), j));
                 j++;
             }
@@ -206,15 +205,11 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
         balance = String.format("%10.2f %s", totalBalance, sign).trim();
         totalOut = String.format("%10.2f %s", totalAmount, sign).trim();
         PieDataSet ds1 = new PieDataSet(entries, "");
-        ds1.setColors(CustomColorTemplate.PIECHART_COLORS);
+        ds1.setColors(colors);
         ds1.setSliceSpace(2f);
         ds1.setValueTextColor(CustomColorTemplate.SECONDARY_TEXT);
         ds1.setValueTextSize(8f);
         ds1.setDrawValues(false);
-
-
-        int[] colors = CustomColorTemplate.getCategoriesColors(getContext(),xVals);
-        myLegends = new CustomLegends(xVals,colors);
 
 
         PieData d = new PieData(xVals, ds1);
@@ -236,6 +231,8 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
 
         //rotate to slice center
         chart.spin(1000, rotationAngle, end, Easing.EasingOption.EaseInOutQuad);
+        String label = chart.getXValue(i);
+        BusProvider.postOnMain(new ChartSliceClickedEvent(label));
     }
 
     @Override
@@ -259,8 +256,6 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
         accounts = MoneyApplication.getInstance().getAccounts();
         chart.setData(generatePieData());
         chart.setCenterText(generateCenterText());
-        Legend l = chart.getLegend();
-        l.setCustom(myLegends.colors, myLegends.titles);
         chart.invalidate();
         chart.animateY(1400);
         customizeLegend();

@@ -2,19 +2,19 @@ package com.devmoroz.moneyme.models;
 
 public class CreatedItem {
 
-    int itemId;
+    String itemId;
     String category;
     double amount;
-    int accountId;
+    String accountId;
 
-    public CreatedItem(int id, String category, double amount, int accountId) {
+    public CreatedItem(String id, String category, double amount, String accountId) {
         this.itemId = id;
         this.category = category;
         this.amount = amount;
         this.accountId = accountId;
     }
 
-    public int getItemId() {
+    public String getItemId() {
         return itemId;
     }
 
@@ -26,7 +26,7 @@ public class CreatedItem {
         return amount;
     }
 
-    public int getAccountId() {
+    public String getAccountId() {
         return accountId;
     }
 }

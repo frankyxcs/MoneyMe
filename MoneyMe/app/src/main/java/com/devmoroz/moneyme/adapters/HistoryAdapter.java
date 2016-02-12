@@ -18,6 +18,7 @@ import com.devmoroz.moneyme.R;
 import com.devmoroz.moneyme.models.Transaction;
 import com.devmoroz.moneyme.models.TransactionType;
 import com.devmoroz.moneyme.utils.Constants;
+import com.devmoroz.moneyme.utils.CustomColorTemplate;
 import com.devmoroz.moneyme.utils.FormatUtils;
 import com.devmoroz.moneyme.utils.PhotoUtil;
 import com.devmoroz.moneyme.utils.datetime.TimeUtils;
@@ -33,8 +34,8 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
     private final Callback mCallback;
 
     public interface Callback {
-        void onDeleteClick(int id, TransactionType type);
-        void onEditClick(int id, TransactionType type);
+        void onDeleteClick(String id, TransactionType type);
+        void onEditClick(String id, TransactionType type);
     }
 
     public HistoryAdapter(Context context, Callback callback) {
@@ -67,18 +68,16 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
         TextView textCircle = holder.textCircle;
         ImageView photoView = holder.attachedPhoto;
         TextView textNotes = holder.textNotes;
+        ImageView colorCircle = holder.colorCircle;
 
-        final int sdk = android.os.Build.VERSION.SDK_INT;
-        if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-            Drawable background = wData.getType() == TransactionType.INCOME ? appContext.getResources().getDrawable(R.drawable.circle_green) : appContext.getResources().getDrawable(R.drawable.circle_red);
-            textCircle.setBackgroundDrawable(background);
-        } else {
-            Drawable background = wData.getType() == TransactionType.INCOME ? appContext.getDrawable(R.drawable.circle_green) : appContext.getDrawable(R.drawable.circle_red);
-            textCircle.setBackground(background);
+        if(wData.getType() == TransactionType.INCOME){
+            colorCircle.setColorFilter(CustomColorTemplate.INCOME_COLOR);
+        }else{
+            colorCircle.setColorFilter(wData.getCategory().getColor());
         }
 
         textAmount.setText(wData.getFormatedAmount());
-        String categ = wData.getType() == TransactionType.OUTCOME ? wData.getCategory() : wData.getAccountName();
+        String categ = wData.getType() == TransactionType.OUTCOME ? wData.getCategory().getTitle() : wData.getAccountName();
         textCategory.setText(categ);
         textCircle.setText(categ.substring(0, 1));
         textDateAdded.setText(TimeUtils.formatHumanFriendlyShortDate(appContext, wData.getDateLong()));
@@ -136,15 +135,16 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
         TextView textAmount;
         TextView textCategory;
         TextView textDateAdded;
+        ImageView colorCircle;
         TextView textCircle;
         ImageView attachedPhoto;
         TextView textNotes;
         ImageButton deleteButton;
         ImageButton editButton;
-        int itemId;
+        String itemId;
         TransactionType itemType;
 
-        public void setItemDetails(int id, TransactionType type){
+        public void setItemDetails(String id, TransactionType type){
             itemId = id;
             itemType = type;
         }
@@ -152,7 +152,8 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
         public MainViewHolder(View v) {
             super(v);
             this.mView = v;
-            this.textCircle = (TextView) v.findViewById(R.id.card_main_icon);
+            this.textCircle = (TextView) v.findViewById(R.id.card_main_categoryLetter);
+            this.colorCircle = (ImageView) v.findViewById(R.id.card_main_categoryColor);
             this.textAmount = (TextView) v.findViewById(R.id.card_main_amount);
             this.textCategory = (TextView) v.findViewById(R.id.card_main_category);
             this.textDateAdded = (TextView) v.findViewById(R.id.card_main_date);
