@@ -104,7 +104,7 @@ public class FinishFragment extends Fragment {
             if(!FormatUtils.isEmpty(startBalanceText)){
                 amount = Double.parseDouble(startBalanceText.getText().toString());
             }
-            Account acc = new Account(name,amount,type);
+            Account acc = new Account(name,amount,type,true);
             DBHelper helper = MoneyApplication.getInstance().GetDBHelper();
             helper.getAccountDAO().create(acc);
             return true;

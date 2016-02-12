@@ -29,10 +29,10 @@ public class Importer {
 
     public void restoreBackup() {
 
-        File[] backupFiles = new File(Exporter.BACKUP_FOLDER_PATH).listFiles();
+        File[] backupFiles = new File(ExportParams.BACKUP_FOLDER_PATH).listFiles();
         if (backupFiles == null){
             Toast.makeText(mContext, R.string.toast_backup_folder_not_found, Toast.LENGTH_LONG).show();
-            new File(Exporter.BACKUP_FOLDER_PATH).mkdirs();
+            new File(ExportParams.BACKUP_FOLDER_PATH).mkdirs();
             return;
         }
 
@@ -44,7 +44,7 @@ public class Importer {
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(mContext, android.R.layout.select_dialog_singlechoice);
         final DateFormat dateFormatter = SimpleDateFormat.getDateTimeInstance();
         for (File backupFile : sortedBackupFiles) {
-            long time = Exporter.getExportTime(backupFile.getName());
+            long time = 123;
             if (time > 0)
                 arrayAdapter.add(dateFormatter.format(new Date(time)));
             else

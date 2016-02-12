@@ -19,18 +19,6 @@ public class CurrencyCache {
         return !c.isEmpty() ? c : Currency.EMPTY;
     }
 
-    /*public static synchronized Currency getCurrency(DBHelper dbHelper) {
-        Currency cachedCurrency = getCurrencyOrEmpty();
-        if (cachedCurrency.isEmpty()) {
-            cachedCurrency = em.get(Currency.class, currencyId);
-            if (cachedCurrency == null) {
-                cachedCurrency = Currency.EMPTY;
-            }
-            CURRENCIES.put(currencyId, cachedCurrency);
-        }
-        return cachedCurrency;
-    }*/
-
     public static void initialize(DBHelper dbHelper) {
         try {
             List<Currency> currencies;

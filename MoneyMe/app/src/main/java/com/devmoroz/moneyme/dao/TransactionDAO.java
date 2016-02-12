@@ -23,7 +23,7 @@ public class TransactionDAO extends BaseDaoImpl<Transaction, UUID> {
 
     public List<Transaction> queryTransactionsForCategory(String category) throws SQLException {
         QueryBuilder<Transaction, UUID> queryBuilder = queryBuilder();
-        queryBuilder.where().eq("category", category);
+        queryBuilder.where().eq("category_id", UUID.fromString(category));
         queryBuilder.orderBy("dateAdded", true);
         PreparedQuery<Transaction> preparedQuery = queryBuilder.prepare();
         List<Transaction> result = query(preparedQuery);
@@ -35,7 +35,7 @@ public class TransactionDAO extends BaseDaoImpl<Transaction, UUID> {
         float val = 0f;
         QueryBuilder<Transaction, UUID> queryBuilder = queryBuilder();
         queryBuilder.selectRaw("SUM(amount)");
-        queryBuilder.where().eq("category", category).and().between("dateAdded", new Date(start), new Date(end));
+        queryBuilder.where().eq("category_id",  UUID.fromString(category)).and().between("dateAdded", new Date(start), new Date(end));
         String[] result = queryRaw(queryBuilder.prepareStatementString()).getFirstResult();
         if (result != null && result.length >= 1 && result[0]!=null) {
             val = Float.parseFloat(result[0]);
@@ -49,7 +49,7 @@ public class TransactionDAO extends BaseDaoImpl<Transaction, UUID> {
 
         QueryBuilder<Transaction, UUID> queryBuilder = queryBuilder();
         queryBuilder.selectRaw("SUM(amount)");
-        queryBuilder.where().eq("account_id", accountId).and().eq("type", TransactionType.INCOME).and().between("dateAdded", new Date(start), new Date(end));
+        queryBuilder.where().eq("account_id", UUID.fromString(accountId)).and().eq("type", TransactionType.INCOME).and().between("dateAdded", new Date(start), new Date(end));
         String[] result = queryRaw(queryBuilder.prepareStatementString()).getFirstResult();
         if (result != null && result.length >= 1 && result[0]!=null) {
             val = Float.parseFloat(result[0]);
@@ -60,7 +60,7 @@ public class TransactionDAO extends BaseDaoImpl<Transaction, UUID> {
 
     public List<Transaction> queryTransactionsByTypeForAccount(TransactionType type, String accountId) throws SQLException {
         QueryBuilder<Transaction, UUID> queryBuilder = queryBuilder();
-        queryBuilder.where().eq("account_id", accountId).and().eq("type", type);
+        queryBuilder.where().eq("account_id", UUID.fromString(accountId)).and().eq("type", type);
         queryBuilder.orderBy("dateAdded", true);
         PreparedQuery<Transaction> preparedQuery = queryBuilder.prepare();
         List<Transaction> result = query(preparedQuery);

@@ -23,56 +23,101 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class ExportAsyncTask extends AsyncTask<ExportParams, Void, Boolean> {
+public class ExportAsyncTask extends AsyncTask<ExportParams, Void, Integer> {
+
+    public static final int SUCCESS = 1;
+    public static final int ERROR = 2;
 
     private final Context mContext;
 
-    private ProgressDialog mProgressDialog;
-
     private ExportParams mExportParams;
 
-    private List<String> mExportedFiles;
+    private Exporter dataExporter;
 
-    private Exporter mExporter;
+    private ProgressDialog dialog;
 
-    public ExportAsyncTask(Context context){
+    private CompletionListener listener;
+
+    public interface CompletionListener {
+        void onExportComplete();
+        void onError(int errorCode);
+    }
+
+    public ExportAsyncTask(Context context,ProgressDialog dialog, CompletionListener callback){
         this.mContext = context;
+        this.listener = callback;
+        this.dialog = dialog;
     }
 
     @Override
-    protected Boolean doInBackground(ExportParams... params) {
-        mExportParams = params[0];
+    protected Integer doInBackground(ExportParams... params) {
         try {
-
+            mExportParams = params[0];
+            File exportDir =
+                    new File(ExportParams.EXPORT_FOLDER_PATH);
+            if (!exportDir.exists()) {
+                exportDir.mkdirs();
+            }
+            final File file = getFile(exportDir,mExportParams.getExportType().getExtention());
+            final OutputStream outputStream;
+            outputStream = new FileOutputStream(file);
+            dataExporter = mExportParams.getExportType().getDataExporter(mContext,outputStream);
+            dataExporter.exportData();
+            dialog.dismiss();
+            switch (mExportParams.getExportTarget()) {
+                case SHARING:
+                    shareFile(file,mExportParams.getExportType().getMimeType());
+                    return SUCCESS;
+                case DROPBOX:
+                    sendExportToDropbox(file);
+                    return SUCCESS;
+                case SD_CARD:
+                    moveFile(file.getAbsolutePath(), ExportParams.BACKUP_FOLDER_PATH);
+                    return SUCCESS;
+            }
         } catch (final Exception e) {
-
+            return ERROR;
         }
-
-        switch (mExportParams.getExportTarget()) {
-            case SHARING:
-                List<String> sdCardExportedFiles = moveExportToSDCard();
-                shareFiles(sdCardExportedFiles);
-                return true;
-
-            case DROPBOX:
-                sendExportToDropbox();
-                return true;
-
-            case SD_CARD:
-                moveExportToSDCard();
-                return true;
-        }
-
-        return false;
+        return ERROR;
     }
 
-    private void sendExportToDropbox() {
+    @Override
+    protected void onPostExecute(Integer result) {
+        switch (result) {
+            case SUCCESS:
+                if (listener != null) {
+                    listener.onExportComplete();
+                }
+                break;
+            case ERROR:
+                if (listener != null) {
+                    listener.onError(1);
+                }
+                break;
+            default:
+                if (listener != null) {
+                    listener.onError(2);
+                }
+        }
+    }
+
+    private File getFile(File directory, String extension) {
+        return new File(directory, getFileTitle(extension));
+    }
+
+    private String getFileTitle(String extension) {
+        final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HHmmss");
+        return mContext.getString(R.string.app_name) + " " + dateFormat.format(new Date()) + extension;
+    }
+
+    private void sendExportToDropbox(File file) {
 
         new UploadFileTask(mContext, DropboxClientFactory.getClient(), new UploadFileTask.Callback() {
             @Override
@@ -85,22 +130,6 @@ public class ExportAsyncTask extends AsyncTask<ExportParams, Void, Boolean> {
 
             }
         }).execute("", "");
-    }
-
-    private List<String> moveExportToSDCard() {
-        new File(Exporter.EXPORT_FOLDER_PATH).mkdirs();
-        List<String> dstFiles = new ArrayList<>();
-        for (String src: mExportedFiles) {
-            String dst = Exporter.EXPORT_FOLDER_PATH + stripPathPart(src);
-            try {
-                moveFile(src, dst);
-                dstFiles.add(dst);
-            } catch (IOException e) {
-
-            }
-        }
-
-        return dstFiles;
     }
 
     private String stripPathPart(String fullPathName) {
@@ -122,26 +151,12 @@ public class ExportAsyncTask extends AsyncTask<ExportParams, Void, Boolean> {
         srcFile.delete();
     }
 
-    private void shareFiles(List<String> paths) {
-        Intent shareIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
-        shareIntent.setType("text/csv");
+    private void shareFile(File file, String type) {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
 
-        ArrayList<Uri> exportFiles = convertFilePathsToUris(paths);
-        shareIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, exportFiles);
-
-        shareIntent.putExtra(Intent.EXTRA_SUBJECT, mContext.getString(R.string.title_export_email,
-               "CSV"));
-
-        String defaultEmail = PreferenceManager.getDefaultSharedPreferences(mContext)
-                .getString(mContext.getString(R.string.pref_default_export_email), null);
-        if (defaultEmail != null && defaultEmail.trim().length() > 0)
-            shareIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{defaultEmail});
-
-        SimpleDateFormat formatter = (SimpleDateFormat) SimpleDateFormat.getDateTimeInstance();
-        ArrayList<CharSequence> extraText = new ArrayList<>();
-        extraText.add(mContext.getString(R.string.description_export_email)
-                + " " + formatter.format(new Date(System.currentTimeMillis())));
-        shareIntent.putExtra(Intent.EXTRA_TEXT, extraText);
+        Uri exportFile = Uri.fromFile(file);
+        shareIntent.putExtra(Intent.EXTRA_STREAM, exportFile);
+        shareIntent.setType(type);
 
         if (mContext instanceof Activity) {
             List<ResolveInfo> activities = mContext.getPackageManager().queryIntentActivities(shareIntent, 0);

@@ -18,6 +18,7 @@ import com.devmoroz.moneyme.models.Category;
 import com.devmoroz.moneyme.models.Currency;
 import com.devmoroz.moneyme.models.Goal;
 import com.devmoroz.moneyme.models.Payee;
+import com.devmoroz.moneyme.models.Tag;
 import com.devmoroz.moneyme.models.Transaction;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.support.ConnectionSource;
@@ -59,6 +60,7 @@ public class DBHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTable(connectionSource, Currency.class);
             TableUtils.createTable(connectionSource, Account.class);
             TableUtils.createTable(connectionSource, Budget.class);
+            TableUtils.createTable(connectionSource, Tag.class);
             addDefaults();
         } catch (SQLException e) {
             Log.e(TAG, "error creating DB " + DATABASE_NAME);

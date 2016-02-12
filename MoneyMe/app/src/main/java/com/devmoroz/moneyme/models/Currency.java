@@ -14,15 +14,15 @@ public class Currency {
     public static final Currency EMPTY = new Currency();
 
     static {
-        EMPTY.id = "";
+        EMPTY.id = UUID.randomUUID();
         EMPTY.name = "";
         EMPTY.title = "Default";
         EMPTY.symbol = "";
     }
 
 
-    @DatabaseField(generatedId = false)
-    private String id;
+    @DatabaseField(generatedId = true)
+    private UUID id;
 
     @DatabaseField
     private String name;
@@ -37,18 +37,17 @@ public class Currency {
     private boolean isDeafult;
 
     public Currency() {
-        this.id = UUID.randomUUID().toString();
+
     }
 
     public Currency(String name, String title, String symbol) {
-        this.id = UUID.randomUUID().toString();
         this.name = name;
         this.title = title;
         this.symbol = symbol;
     }
 
     public String getId() {
-        return id;
+        return id.toString();
     }
 
     public String getName() {
@@ -73,7 +72,7 @@ public class Currency {
     }
 
     public void setId(String id) {
-        this.id = id;
+        this.id = UUID.fromString(id);
     }
 
     public void setName(String name) {
@@ -89,7 +88,7 @@ public class Currency {
     }
 
     public boolean isEmpty() {
-        return id.isEmpty();
+        return title.equals("Default");
     }
 
     public DecimalFormat getFormat(){

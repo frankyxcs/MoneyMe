@@ -20,6 +20,9 @@ public class Payee {
     @DatabaseField
     private String icon;
 
+    @DatabaseField(foreign = true, foreignAutoRefresh = true)
+    private Currency currency;
+
     @ForeignCollectionField
     private ForeignCollection<Transaction> transactions;
 
@@ -66,5 +69,9 @@ public class Payee {
 
     public void setIcon(String icon) {
         this.icon = icon;
+    }
+
+    public Currency getCurrency() {
+        return currency;
     }
 }

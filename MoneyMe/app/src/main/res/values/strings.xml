@@ -57,7 +57,9 @@
     <string name="regular_transactions">Регулярные операции</string>
     <string name="statistics">Статистика</string>
     <string name="csv_export">Экспорт в CSV</string>
-    <string name="csv_import">CSV импорт</string>
+    <string name="csv_export_dialog_content">Будет создан CSV файл ваших транзакий.</string>
+    <string name="csv_export_inprogress">Экспортирование транзакций в CSV..</string>
+    <string name="csv_export_completed">Файл CSV успешно создан.</string>
     <string name="backup">Резервное копирование</string>
     <string name="db_backup">Создать бэкап базы</string>
     <string name="db_restore">Восстановить базу</string>

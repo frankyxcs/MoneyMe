@@ -176,7 +176,7 @@ public class AccountsFragment extends Fragment {
         }
         try {
             DBHelper dbHelper = MoneyApplication.getInstance().GetDBHelper();
-            Account account = new Account(name,amount,type);
+            Account account = new Account(name,amount,type,true);
             dbHelper.getAccountDAO().create(account);
         }catch (SQLException ex){
 

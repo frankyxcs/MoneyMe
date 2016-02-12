@@ -38,16 +38,20 @@ public class Account {
     @DatabaseField(columnName = INCLUDE_IN_TOTAL_FIELD_NAME)
     private boolean includeInTotal;
 
+    @DatabaseField
+    private boolean shared;
+
     @ForeignCollectionField
     private ForeignCollection<Transaction> transactions;
 
 
-    public Account(String name, double balance, int type) {
+    public Account(String name, double balance, int type, boolean shared) {
         this.name = name;
         this.balance = balance;
         this.includeInTotal = true;
         this.date = new Date();
         this.type = type;
+        this.shared = shared;
     }
 
     public Account(String id) {
@@ -56,15 +60,36 @@ public class Account {
         this.type = 0;
         this.includeInTotal = true;
         this.date = new Date();
+        this.shared = true;
     }
 
-    public Account(String name, double balance, int currency, int type, boolean includeInTotal) {
+    public Account(String name, double balance, int currency, int type, boolean includeInTotal, boolean shared) {
         this.name = name;
         this.balance = balance;
         this.currency = currency;
         this.includeInTotal = includeInTotal;
         this.type = type;
         this.date = new Date();
+        this.shared = shared;
+    }
+
+    public Account(String id, String name, double balance, Date date, int currency, int type, boolean includeInTotal, boolean shared) {
+        this.id = UUID.fromString(id);
+        this.name = name;
+        this.balance = balance;
+        this.date = date;
+        this.currency = currency;
+        this.type = type;
+        this.includeInTotal = includeInTotal;
+        this.shared = shared;
+    }
+
+    public boolean isShared() {
+        return shared;
+    }
+
+    public void setShared(boolean shared) {
+        this.shared = shared;
     }
 
     public String getId() {

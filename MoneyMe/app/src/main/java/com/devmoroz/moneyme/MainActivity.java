@@ -36,6 +36,8 @@ import com.devmoroz.moneyme.eventBus.DBRestoredEvent;
 import com.devmoroz.moneyme.eventBus.SearchCanceled;
 import com.devmoroz.moneyme.eventBus.SearchTriggered;
 import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
+import com.devmoroz.moneyme.export.ExportAsyncTask;
+import com.devmoroz.moneyme.export.ExportParams;
 import com.devmoroz.moneyme.export.backup.BackupTask;
 import com.devmoroz.moneyme.helpers.CurrencyHelper;
 import com.devmoroz.moneyme.helpers.DBHelper;
@@ -141,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Subscribe
     public void onChartSliceClicked(ChartSliceClickedEvent event) {
-        startAddActivity(Constants.OUTCOME_ACTIVITY,event.Category);
+        startAddActivity(Constants.OUTCOME_ACTIVITY, event.Category);
     }
 
     @Override
@@ -217,6 +219,9 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.item_navigation_drawer_backup:
                         showBackupDialog();
                         return true;
+                    case R.id.item_navigation_drawer_export:
+                        showCSVExportDialog();
+                        return true;
                 }
                 return true;
             }
@@ -246,6 +251,41 @@ public class MainActivity extends AppCompatActivity {
                                 break;
                             }
                         }
+                    }
+                })
+                .show();
+    }
+
+    private void showCSVExportDialog() {
+        new MaterialDialog.Builder(this)
+                .title(R.string.csv_export)
+                .content(R.string.csv_export_dialog_content)
+                .positiveText(R.string.ok_continue)
+                .negativeText(R.string.cancel)
+                .positiveColorRes(R.color.colorPrimary)
+                .negativeColorRes(R.color.colorPrimary)
+                .widgetColorRes(R.color.colorPrimary)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
+                        final ProgressDialog dialog = new ProgressDialog(MainActivity.this);
+                        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                        dialog.setCancelable(false);
+                        dialog.setMessage(getString(R.string.csv_export_inprogress));
+                        dialog.show();
+                        ExportParams exportParams = new ExportParams(ExportParams.ExportTarget.SHARING, ExportParams.ExportType.CSV);
+                        new ExportAsyncTask(MainActivity.this,dialog, new ExportAsyncTask.CompletionListener() {
+                            @Override
+                            public void onExportComplete() {
+                                dialog.dismiss();
+                                L.T(MainActivity.this, getString(R.string.csv_export_completed));
+                            }
+                            @Override
+                            public void onError(int errorCode) {
+                                L.T(MainActivity.this, "Бляха, что-то не получилось");
+                                dialog.dismiss();
+                            }
+                        }).execute(exportParams);
                     }
                 })
                 .show();

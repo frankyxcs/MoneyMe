@@ -13,7 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
-@DatabaseTable(tableName = "transaction")
+@DatabaseTable(tableName = "transactions")
 public class Transaction {
 
     public static final String ACCOUNT_ID_FIELD_NAME = "account_id";
@@ -191,6 +191,14 @@ public class Transaction {
 
     public void setAccount(Account account) {
         this.account = account;
+    }
+
+    public Payee getPayee() {
+        return payee;
+    }
+
+    public void setPayee(Payee payee) {
+        this.payee = payee;
     }
 
     private DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");

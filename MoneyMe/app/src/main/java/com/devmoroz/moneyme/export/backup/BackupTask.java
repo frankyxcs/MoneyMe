@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Environment;
 
+import com.devmoroz.moneyme.export.ExportParams;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -43,7 +45,7 @@ public class BackupTask extends AsyncTask<String, Void, Integer> {
         File dbFile = mContext.getDatabasePath("moneyme.db");
         //Get a reference to the directory location for the backup
         File exportDir =
-                new File(Environment.getExternalStorageDirectory()+"/MoneyMe/Backups");
+                new File(ExportParams.BACKUP_FOLDER_PATH);
         if (!exportDir.exists()) {
             exportDir.mkdirs();
         }

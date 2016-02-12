@@ -34,6 +34,8 @@ public class Goal {
     @DatabaseField(dataType = DataType.BOOLEAN)
     private boolean achieved;
 
+    @DatabaseField(foreign = true, foreignAutoRefresh = true)
+    private Payee payee;
 
     public Goal() {
     }
@@ -54,6 +56,10 @@ public class Goal {
         return deadlineDate;
     }
 
+    public Long getDeadLong() {
+        return deadlineDate.getTime();
+    }
+
     public int getTotalAmount() {
         return totalAmount;
     }
@@ -72,6 +78,14 @@ public class Goal {
 
     public boolean isAchieved() {
         return achieved;
+    }
+
+    public Payee getPayee() {
+        return payee;
+    }
+
+    public void setPayee(Payee payee) {
+        this.payee = payee;
     }
 
     public Goal(String name, String notes, Date deadlineDate, int totalAmount, int accumulated) {
