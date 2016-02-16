@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#2196F3</color>
+    <color name="colorPrimaryDark">#1976D2</color>
+    <color name="colorPrimaryLight">#BBDEFB</color>
+    <color name="colorAccent">#03A9F4</color>
+    <color name="colorPrimaryTextLighter">#212121</color>
+    <color name="colorPrimaryText">#9b000000</color>
+    <color name="colorSecondaryText">#727272</color>
+    <color name="colorDivider">#B6B6B6</color>
+    <color name="mainBackground">#E3F2FD</color>
+
+    <color name="colorWhite">#ffffff</color>
+    <color name="colorIncomeItem">#80CBC4</color>
+    <color name="colorOutcomeItem">#FFAB91</color>
+    <color name="colorGreen">#009688</color>
+    <color name="translucent_white">#22FFFFFF</color>
+
+    <color name="holo_green_dark">#43A047</color>
+    <color name="holo_red_dark">#DD2C00</color>
+    <color name="holo_gray_dark">@android:color/secondary_text_light</color>
+    <color name="disable_gray">#BDBDBD</color>
+    <color name="colorPressedButton">#999999</color>
+    <color name="material_teal_a400">#1DE9B6</color>
+    <color name="colorBlack">#000</color>
+
+    <color name="zero_amount">@color/holo_gray_dark</color>
+    <color name="balance_amount">@color/holo_gray_dark</color>
+    <color name="positive_amount">@color/holo_green_dark</color>
+    <color name="negative_amount">@color/holo_red_dark</color>
+
+    <color name="fab_income_normal">#388E3C</color>
+    <color name="fab_income_pressed">#4CAF50</color>
+    <color name="fab_outcome_normal">#D32F2F</color>
+    <color name="fab_outcome_pressed">#F44336</color>
+
+
+    <color name="text">#fff</color>
+    <color name="background">@color/colorPrimary</color>
+    <color name="textview">#EEE</color>
+    <color name="operators">@color/colorPrimaryDark</color>
+
+    <color name="holo_blue_dark">#880099CC</color>
+    <color name="holo_blue_light">#8833B5E5</color>
+</resources>

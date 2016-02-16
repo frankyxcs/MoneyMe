@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="Theme">
+        <attr name="preferenceHelpStyle" format="reference" />
+        <attr name="numberPickerPreferenceStyle" format="reference" />
+        <attr name="timePickerPreferenceStyle" format="reference" />
+        <attr name="backgroundColorSecondary" format="color" />
+    </declare-styleable>
+
+    <declare-styleable name="PreferenceHelp">
+        <attr name="dialogTitle" />
+        <attr name="dialogLayout" />
+    </declare-styleable>
+
+    <declare-styleable name="SpinnerPreference">
+        <attr name="entries" />
+        <attr name="entryValues" />
+    </declare-styleable>
+
+    <declare-styleable name="NumberPickerPreference">
+        <attr name="minValue" format="integer" />
+        <attr name="maxValue" format="integer" />
+        <attr name="wrapSelectorWheel" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="AspectRatioImageView">
+        <attr name="aspectRatio" format="float" />
+        <attr name="aspectRatioEnabled" format="boolean" />
+        <attr name="dominantMeasurement">
+            <enum name="width" value="0"/>
+            <enum name="height" value="1"/>
+        </attr>
+    </declare-styleable>
+</resources>

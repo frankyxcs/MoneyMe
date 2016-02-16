@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/mainBackground"
+    android:orientation="vertical">
+
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/add_outcome_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        android:theme="@style/AppDefault"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:isScrollContainer="true"
+        android:orientation="vertical">
+
+        <LinearLayout android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="4dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp">
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/text_input_layout_out_amount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"   >
+
+            <EditText
+                android:id="@+id/add_outcome_amount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:digits="1234567890."
+                android:hint="@string/amount"
+                android:imeOptions="actionNext"
+                android:inputType="numberDecimal"/>
+
+        </android.support.design.widget.TextInputLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:animateLayoutChanges="true"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp">
+
+            <ImageView
+                android:id="@+id/add_outcome_category_color"
+                style="@style/ImageView.Form"
+                android:padding="2dp"
+                android:src="@drawable/circle"
+                tools:ignore="RtlHardcoded"  />
+
+            <Spinner
+                android:id="@+id/add_outcome_category"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:entries="@array/transaction_categories" />
+        </LinearLayout>
+
+        <View
+            style="@style/Divider.Thick"
+            android:layout_marginLeft="72dp"
+            android:layout_marginRight="16dp"
+            tools:ignore="RtlHardcoded" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:animateLayoutChanges="true"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp">
+
+            <ImageView
+                android:id="@+id/TextView04"
+                style="@style/ImageView.Form"
+                android:src="@drawable/ic_wallet"
+                tools:ignore="RtlHardcoded" />
+
+            <Spinner
+                android:id="@+id/add_outcome_account"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"/>
+
+        </LinearLayout>
+
+        <View
+            style="@style/Divider.Thick"
+            android:layout_marginLeft="72dp"
+            android:layout_marginRight="16dp"
+            tools:ignore="RtlHardcoded" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:animateLayoutChanges="true"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp">
+
+            <ImageView
+                android:id="@+id/TextView07"
+                style="@style/ImageView.Form"
+                android:src="@drawable/ic_calendar_dark"
+                tools:ignore="RtlHardcoded" />
+
+            <Button
+                android:id="@+id/add_outcome_date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="12-12-12"
+                android:gravity="center_vertical"
+                android:textAllCaps="false"
+                android:background="?selectableItemBackground"
+                android:onClick="showDatePickerDialog"
+                android:theme="@style/BlackInput" />
+
+        </LinearLayout>
+
+        <View
+            style="@style/Divider.Thick"
+            android:layout_marginLeft="72dp"
+            android:layout_marginRight="16dp"
+            tools:ignore="RtlHardcoded" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:animateLayoutChanges="true"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp">
+
+            <ImageView
+                android:id="@+id/add_outcome_tags_icon"
+                style="@style/ImageView.Form"
+                android:src="@drawable/ic_tag_multiple"
+                tools:ignore="RtlHardcoded"  />
+
+            <Button
+                android:id="@+id/add_outcome_tags"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="@string/tags"
+                android:gravity="center_vertical"
+                android:textAllCaps="false"
+                android:background="?selectableItemBackground"
+                android:theme="@style/BlackInput" />
+        </LinearLayout>
+
+        <View
+            style="@style/Divider.Thick"
+            android:layout_marginLeft="72dp"
+            android:layout_marginRight="16dp"
+            tools:ignore="RtlHardcoded" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:animateLayoutChanges="true"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp">
+
+            <ImageView
+                android:id="@+id/add_outcome_location_icon"
+                style="@style/ImageView.Form"
+                android:src="@drawable/ic_google_maps"
+                tools:ignore="RtlHardcoded"  />
+
+            <Button
+                android:id="@+id/add_outcome_location"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="@string/location"
+                android:gravity="center_vertical"
+                android:textAllCaps="false"
+                android:background="?selectableItemBackground"
+                android:theme="@style/BlackInput" />
+        </LinearLayout>
+
+        <View
+            style="@style/Divider.Thick"
+            android:layout_marginLeft="72dp"
+            android:layout_marginRight="16dp"
+            tools:ignore="RtlHardcoded" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:animateLayoutChanges="true"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp">
+
+            <ImageView
+                android:id="@+id/TextView08"
+                style="@style/ImageView.Form"
+                android:src="@drawable/ic_note_text"
+                tools:ignore="RtlHardcoded" />
+
+          <android.support.design.widget.TextInputLayout
+            android:id="@+id/add_outcome_note1111"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            app:counterEnabled="true"
+            app:counterMaxLength="200">
+            <EditText
+                android:id="@+id/add_outcome_note"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textAutoCorrect|textMultiLine|textAutoComplete"
+                android:maxLength="200" />
+          </android.support.design.widget.TextInputLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/coordinator_outcome">
+
+        <LinearLayout
+            android:id="@+id/album"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_margin="8dp"
+            android:orientation="vertical"
+            android:padding="16dp">
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:id="@+id/ll_album"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:orientation="horizontal">
+                </LinearLayout>
+            </HorizontalScrollView>
+        </LinearLayout>
+
+    </android.support.design.widget.CoordinatorLayout>
+</LinearLayout>
