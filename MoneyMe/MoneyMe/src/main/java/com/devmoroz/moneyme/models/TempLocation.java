@@ -4,6 +4,8 @@ package com.devmoroz.moneyme.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.android.gms.maps.model.LatLng;
+
 public class TempLocation implements Parcelable {
 
     public static final Parcelable.Creator<TempLocation> CREATOR = new Parcelable.Creator<TempLocation>() {
@@ -18,9 +20,11 @@ public class TempLocation implements Parcelable {
         }
     };
 
+    private LatLng latlng;
     private Double latitude;
     private Double longitude;
     private String address;
+    private String name;
 
     private TempLocation(Parcel in) {
         setLatitude(in.readString());
@@ -91,5 +95,21 @@ public class TempLocation implements Parcelable {
                 && this.getLatitude() != 0
                 && this.getLongitude() != null
                 && this.getLongitude() != 0;
+    }
+
+    public LatLng getLatlng() {
+        return latlng;
+    }
+
+    public void setLatlng(LatLng latlng) {
+        this.latlng = latlng;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +23,9 @@ import com.devmoroz.moneyme.utils.Constants;
 import com.devmoroz.moneyme.utils.CustomColorTemplate;
 import com.devmoroz.moneyme.utils.FormatUtils;
 import com.devmoroz.moneyme.utils.PhotoUtil;
+import com.devmoroz.moneyme.utils.ThemeUtils;
 import com.devmoroz.moneyme.utils.datetime.TimeUtils;
+import com.devmoroz.moneyme.widgets.TextBackgroundSpan;
 
 import java.util.Collections;
 import java.util.List;
@@ -69,6 +73,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
         ImageView photoView = holder.attachedPhoto;
         TextView textNotes = holder.textNotes;
         ImageView colorCircle = holder.colorCircle;
+        TextView tagsTextView = holder.textTags;
 
         if(wData.getType() == TransactionType.INCOME){
             colorCircle.setColorFilter(CustomColorTemplate.INCOME_COLOR);
@@ -89,6 +94,21 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
         else {
             textNotes.setText(wData.getNotes());
             textNotes.setVisibility(View.GONE);
+        }
+        if (wData.getTags()!= null && wData.getTags().length() > 0) {
+            final int tagBackgroundColor = ThemeUtils.getColor(appContext, R.attr.backgroundColorSecondary);
+            final float tagBackgroundRadius = appContext.getResources().getDimension(R.dimen.tag_radius);
+            final SpannableStringBuilder tags = new SpannableStringBuilder();
+            String[] transactionTags = wData.getTags().split(";");
+            for (String tag : transactionTags) {
+                tags.append(tag);
+                tags.setSpan(new TextBackgroundSpan(tagBackgroundColor, tagBackgroundRadius), tags.length() - tag.length(), tags.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                tags.append(" ");
+            }
+            tagsTextView.setVisibility(View.VISIBLE);
+            tagsTextView.setText(tags);
+        } else {
+            tagsTextView.setVisibility(View.GONE);
         }
 
         if(FormatUtils.isNotEmpty(wData.getPhoto())){
@@ -139,6 +159,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
         TextView textCircle;
         ImageView attachedPhoto;
         TextView textNotes;
+        TextView textTags;
         ImageButton deleteButton;
         ImageButton editButton;
         String itemId;
@@ -159,6 +180,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
             this.textDateAdded = (TextView) v.findViewById(R.id.card_main_date);
             this.attachedPhoto = (ImageView) v.findViewById(R.id.card_main_attachedPhoto);
             this.textNotes = (TextView) v.findViewById(R.id.card_main_notes);
+            this.textTags = (TextView) v.findViewById(R.id.card_main_tags);
             this.deleteButton = (ImageButton) v.findViewById(R.id.card_main_deleteButton);
             this.editButton = (ImageButton) v.findViewById(R.id.card_main_editButton);
 

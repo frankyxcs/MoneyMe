@@ -5,6 +5,10 @@
         <attr name="numberPickerPreferenceStyle" format="reference" />
         <attr name="timePickerPreferenceStyle" format="reference" />
         <attr name="backgroundColorSecondary" format="color" />
+        <attr name="backgroundColor" format="color" />
+        <attr name="backgroundColorPrimary" format="color" />
+        <attr name="actionItemColor" format="color" />
+        <attr name="colorAccentDark" format="color" />
     </declare-styleable>
 
     <declare-styleable name="PreferenceHelp">

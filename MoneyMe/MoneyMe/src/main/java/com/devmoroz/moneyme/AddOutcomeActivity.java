@@ -3,16 +3,13 @@ package com.devmoroz.moneyme;
 import android.Manifest;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.NavUtils;
@@ -28,8 +25,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -37,16 +32,14 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.devmoroz.moneyme.adapters.CategorySpinnerWithIconsAdapter;
-import com.devmoroz.moneyme.eventBus.OnGeoUtilResultListener;
 import com.devmoroz.moneyme.helpers.DBHelper;
-import com.devmoroz.moneyme.helpers.GeocodeHelper;
+import com.devmoroz.moneyme.helpers.GoogleApiHelper;
 import com.devmoroz.moneyme.helpers.PermissionsHelper;
 import com.devmoroz.moneyme.logging.L;
 import com.devmoroz.moneyme.models.Account;
@@ -56,7 +49,6 @@ import com.devmoroz.moneyme.models.Currency;
 import com.devmoroz.moneyme.models.TempLocation;
 import com.devmoroz.moneyme.models.Transaction;
 import com.devmoroz.moneyme.models.TransactionType;
-import com.devmoroz.moneyme.utils.AppUtils;
 import com.devmoroz.moneyme.utils.Constants;
 import com.devmoroz.moneyme.utils.CurrencyCache;
 import com.devmoroz.moneyme.utils.CustomColorTemplate;
@@ -66,22 +58,25 @@ import com.devmoroz.moneyme.widgets.CalculatorDialog;
 import com.devmoroz.moneyme.widgets.DecimalDigitsInputFilter;
 import com.devmoroz.moneyme.widgets.PlacesAutoCompleteAdapter;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.location.places.AutocompletePrediction;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
 
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-
 import static com.devmoroz.moneyme.utils.PhotoUtil.extractImageUrlFromGallery;
 import static com.devmoroz.moneyme.utils.PhotoUtil.setImageWithGlide;
 
-public class AddOutcomeActivity extends AppCompatActivity implements OnGeoUtilResultListener {
+public class AddOutcomeActivity extends AppCompatActivity{
 
     private static final int FROM_GALLERY_REQUEST_CODE = 1;
     private static final int SAVE_REQUEST_CODE = 2;
@@ -108,6 +103,8 @@ public class AddOutcomeActivity extends AppCompatActivity implements OnGeoUtilRe
     private ImageView imageDeletePhoto;
 
     protected GoogleApiClient mGoogleApiClient;
+    private GoogleApiHelper mGoogleApiHelper;
+    private PlacesAutoCompleteAdapter mAdapter;
 
 
     private DBHelper dbHelper;
@@ -125,7 +122,9 @@ public class AddOutcomeActivity extends AppCompatActivity implements OnGeoUtilRe
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Places.GEO_DATA_API)
+                .addApi(Places.PLACE_DETECTION_API)
                 .build();
+        mGoogleApiHelper = new GoogleApiHelper(this, mGoogleApiClient);
 
 
         toolbar = (Toolbar) findViewById(R.id.add_outcome_toolbar);
@@ -136,7 +135,7 @@ public class AddOutcomeActivity extends AppCompatActivity implements OnGeoUtilRe
         description = (EditText) findViewById(R.id.add_outcome_note);
         date = (Button) findViewById(R.id.add_outcome_date);
         locationButton = (Button) findViewById(R.id.add_outcome_location);
-        locationButton.setOnClickListener(v->displayLocationDialog());
+        locationButton.setOnClickListener(v -> displayLocationDialog());
         categorySpin = (Spinner) findViewById(R.id.add_outcome_category);
         categoryColor = (ImageView) findViewById(R.id.add_outcome_category_color);
         accountSpin = (Spinner) findViewById(R.id.add_outcome_account);
@@ -151,9 +150,9 @@ public class AddOutcomeActivity extends AppCompatActivity implements OnGeoUtilRe
         imageDeletePhoto.setOnClickListener(v -> removePic());
         ll_album.addView(add);
 
-        if(savedInstanceState!=null){
+        if (savedInstanceState != null) {
             tmpLocation = savedInstanceState.getParcelable("tmpLocation");
-        }else{
+        } else {
             tmpLocation = new TempLocation();
         }
 
@@ -429,132 +428,118 @@ public class AddOutcomeActivity extends AppCompatActivity implements OnGeoUtilRe
     }
 
     private void displayLocationDialog() {
-        PermissionsHelper.requestPermission(AddOutcomeActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION, R.string
-                .permission_coarse_location, AddOutcomeActivity.this.findViewById(R.id.coordinator_outcome), () -> GeocodeHelper
-                .getLocation(new OnGeoUtilResultListener() {
-                    @Override
-                    public void onAddressResolved(String address) {
-                    }
+        mGoogleApiHelper.start();
+        PermissionsHelper.requestPermission(AddOutcomeActivity.this, Manifest.permission.ACCESS_FINE_LOCATION, R.string
+                .permission_coarse_location, AddOutcomeActivity.this.findViewById(R.id.coordinator_outcome), () -> {
 
+            LayoutInflater inflater = AddOutcomeActivity.this.getLayoutInflater();
+            View v = inflater.inflate(R.layout.dialog_location, null);
+            final AutoCompleteTextView autoCompView = (AutoCompleteTextView) v.findViewById(R.id
+                    .auto_complete_location);
+            autoCompView.setHint(getString(R.string.search_location));
+            mAdapter = new PlacesAutoCompleteAdapter(AddOutcomeActivity.this, mGoogleApiClient, null, null);
+            autoCompView.setAdapter(mAdapter);
+            autoCompView.setOnItemClickListener(mAutocompleteClickListener);
 
-                    @Override
-                    public void onCoordinatesResolved(Location location, String address) {
-                    }
+            final MaterialDialog dialog = new MaterialDialog.Builder(AddOutcomeActivity.this)
+                    .customView(autoCompView, false)
+                    .positiveText(R.string.use_current_location)
+                    .onPositive((materialDialog, dialogAction) -> {
+                        if (TextUtils.isEmpty(autoCompView.getText().toString())) {
 
+                        } else {
 
-                    @Override
-                    public void onLocationUnavailable() {
-                        showMessage(R.string.location_not_found);
-                    }
-
-
-                    @Override
-                    public void onLocationRetrieved(Location location) {
-                        if (location == null) {
-                            return;
                         }
-                        if (!AppUtils.isNetworkOn(AddOutcomeActivity.this)) {
-                            tmpLocation.setLatitude(location.getLatitude());
-                            tmpLocation.setLongitude(location.getLongitude());
-                            onAddressResolved("");
-                            return;
-                        }
-                        LayoutInflater inflater = AddOutcomeActivity.this.getLayoutInflater();
-                        View v = inflater.inflate(R.layout.dialog_location, null);
-                        final AutoCompleteTextView autoCompView = (AutoCompleteTextView) v.findViewById(R.id
-                                .auto_complete_location);
-                        autoCompView.setHint(getString(R.string.search_location));
-                        autoCompView.setAdapter(new PlacesAutoCompleteAdapter(AddOutcomeActivity.this, mGoogleApiClient,null,null));
-                        final MaterialDialog dialog = new MaterialDialog.Builder(AddOutcomeActivity.this)
-                                .customView(autoCompView, false)
-                                .positiveText(R.string.use_current_location)
-                                .onPositive((materialDialog, dialogAction) -> {
-                                    if (TextUtils.isEmpty(autoCompView.getText().toString())) {
-                                        tmpLocation.setLatitude(location.getLatitude());
-                                        tmpLocation.setLongitude(location.getLongitude());
-                                    } else {
-                                        GeocodeHelper.getCoordinatesFromAddress(autoCompView.getText().toString(), AddOutcomeActivity.this);
-                                    }
-                                })
-                                .build();
-                            autoCompView.addTextChangedListener(new TextWatcher() {
-                            @Override
-                            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                            }
+                    })
+                    .build();
+                autoCompView.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                }
 
 
-                            @Override
-                            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                                if (s.length() != 0) {
-                                    dialog.setActionButton(DialogAction.POSITIVE, getString(R.string.confirm));
-                                } else {
-                                    dialog.setActionButton(DialogAction.POSITIVE, getString(R.string.use_current_location));
-                                }
-                            }
-
-
-                            @Override
-                            public void afterTextChanged(Editable s) {
-                            }
-                        });
-                        dialog.show();
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    if (s.length() != 0) {
+                        dialog.setActionButton(DialogAction.POSITIVE, getString(R.string.confirm));
+                    } else {
+                        dialog.getActionButton(DialogAction.POSITIVE).setEnabled(false);
                     }
-                }));
+                }
+
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                }
+            });
+            dialog.show();
+        });
+
     }
 
-    @Override
-    public void onAddressResolved(String address) {
-        if (TextUtils.isEmpty(address)) {
-            if (!tmpLocation.isLocationValid()) {
-                showMessage(R.string.location_not_found);
+    private AdapterView.OnItemClickListener mAutocompleteClickListener
+            = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+            final AutocompletePrediction item = mAdapter.getItem(position);
+            final String placeId = item.getPlaceId();
+            final CharSequence primaryText = item.getPrimaryText(null);
+
+
+            PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi
+                    .getPlaceById(mGoogleApiClient, placeId);
+            placeResult.setResultCallback(mUpdatePlaceDetailsCallback);
+
+            Toast.makeText(getApplicationContext(), "Clicked: " + primaryText,
+                    Toast.LENGTH_SHORT).show();
+
+        }
+    };
+
+    private ResultCallback<PlaceBuffer> mUpdatePlaceDetailsCallback
+            = new ResultCallback<PlaceBuffer>() {
+        @Override
+        public void onResult(PlaceBuffer places) {
+            if (!places.getStatus().isSuccess()) {
+                // Request did not complete successfully
+                places.release();
                 return;
             }
-            address = tmpLocation.getLatitude() + ", " + tmpLocation.getLongitude();
-        }
-        if (!GeocodeHelper.areCoordinates(address)) {
-            tmpLocation.setAddress(address);
-        }
-        locationButton.setText(address);
-    }
+            // Get the Place object from the buffer.
+            final Place place = places.get(0);
 
-    @Override
-    public void onCoordinatesResolved(Location location, String address) {
-        if (location != null) {
-            tmpLocation.setLatitude(location.getLatitude());
-            tmpLocation.setLongitude(location.getLongitude());
-            tmpLocation.setAddress(address);
-            locationButton.setText(address);
-        } else {
-            showMessage(R.string.location_not_found);
-        }
+            // Format details of the place for display and show it in a TextView.
+            locationButton.setText(place.getName().toString());
 
-    }
+            // Display the third party attributions if set.
+            final CharSequence thirdPartyAttribution = places.getAttributions();
+//            if (thirdPartyAttribution == null) {
+//                mPlaceDetailsAttribution.setVisibility(View.GONE);
+//            } else {
+//                mPlaceDetailsAttribution.setVisibility(View.VISIBLE);
+//                mPlaceDetailsAttribution.setText(Html.fromHtml(thirdPartyAttribution.toString()));
+//            }
 
-    @Override
-    public void onLocationRetrieved(Location location) {
-        if (location == null) {
-            showMessage(R.string.location_not_found);
-        }
-        if (location != null) {
-            tmpLocation.setLatitude(location.getLatitude());
-            tmpLocation.setLongitude(location.getLongitude());
-            if (!TextUtils.isEmpty(tmpLocation.getAddress())) {
-                locationButton.setText(tmpLocation.getAddress());
-            } else {
-                GeocodeHelper.getAddressFromCoordinates(location, AddOutcomeActivity.this);
-            }
-        }
-    }
 
-    @Override
-    public void onLocationUnavailable() {
-        showMessage(R.string.location_not_found);
-    }
+
+            places.release();
+        }
+    };
+
+//    private static Spanned formatPlaceDetails(Resources res, CharSequence name, String id,
+//                                              CharSequence address, CharSequence phoneNumber, Uri websiteUri) {
+//
+//        return Html.fromHtml(res.getString(R.string.place_details, name, id, address, phoneNumber,
+//                websiteUri));
+//
+//    }
+
 
     @Override
     protected void onStop() {
         super.onStop();
-        GeocodeHelper.stop();
+        mGoogleApiHelper.stop();
     }
 
     public static class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {

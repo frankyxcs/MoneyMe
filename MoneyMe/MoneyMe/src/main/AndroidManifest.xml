@@ -21,6 +21,9 @@
         android:windowSoftInputMode="stateHidden">
 
         <meta-data tools:replace="android:value" android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDGww6BVqsgVCMBlqUexcVeCK_Apqf4CBw"/>
 
         <activity android:name=".MainActivity" android:screenOrientation="portrait"
             android:configChanges="orientation|screenSize">
