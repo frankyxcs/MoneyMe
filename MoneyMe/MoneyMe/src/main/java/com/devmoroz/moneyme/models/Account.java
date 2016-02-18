@@ -1,5 +1,8 @@
 package com.devmoroz.moneyme.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
@@ -10,7 +13,17 @@ import java.util.Date;
 import java.util.UUID;
 
 @DatabaseTable(tableName = "accounts")
-public class Account {
+public class Account implements Parcelable{
+
+    public static final Parcelable.Creator<Account> CREATOR = new Parcelable.Creator<Account>() {
+        public Account createFromParcel(Parcel in) {
+            return new Account(in);
+        }
+
+        public Account[] newArray(int size) {
+            return new Account[size];
+        }
+    };
 
     public final static String INCLUDE_IN_TOTAL_FIELD_NAME = "includeintotal";
 
@@ -26,11 +39,8 @@ public class Account {
     @DatabaseField
     private double balance;
 
-    @DatabaseField(dataType = DataType.DATE)
-    private Date date;
-
     @DatabaseField
-    private int currency;
+    private String currency;
 
     @DatabaseField
     private int type;
@@ -44,12 +54,35 @@ public class Account {
     @ForeignCollectionField
     private ForeignCollection<Transaction> transactions;
 
+    public Account(Parcel parcel) {
+        setId(parcel.readString());
+        setName(parcel.readString());
+        setBalance(parcel.readDouble());
+        setCurrency(parcel.readString());
+        setType(parcel.readInt());
+        setIncludeInTotal(parcel.readInt() != 0);
+        setShared(parcel.readInt() != 0);
+    }
+
+    @Override public int describeContents() {
+        return 0;
+    }
+
+    @Override public void writeToParcel(Parcel parcel, int flags) {
+        parcel.writeString(getId());
+        parcel.writeString(name);
+        parcel.writeDouble(balance);
+        parcel.writeString(currency);
+        parcel.writeInt(type);
+        parcel.writeInt(includeInTotal ? 1 : 0);
+        parcel.writeInt(shared ? 1 : 0);
+    }
+
 
     public Account(String name, double balance, int type, boolean shared) {
         this.name = name;
         this.balance = balance;
         this.includeInTotal = true;
-        this.date = new Date();
         this.type = type;
         this.shared = shared;
     }
@@ -59,25 +92,22 @@ public class Account {
         this.balance = 0f;
         this.type = 0;
         this.includeInTotal = true;
-        this.date = new Date();
         this.shared = true;
     }
 
-    public Account(String name, double balance, int currency, int type, boolean includeInTotal, boolean shared) {
+    public Account(String name, double balance, String currency, int type, boolean includeInTotal, boolean shared) {
         this.name = name;
         this.balance = balance;
         this.currency = currency;
         this.includeInTotal = includeInTotal;
         this.type = type;
-        this.date = new Date();
         this.shared = shared;
     }
 
-    public Account(String id, String name, double balance, Date date, int currency, int type, boolean includeInTotal, boolean shared) {
+    public Account(String id, String name, double balance, String currency, int type, boolean includeInTotal, boolean shared) {
         this.id = UUID.fromString(id);
         this.name = name;
         this.balance = balance;
-        this.date = date;
         this.currency = currency;
         this.type = type;
         this.includeInTotal = includeInTotal;
@@ -116,19 +146,11 @@ public class Account {
         this.balance = balance;
     }
 
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public int getCurrency() {
+    public String getCurrency() {
         return currency;
     }
 
-    public void setCurrency(int currency) {
+    public void setCurrency(String currency) {
         this.currency = currency;
     }
 

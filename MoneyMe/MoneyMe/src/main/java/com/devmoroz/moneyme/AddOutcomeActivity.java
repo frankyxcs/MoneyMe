@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
@@ -17,6 +18,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.InputFilter;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -46,17 +49,21 @@ import com.devmoroz.moneyme.models.Account;
 import com.devmoroz.moneyme.models.Category;
 import com.devmoroz.moneyme.models.CreatedItem;
 import com.devmoroz.moneyme.models.Currency;
-import com.devmoroz.moneyme.models.TempLocation;
+import com.devmoroz.moneyme.models.Tag;
+import com.devmoroz.moneyme.models.Location;
 import com.devmoroz.moneyme.models.Transaction;
+import com.devmoroz.moneyme.models.TransactionEdit;
 import com.devmoroz.moneyme.models.TransactionType;
 import com.devmoroz.moneyme.utils.Constants;
 import com.devmoroz.moneyme.utils.CurrencyCache;
 import com.devmoroz.moneyme.utils.CustomColorTemplate;
 import com.devmoroz.moneyme.utils.FormatUtils;
+import com.devmoroz.moneyme.utils.ThemeUtils;
 import com.devmoroz.moneyme.utils.datetime.TimeUtils;
 import com.devmoroz.moneyme.widgets.CalculatorDialog;
 import com.devmoroz.moneyme.widgets.DecimalDigitsInputFilter;
 import com.devmoroz.moneyme.widgets.PlacesAutoCompleteAdapter;
+import com.devmoroz.moneyme.widgets.TextBackgroundSpan;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
@@ -69,29 +76,31 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import static com.devmoroz.moneyme.utils.PhotoUtil.extractImageUrlFromGallery;
 import static com.devmoroz.moneyme.utils.PhotoUtil.setImageWithGlide;
 
-public class AddOutcomeActivity extends AppCompatActivity{
+public class AddOutcomeActivity extends AppCompatActivity implements View.OnClickListener{
 
     private static final int FROM_GALLERY_REQUEST_CODE = 1;
     private static final int SAVE_REQUEST_CODE = 2;
+    private static final int TAGS_REQUEST_CODE = 3;
 
-    private String photoFileName;
-    private String photoPath;
-    private static Date outcomeDate;
     String defaultCategory;
-    private TempLocation tmpLocation;
+    private String photoFileName;
+    private static TransactionEdit transactionEdit;
 
     private EditText amount;
     private EditText description;
     private TextInputLayout floatingAmountLabel;
     private Button date;
     private Button locationButton;
+    private Button tagsButton;
     private Spinner categorySpin;
     private ImageView categoryColor;
     private Spinner accountSpin;
@@ -134,26 +143,23 @@ public class AddOutcomeActivity extends AppCompatActivity{
         amount.setFilters(new InputFilter[]{new DecimalDigitsInputFilter()});
         description = (EditText) findViewById(R.id.add_outcome_note);
         date = (Button) findViewById(R.id.add_outcome_date);
+        tagsButton = (Button) findViewById(R.id.add_outcome_tags);
         locationButton = (Button) findViewById(R.id.add_outcome_location);
-        locationButton.setOnClickListener(v -> displayLocationDialog());
         categorySpin = (Spinner) findViewById(R.id.add_outcome_category);
         categoryColor = (ImageView) findViewById(R.id.add_outcome_category_color);
         accountSpin = (Spinner) findViewById(R.id.add_outcome_account);
         date.setText(TimeUtils.formatShortDate(getApplicationContext(), new Date()));
-        outcomeDate = null;
         floatingAmountLabel = (TextInputLayout) findViewById(R.id.text_input_layout_out_amount);
         ll_album = (ViewGroup) findViewById(R.id.ll_album);
         add = View.inflate(this, R.layout.item_photo, null);
         chequeImage = (ImageView) add.findViewById(R.id.add_outcome_cheque);
-        chequeImage.setOnClickListener(v -> addPictureAttachment());
         imageDeletePhoto = (ImageView) add.findViewById(R.id.delete_outcome_cheque);
-        imageDeletePhoto.setOnClickListener(v -> removePic());
         ll_album.addView(add);
 
-        if (savedInstanceState != null) {
-            tmpLocation = savedInstanceState.getParcelable("tmpLocation");
+        if (savedInstanceState == null) {
+            transactionEdit = new TransactionEdit();
         } else {
-            tmpLocation = new TempLocation();
+            transactionEdit = savedInstanceState.getParcelable(Constants.STATE_TRANSACTION_EDIT);
         }
 
         initToolbar();
@@ -164,8 +170,8 @@ public class AddOutcomeActivity extends AppCompatActivity{
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        if (tmpLocation != null) {
-            outState.putParcelable("tmpLocation", tmpLocation);
+        if (transactionEdit != null) {
+            outState.putParcelable(Constants.STATE_TRANSACTION_EDIT, transactionEdit);
         }
         super.onSaveInstanceState(outState);
     }
@@ -269,7 +275,7 @@ public class AddOutcomeActivity extends AppCompatActivity{
         super.onResume();
     }
 
-    public void showDatePickerDialog(View v) {
+    public void showDatePickerDialog() {
         DatePickerFragment newFragment = new DatePickerFragment();
         newFragment.setDate(date);
         newFragment.show(getSupportFragmentManager(), "datePicker");
@@ -282,14 +288,14 @@ public class AddOutcomeActivity extends AppCompatActivity{
         double outcomeAmount = Double.parseDouble(amount.getText().toString());
         Category selectedCategory = categories.get(categorySpin.getSelectedItemPosition());
 
-        dateAdded = outcomeDate == null ? new Date() : outcomeDate;
+        dateAdded = new Date(transactionEdit.getDate());
 
         int id = accountSpin.getSelectedItemPosition();
         Account account = dbHelper.getAccountDAO().queryForAll().get(id);
         account.setBalance(account.getBalance() - outcomeAmount);
 
         Transaction outcome = new Transaction(TransactionType.OUTCOME, outcomeNote, selectedCategory, dateAdded, outcomeAmount, account);
-        outcome.setPhoto(photoPath);
+        outcome.setPhoto(transactionEdit.getPhotoPath());
 
         dbHelper.getTransactionDAO().create(outcome);
         dbHelper.getAccountDAO().update(account);
@@ -356,21 +362,55 @@ public class AddOutcomeActivity extends AppCompatActivity{
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
-            if (requestCode == FROM_GALLERY_REQUEST_CODE) {
-                photoPath = extractImageUrlFromGallery(this, data);
-                L.appendLog("from gallery");
-                L.appendLog(photoPath);
-            } else if (requestCode == SAVE_REQUEST_CODE) {
-                File f = new File(photoPath);
-                Uri contentUri = Uri.fromFile(f);
-                L.appendLog("take photo");
-                L.appendLog(photoPath);
-                Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-                intent.setData(contentUri);
-                this.sendBroadcast(intent);
+            switch (requestCode) {
+                case FROM_GALLERY_REQUEST_CODE:
+                    transactionEdit.setPhotoPath(extractImageUrlFromGallery(this, data));
+                    L.appendLog("from gallery");
+                    L.appendLog(transactionEdit.getPhotoPath());
+                    setPic();
+                    break;
+                case SAVE_REQUEST_CODE:
+                    File f = new File(transactionEdit.getPhotoPath());
+                    Uri contentUri = Uri.fromFile(f);
+                    L.appendLog("take photo");
+                    L.appendLog(transactionEdit.getPhotoPath());
+                    Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+                    intent.setData(contentUri);
+                    this.sendBroadcast(intent);
+                    setPic();
+                    break;
+                case TAGS_REQUEST_CODE:
+                    transactionEdit.setTags(getTagsExtra(data));
+                    setTags(transactionEdit.getTags());
+                    break;
             }
-            setPic();
         }
+    }
+
+    private void setTags(List<Tag> tags){
+        final int tagBackgroundColor = ThemeUtils.getColor(AddOutcomeActivity.this, R.attr.backgroundColorSecondary);
+        final float tagBackgroundRadius = getResources().getDimension(R.dimen.tag_radius);
+        if (tags == null) {
+            tags = Collections.emptyList();
+        }
+        final SpannableStringBuilder ssb = new SpannableStringBuilder();
+        for (Tag tag : tags) {
+            ssb.append(tag.getTitle());
+            ssb.setSpan(new TextBackgroundSpan(tagBackgroundColor, tagBackgroundRadius), ssb.length() - tag.getTitle().length(), ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            ssb.append(" ");
+        }
+        tagsButton.setText(ssb);
+    }
+
+    private void startTagsActivity(List<Tag> selectedTags){
+        Intent intent = new Intent(this, TagsActivity.class);
+        final Parcelable[] parcelables = new Parcelable[selectedTags.size()];
+        int index = 0;
+        for (Tag tag : selectedTags) {
+            parcelables[index++] = tag;
+        }
+        intent.putExtra(Constants.EXTRA_SELECTED_TAGS, parcelables);
+        startActivityForResult(intent, TAGS_REQUEST_CODE);
     }
 
     private void takePhoto() {
@@ -404,13 +444,13 @@ public class AddOutcomeActivity extends AppCompatActivity{
             photoDir.mkdirs();
         }
         File image = new File(photoDir, photoFileName);
-        photoPath = "file:" + image.getAbsolutePath();
+        transactionEdit.setPhotoPath("file:" + image.getAbsolutePath());
         return image;
     }
 
     private void setPic() {
-        if (FormatUtils.isNotEmpty(photoPath)) {
-            setImageWithGlide(getApplicationContext(), photoPath, chequeImage);
+        if (FormatUtils.isNotEmpty(transactionEdit.getPhotoPath())) {
+            setImageWithGlide(getApplicationContext(), transactionEdit.getPhotoPath(), chequeImage);
             imageDeletePhoto.setVisibility(View.VISIBLE);
         }
     }
@@ -419,10 +459,10 @@ public class AddOutcomeActivity extends AppCompatActivity{
         if (chequeImage == null) {
             return;
         }
-        if (photoPath != null && imageDeletePhoto != null) {
+        if (transactionEdit.getPhotoPath() != null && imageDeletePhoto != null) {
             imageDeletePhoto.setVisibility(View.INVISIBLE);
             photoFileName = null;
-            photoPath = null;
+            transactionEdit.setPhotoPath(null);
             chequeImage.setImageResource(R.drawable.ic_paperclip);
         }
     }
@@ -431,7 +471,6 @@ public class AddOutcomeActivity extends AppCompatActivity{
         mGoogleApiHelper.start();
         PermissionsHelper.requestPermission(AddOutcomeActivity.this, Manifest.permission.ACCESS_FINE_LOCATION, R.string
                 .permission_coarse_location, AddOutcomeActivity.this.findViewById(R.id.coordinator_outcome), () -> {
-
             LayoutInflater inflater = AddOutcomeActivity.this.getLayoutInflater();
             View v = inflater.inflate(R.layout.dialog_location, null);
             final AutoCompleteTextView autoCompView = (AutoCompleteTextView) v.findViewById(R.id
@@ -443,16 +482,17 @@ public class AddOutcomeActivity extends AppCompatActivity{
 
             final MaterialDialog dialog = new MaterialDialog.Builder(AddOutcomeActivity.this)
                     .customView(autoCompView, false)
-                    .positiveText(R.string.use_current_location)
+                    .positiveText(R.string.confirm)
                     .onPositive((materialDialog, dialogAction) -> {
                         if (TextUtils.isEmpty(autoCompView.getText().toString())) {
-
+                            transactionEdit.setLocation(null);
                         } else {
-
+                            locationButton.setText(transactionEdit.getLocation().getName());
                         }
                     })
                     .build();
-                autoCompView.addTextChangedListener(new TextWatcher() {
+
+            autoCompView.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                 }
@@ -460,18 +500,16 @@ public class AddOutcomeActivity extends AppCompatActivity{
 
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    if (s.length() != 0) {
-                        dialog.setActionButton(DialogAction.POSITIVE, getString(R.string.confirm));
-                    } else {
+                    if (s.length() == 0) {
                         dialog.getActionButton(DialogAction.POSITIVE).setEnabled(false);
                     }
                 }
-
 
                 @Override
                 public void afterTextChanged(Editable s) {
                 }
             });
+
             dialog.show();
         });
 
@@ -508,38 +546,42 @@ public class AddOutcomeActivity extends AppCompatActivity{
             }
             // Get the Place object from the buffer.
             final Place place = places.get(0);
-
-            // Format details of the place for display and show it in a TextView.
-            locationButton.setText(place.getName().toString());
-
-            // Display the third party attributions if set.
-            final CharSequence thirdPartyAttribution = places.getAttributions();
-//            if (thirdPartyAttribution == null) {
-//                mPlaceDetailsAttribution.setVisibility(View.GONE);
-//            } else {
-//                mPlaceDetailsAttribution.setVisibility(View.VISIBLE);
-//                mPlaceDetailsAttribution.setText(Html.fromHtml(thirdPartyAttribution.toString()));
-//            }
-
-
+            Location location = new Location();
+            location.setId(place.getId());
+            location.setName(place.getName().toString());
+            location.setLatLng(place.getLatLng());
+            location.setAddress(place.getAddress().toString());
+            transactionEdit.setLocation(location);
 
             places.release();
         }
     };
 
-//    private static Spanned formatPlaceDetails(Resources res, CharSequence name, String id,
-//                                              CharSequence address, CharSequence phoneNumber, Uri websiteUri) {
-//
-//        return Html.fromHtml(res.getString(R.string.place_details, name, id, address, phoneNumber,
-//                websiteUri));
-//
-//    }
-
-
     @Override
     protected void onStop() {
         super.onStop();
         mGoogleApiHelper.stop();
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.add_outcome_date:
+                showDatePickerDialog();
+                break;
+            case R.id.add_outcome_tags:
+                startTagsActivity(transactionEdit.getTags() != null ? transactionEdit.getTags() : Collections.<Tag>emptyList());
+                break;
+            case R.id.add_outcome_location:
+                displayLocationDialog();
+                break;
+            case R.id.add_outcome_cheque:
+                addPictureAttachment();
+                break;
+            case R.id.delete_outcome_cheque:
+                removePic();
+                break;
+        }
     }
 
     public static class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
@@ -558,7 +600,7 @@ public class AddOutcomeActivity extends AppCompatActivity{
             int year = c.get(Calendar.YEAR);
             int month = c.get(Calendar.MONTH);
             int day = c.get(Calendar.DAY_OF_MONTH);
-            outcomeDate = c.getTime();
+            transactionEdit.setDate(c.getTime().getTime());
 
             return new DatePickerDialog(getActivity(), this, year, month, day);
         }
@@ -568,8 +610,8 @@ public class AddOutcomeActivity extends AppCompatActivity{
             cal.set(Calendar.YEAR, year);
             cal.set(Calendar.MONTH, month);
             cal.set(Calendar.DAY_OF_MONTH, day);
-            outcomeDate = cal.getTime();
-            date.setText(TimeUtils.formatShortDate(getContext(), outcomeDate));
+            transactionEdit.setDate(cal.getTime().getTime());
+            date.setText(TimeUtils.formatShortDate(getContext(), cal.getTime()));
         }
     }
 
@@ -606,6 +648,15 @@ public class AddOutcomeActivity extends AppCompatActivity{
 
     public void showMessage(int messageResId) {
         runOnUiThread(() -> Toast.makeText(this, getString(messageResId) + "", Toast.LENGTH_LONG).show());
+    }
+
+    public static List<Tag> getTagsExtra(Intent data) {
+        final Parcelable[] parcelables = data.getParcelableArrayExtra(Constants.RESULT_EXTRA_TAGS);
+        final List<Tag> tags = new ArrayList<>();
+        for (Parcelable parcelable : parcelables) {
+            tags.add((Tag) parcelable);
+        }
+        return tags;
     }
 
 }

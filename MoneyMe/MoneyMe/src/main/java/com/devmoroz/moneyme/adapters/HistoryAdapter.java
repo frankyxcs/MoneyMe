@@ -108,21 +108,18 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
             tagsTextView.setVisibility(View.VISIBLE);
             tagsTextView.setText(tags);
         } else {
-            tagsTextView.setVisibility(View.GONE);
+            tagsTextView.setVisibility(View.INVISIBLE);
         }
 
         if(FormatUtils.isNotEmpty(wData.getPhoto())){
             PhotoUtil.setImageWithGlide(appContext,wData.getPhoto(),photoView);
             photoView.setVisibility(View.VISIBLE);
-            holder.attachedPhoto.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Context context = v.getContext();
-                    Intent intent = new Intent(context, FullScreenImageActivity.class);
-                    intent.putExtra(Constants.IMAGE_PATH, wData.getPhoto());
+            holder.attachedPhoto.setOnClickListener(v -> {
+                Context context = v.getContext();
+                Intent intent = new Intent(context, FullScreenImageActivity.class);
+                intent.putExtra(Constants.IMAGE_PATH, wData.getPhoto());
 
-                    context.startActivity(intent);
-                }
+                context.startActivity(intent);
             });
         }
         else
@@ -131,16 +128,13 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
             photoView.setImageDrawable(null);
         }
 
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Context context = v.getContext();
-                Intent intent = new Intent(context, DetailsActivity.class);
-                intent.putExtra(Constants.DETAILS_ITEM_TYPE, holder.itemType.toString());
-                intent.putExtra(Constants.DETAILS_ITEM_ID, holder.itemId);
+        holder.mView.setOnClickListener(v -> {
+            Context context = v.getContext();
+            Intent intent = new Intent(context, DetailsActivity.class);
+            intent.putExtra(Constants.DETAILS_ITEM_TYPE, holder.itemType.toString());
+            intent.putExtra(Constants.DETAILS_ITEM_ID, holder.itemId);
 
-                context.startActivity(intent);
-            }
+            context.startActivity(intent);
         });
     }
 

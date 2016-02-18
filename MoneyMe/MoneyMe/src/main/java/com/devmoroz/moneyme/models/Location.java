@@ -6,33 +6,37 @@ import android.os.Parcelable;
 
 import com.google.android.gms.maps.model.LatLng;
 
-public class TempLocation implements Parcelable {
+public class Location implements Parcelable {
 
-    public static final Parcelable.Creator<TempLocation> CREATOR = new Parcelable.Creator<TempLocation>() {
+    public static final Parcelable.Creator<Location> CREATOR = new Parcelable.Creator<Location>() {
 
-        public TempLocation createFromParcel(Parcel in) {
-            return new TempLocation(in);
+        public Location createFromParcel(Parcel in) {
+            return new Location(in);
         }
 
 
-        public TempLocation[] newArray(int size) {
-            return new TempLocation[size];
+        public Location[] newArray(int size) {
+            return new Location[size];
         }
     };
 
+    private String id;
     private LatLng latlng;
     private Double latitude;
     private Double longitude;
     private String address;
     private String name;
 
-    private TempLocation(Parcel in) {
+    private Location(Parcel in) {
+        setId(in.readString());
+        setLatLng(in.readParcelable(LatLng.class.getClassLoader()));
         setLatitude(in.readString());
         setLongitude(in.readString());
         setAddress(in.readString());
+        setName(in.readString());
     }
 
-    public TempLocation() {
+    public Location() {
     }
 
     @Override
@@ -43,9 +47,20 @@ public class TempLocation implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int flags) {
+        parcel.writeString(id);
+        parcel.writeParcelable(latlng, flags);
         parcel.writeString(String.valueOf(getLatitude()));
         parcel.writeString(String.valueOf(getLongitude()));
         parcel.writeString(getAddress());
+        parcel.writeString(name);
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public Double getLatitude() {
@@ -97,11 +112,11 @@ public class TempLocation implements Parcelable {
                 && this.getLongitude() != 0;
     }
 
-    public LatLng getLatlng() {
+    public LatLng getLatLng() {
         return latlng;
     }
 
-    public void setLatlng(LatLng latlng) {
+    public void setLatLng(LatLng latlng) {
         this.latlng = latlng;
     }
 

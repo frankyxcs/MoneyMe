@@ -11,6 +11,7 @@ import com.devmoroz.moneyme.dao.CategoryDAO;
 import com.devmoroz.moneyme.dao.CurrencyDAO;
 import com.devmoroz.moneyme.dao.GoalDAO;
 import com.devmoroz.moneyme.dao.PayeeDAO;
+import com.devmoroz.moneyme.dao.TagDAO;
 import com.devmoroz.moneyme.dao.TransactionDAO;
 import com.devmoroz.moneyme.models.Account;
 import com.devmoroz.moneyme.models.Budget;
@@ -44,6 +45,7 @@ public class DBHelper extends OrmLiteSqliteOpenHelper {
     private CategoryDAO categoryDAO = null;
     private BudgetDAO budgetDAO = null;
     private PayeeDAO payeeDAO = null;
+    private TagDAO tagDAO = null;
 
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -71,8 +73,8 @@ public class DBHelper extends OrmLiteSqliteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, ConnectionSource connectionSource, int oldVersion, int newVersion) {
         try {
-            TableUtils.dropTable(connectionSource,Payee.class,true);
-            TableUtils.dropTable(connectionSource, Category.class,true);
+            TableUtils.dropTable(connectionSource, Payee.class, true);
+            TableUtils.dropTable(connectionSource, Category.class, true);
             TableUtils.dropTable(connectionSource, Goal.class, true);
             TableUtils.dropTable(connectionSource, Transaction.class, true);
             TableUtils.dropTable(connectionSource, Currency.class, true);
@@ -99,6 +101,7 @@ public class DBHelper extends OrmLiteSqliteOpenHelper {
         categoryDAO = null;
         budgetDAO = null;
         payeeDAO = null;
+        tagDAO = null;
     }
 
     public GoalDAO getGoalDAO() throws SQLException {
@@ -148,6 +151,13 @@ public class DBHelper extends OrmLiteSqliteOpenHelper {
             payeeDAO = new PayeeDAO(getConnectionSource(), Payee.class);
         }
         return payeeDAO;
+    }
+
+    public TagDAO getTagDAO() throws SQLException {
+        if (tagDAO == null) {
+            tagDAO = new TagDAO(getConnectionSource(), Tag.class);
+        }
+        return tagDAO;
     }
 
 }

@@ -28,19 +28,14 @@ public class Tag implements Parcelable{
     @DatabaseField
     String title;
 
-    @DatabaseField
-    String categoryId;
-
     public Tag(Parcel parcel) {
         setId(parcel.readString());
         setTitle(parcel.readString());
-        setCategoryId(parcel.readString());
     }
 
     @Override public void writeToParcel(Parcel parcel, int flags) {
         parcel.writeString(getId());
         parcel.writeString(getTitle());
-        parcel.writeString(getCategoryId());
     }
 
     @Override public int describeContents() {
@@ -50,15 +45,13 @@ public class Tag implements Parcelable{
     public Tag() {
     }
 
-    public Tag(String title, String categoryId) {
+    public Tag(String title) {
         this.title = title;
-        this.categoryId = categoryId;
     }
 
-    public Tag(UUID id, String title, String categoryId) {
+    public Tag(UUID id, String title) {
         this.id = id;
         this.title = title;
-        this.categoryId = categoryId;
     }
 
     public String getId() {
@@ -69,10 +62,6 @@ public class Tag implements Parcelable{
         return title;
     }
 
-    public String getCategoryId() {
-        return categoryId;
-    }
-
     public void setId(String id) {
         this.id = UUID.fromString(id);
     }
@@ -81,7 +70,4 @@ public class Tag implements Parcelable{
         this.title = title;
     }
 
-    public void setCategoryId(String categoryId) {
-        this.categoryId = categoryId;
-    }
 }

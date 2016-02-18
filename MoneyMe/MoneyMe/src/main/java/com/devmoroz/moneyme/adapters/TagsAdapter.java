@@ -20,8 +20,14 @@ public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.MainViewHolder
 
     private List<Tag> tags = Collections.emptyList();
     private Set<Tag> selectedTags = new HashSet<>();
+    private final OnTagClickListener listener;
 
-    public TagsAdapter() {
+    public interface OnTagClickListener {
+        void onModelClick(View view, Tag tag, int position, boolean isSelected);
+    }
+
+    public TagsAdapter(OnTagClickListener listener) {
+        this.listener = listener;
     }
 
     public Set<Tag> getSelectedTags() {
@@ -38,6 +44,14 @@ public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.MainViewHolder
 
     public void setTags(List<Tag> tags) {
         this.tags = tags;
+        notifyDataSetChanged();
+    }
+
+    public void toggleTagSelected(Tag tag, int position) {
+        if (!selectedTags.add(tag)) {
+            selectedTags.remove(tag);
+        }
+        notifyItemChanged(position);
     }
 
     @Override
@@ -48,7 +62,7 @@ public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.MainViewHolder
     @Override
     public void onBindViewHolder(MainViewHolder holder, int position) {
         Tag tag = tags.get(position);
-        holder.bind(tag, selectedTags.contains(tag));
+        holder.bind(tag,position, selectedTags.contains(tag));
     }
 
     @Override
@@ -56,9 +70,12 @@ public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.MainViewHolder
         return tags.size();
     }
 
-    public class MainViewHolder extends RecyclerView.ViewHolder{
+    public class MainViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private final CheckBox selectCheckBox;
         private final TextView titleTextView;
+        private Tag tag;
+        private int position;
+        private boolean isSelected;
 
         public MainViewHolder(View itemView) {
             super(itemView);
@@ -66,11 +83,18 @@ public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.MainViewHolder
             titleTextView = (TextView) itemView.findViewById(R.id.titleTextView);
         }
 
-        public void bind(Tag model, boolean isSelected) {
+        public void bind(Tag model,int position, boolean isSelected) {
+            this.tag = model;
+            this.position = position;
+            this.isSelected = isSelected;
             titleTextView.setText(model.getTitle());
             selectCheckBox.setVisibility(View.VISIBLE);
             selectCheckBox.setChecked(isSelected);
         }
 
+        @Override
+        public void onClick(View v) {
+            listener.onModelClick(v,tag,position,isSelected);
+        }
     }
 }

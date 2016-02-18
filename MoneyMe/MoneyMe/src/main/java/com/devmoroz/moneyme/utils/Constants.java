@@ -17,6 +17,10 @@ public class Constants {
     public final static String IMAGE_PATH = "itemImagePath";
     public final static String OUTCOME_DEFAULT_CATEGORY = "defaultCategory";
     public static final String SYNC_DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
+    public static final String EXTRA_SELECTED_TAGS = "EXTRA_SELECTED_TAGS";
+    public static final String STATE_SELECTED_TAGS = "STATE_SELECTED_TAGS";
+    public static final String RESULT_EXTRA_TAGS = "RESULT_EXTRA_TAGS";
+    public static final String STATE_TRANSACTION_EDIT = "STATE_TRANSACTION_EDIT";
     public static final String[] BACKUP_TABLES = {
             "account",
             "budget",

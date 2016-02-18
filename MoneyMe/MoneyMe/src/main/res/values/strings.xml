@@ -261,4 +261,8 @@
     <string name="use_current_location">Текущее местоположение</string>
     <string name="confirm">Подтвердить</string>
     <string name="location_not_found">Местоположение не определено</string>
+    <string name="tags_empty_text">У вас еще нет сохраненных тэгов. Нажмите \"+\" чтобы добавить новый.</string>
+    <string name="tag_with_current_name_exist">Тэг с таким именем уже существует.</string>
+    <string name="add_new_tag">Добавить тэг</string>
+    <string name="add_tag_dialog_title">Название</string>
 </resources>

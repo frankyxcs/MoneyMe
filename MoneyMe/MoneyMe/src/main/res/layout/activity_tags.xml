@@ -20,6 +20,27 @@
             android:scrollbarStyle="outsideOverlay"
             android:drawSelectorOnTop="true"/>
 
+        <LinearLayout
+            android:id="@+id/tagsEmpty"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:textColor="@color/disable_gray"
+                android:text="@string/tags_empty_text"
+                android:textSize="17sp"/>
+        </LinearLayout>
+
     </FrameLayout>
+
+    <include
+        android:id="@+id/editButtonsContainerView"
+        layout="@layout/cancel_save_buttons" />
 
 </LinearLayout>
