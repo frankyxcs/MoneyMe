@@ -5,6 +5,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class TransactionEdit implements Parcelable {
@@ -19,6 +20,7 @@ public class TransactionEdit implements Parcelable {
         }
     };
 
+    private TransactionType transactionType;
     private double amount;
     private Long date;
     private Account account;
@@ -42,6 +44,7 @@ public class TransactionEdit implements Parcelable {
     }
 
     private TransactionEdit(Parcel in) {
+        transactionType = (TransactionType) in.readSerializable();
         amount = (double) in.readValue(Double.class.getClassLoader());
         date = (Long) in.readValue(Long.class.getClassLoader());
         account = in.readParcelable(Account.class.getClassLoader());
@@ -71,6 +74,7 @@ public class TransactionEdit implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeSerializable(transactionType);
         dest.writeValue(amount);
         dest.writeValue(date);
         dest.writeParcelable(account, flags);
@@ -91,6 +95,14 @@ public class TransactionEdit implements Parcelable {
         dest.writeInt(isNoteSet ? 1 : 0);
         dest.writeInt(isLocationSet ? 1 : 0);
         dest.writeInt(isPhotoPathSet ? 1 : 0);
+    }
+
+    public TransactionType getTransactionType() {
+        return transactionType;
+    }
+
+    public void setTransactionType(TransactionType transactionType) {
+        this.transactionType = transactionType;
     }
 
     public double getAmount() {
@@ -141,6 +153,18 @@ public class TransactionEdit implements Parcelable {
     public List<Tag> getTags() {
         if (isTagsSet || tags != null) {
             return tags;
+        }
+        return null;
+    }
+
+    public String getStringTags() {
+        if (isTagsSet || tags != null) {
+            StringBuilder builder = new StringBuilder();
+            for(Tag t : tags) {
+                builder.append(t);
+                builder.append(";");
+            }
+            return builder.toString();
         }
         return null;
     }
@@ -208,5 +232,19 @@ public class TransactionEdit implements Parcelable {
 
     public boolean isNoteSet() {
         return isNoteSet;
+    }
+
+    public Transaction getModel() {
+        final Transaction transaction = new Transaction();
+        transaction.setAccount(getAccount());
+        transaction.setCategory(getCategory());
+        transaction.setTags(getStringTags());
+        transaction.setDateAdded(new Date(getDate()));
+        transaction.setAmount(getAmount());
+        transaction.setNotes(getNote());
+        transaction.setType(getTransactionType());
+        transaction.setPhoto(getPhotoPath());
+
+        return transaction;
     }
 }

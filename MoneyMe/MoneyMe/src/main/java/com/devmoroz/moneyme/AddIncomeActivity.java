@@ -97,10 +97,7 @@ public class AddIncomeActivity extends AppCompatActivity {
                     L.t(AddIncomeActivity.this, "Something went wrong.Please,try again.");
                 }
                 intent = new Intent(getApplicationContext(), MainActivity.class);
-                intent.putExtra(Constants.CREATED_ITEM_ID, info.getItemId());
-                intent.putExtra(Constants.CREATED_ITEM_CATEGORY, info.getCategory());
-                intent.putExtra(Constants.CREATED_ITEM_AMOUNT, info.getAmount());
-                intent.putExtra(Constants.CREATED_ITEM_ACCOUNT, info.getAccountId());
+                intent.putExtra(Constants.CREATED_TRANSACTION_DETAILS, info);
                 setResult(RESULT_OK, intent);
                 finish();
             }

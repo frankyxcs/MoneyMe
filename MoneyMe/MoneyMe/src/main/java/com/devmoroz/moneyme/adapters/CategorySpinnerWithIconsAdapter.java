@@ -18,9 +18,16 @@ public class CategorySpinnerWithIconsAdapter extends ArrayAdapter<String> {
     List<Category> categories;
 
     public CategorySpinnerWithIconsAdapter(Context context, int textViewResourceId,
-                                          String[] objectsText,List<Category> categories) {
+                                           String[] objectsText, List<Category> categories) {
         super(context, textViewResourceId, objectsText);
         this.categories = categories;
+    }
+
+    public Category getCategory(int position) {
+        if (position <= categories.size()) {
+            return categories.get(position);
+        }
+        return null;
     }
 
     @Override
@@ -48,7 +55,7 @@ public class CategorySpinnerWithIconsAdapter extends ArrayAdapter<String> {
         return row;
     }
 
-    public View getClosedView(int position ,View convertView, ViewGroup parent){
+    public View getClosedView(int position, View convertView, ViewGroup parent) {
         Category model = categories.get(position);
         LayoutInflater inflater = LayoutInflater.from(getContext());
         View row = inflater.inflate(android.R.layout.simple_spinner_dropdown_item, parent, false);

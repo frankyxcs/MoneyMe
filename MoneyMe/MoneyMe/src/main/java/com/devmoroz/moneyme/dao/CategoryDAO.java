@@ -26,4 +26,15 @@ public class CategoryDAO extends BaseDaoImpl<Category, UUID> {
         List<Category> result = query(preparedQuery);
         return result;
     }
+
+    public Category getCategoryByName(String name) throws SQLException{
+        QueryBuilder<Category,UUID> queryBuilder = queryBuilder();
+        queryBuilder.distinct().where().eq("title", name);
+        PreparedQuery<Category> preparedQuery = queryBuilder.prepare();
+        List<Category> result = query(preparedQuery);
+        if(result!= null && !result.isEmpty()){
+            return result.get(0);
+        }
+        return null;
+    }
 }

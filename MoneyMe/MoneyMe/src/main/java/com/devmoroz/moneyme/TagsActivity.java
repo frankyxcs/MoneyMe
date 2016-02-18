@@ -2,12 +2,14 @@ package com.devmoroz.moneyme;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -62,8 +64,18 @@ public class TagsActivity extends AppCompatActivity {
                 selectedTagSet.add((Tag) parcelable);
             }
         }
+        initToolbar();
         initEditButtons();
         initRecyclerWithAdapter(selectedTagSet);
+    }
+
+    private void initToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tags_toolbar);
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+            getSupportActionBar().setHomeButtonEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     private void initEditButtons() {
@@ -123,6 +135,8 @@ public class TagsActivity extends AppCompatActivity {
             case R.id.action_new_tag:
                 showAddTagDialog();
                 return true;
+            case android.R.id.home:
+                onTagsSelectCanceled();
             default:
                 return super.onOptionsItemSelected(item);
         }

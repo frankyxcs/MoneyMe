@@ -9,6 +9,7 @@
         <item name="android:textColorPrimary">@color/colorPrimaryText</item>
         <item name="android:textColorSecondary">@color/colorSecondaryText</item>
         <item name="preferenceTheme">@style/AppPreferenceThemeOverlay</item>
+        <item name="backgroundColorSecondary">@color/backgroundColorSecondary</item>
     </style>
 
     <style name="AppDefaultOutcome" parent="AppTheme">
@@ -95,9 +96,9 @@
 
     <style name="ToolbarStyle">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">?actionBarSize</item>
-        <item name="android:minHeight">?actionBarSize</item>
-        <item name="android:background">?colorPrimary</item>
+        <item name="android:layout_height">?android:attr/actionBarSize</item>
+        <item name="android:minHeight">?android:attr/actionBarSize</item>
+        <item name="android:background">?android:attr/colorPrimary</item>
         <item name="android:elevation" tools:ignore="NewApi">3dp</item>
         <item name="contentInsetStart">72dp</item>
         <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>

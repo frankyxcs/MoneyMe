@@ -40,6 +40,7 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.devmoroz.moneyme.adapters.AccountSpinnerAdapter;
 import com.devmoroz.moneyme.adapters.CategorySpinnerWithIconsAdapter;
 import com.devmoroz.moneyme.helpers.DBHelper;
 import com.devmoroz.moneyme.helpers.GoogleApiHelper;
@@ -85,7 +86,7 @@ import java.util.List;
 import static com.devmoroz.moneyme.utils.PhotoUtil.extractImageUrlFromGallery;
 import static com.devmoroz.moneyme.utils.PhotoUtil.setImageWithGlide;
 
-public class AddOutcomeActivity extends AppCompatActivity implements View.OnClickListener{
+public class AddOutcomeActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final int FROM_GALLERY_REQUEST_CODE = 1;
     private static final int SAVE_REQUEST_CODE = 2;
@@ -156,8 +157,15 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
         imageDeletePhoto = (ImageView) add.findViewById(R.id.delete_outcome_cheque);
         ll_album.addView(add);
 
+        chequeImage.setOnClickListener(this);
+        imageDeletePhoto.setOnClickListener(this);
+        locationButton.setOnClickListener(this);
+        tagsButton.setOnClickListener(this);
+        date.setOnClickListener(this);
+
         if (savedInstanceState == null) {
             transactionEdit = new TransactionEdit();
+            transactionEdit.setTransactionType(TransactionType.OUTCOME);
         } else {
             transactionEdit = savedInstanceState.getParcelable(Constants.STATE_TRANSACTION_EDIT);
         }
@@ -190,10 +198,7 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
             L.t(AddOutcomeActivity.this, "Something went wrong.Please,try again.");
         }
         intent = new Intent(getApplicationContext(), MainActivity.class);
-        intent.putExtra(Constants.CREATED_ITEM_ID, info.getItemId());
-        intent.putExtra(Constants.CREATED_ITEM_CATEGORY, info.getCategory());
-        intent.putExtra(Constants.CREATED_ITEM_AMOUNT, info.getAmount());
-        intent.putExtra(Constants.CREATED_ITEM_ACCOUNT, info.getAccountId());
+        intent.putExtra(Constants.CREATED_TRANSACTION_DETAILS, info);
         setResult(RESULT_OK, intent);
         finish();
     }
@@ -219,28 +224,25 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
         try {
             dbHelper = MoneyApplication.getInstance().GetDBHelper();
             categories = dbHelper.getCategoryDAO().getSortedCategories();
+            if (FormatUtils.isNotEmpty(defaultCategory)) {
+                transactionEdit.setCategory(dbHelper.getCategoryDAO().getCategoryByName(defaultCategory));
+            }else {
+                transactionEdit.setCategory(categories.get(0));
+            }
         } catch (SQLException ex) {
 
         }
         String[] defaults = getResources().getStringArray(R.array.outcome_categories);
         CategorySpinnerWithIconsAdapter adapter = new CategorySpinnerWithIconsAdapter(this, R.layout.category_row, defaults, categories);
         categorySpin.setAdapter(adapter);
-        categoryColor.setColorFilter(categories.get(0).getColor());
-        if (FormatUtils.isNotEmpty(defaultCategory)) {
-            for (Category category : categories) {
-                if (defaultCategory.equals(category.getTitle())) {
-                    categoryColor.setColorFilter(category.getColor());
-                    categorySpin.setSelection(category.getOrder());
-                    break;
-                }
-            }
-        }
+        categoryColor.setColorFilter(transactionEdit.getCategory().getColor());
+        categorySpin.setSelection(transactionEdit.getCategory().getOrder());
+
         categorySpin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position <= CustomColorTemplate.PIECHART_COLORS.length) {
-                    categoryColor.setColorFilter(CustomColorTemplate.PIECHART_COLORS[position]);
-                }
+                transactionEdit.setCategory(adapter.getCategory(position));
+                categoryColor.setColorFilter(transactionEdit.getCategory().getColor());
             }
 
             @Override
@@ -251,18 +253,29 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void initAccountSpinner() {
-        List<Account> accountList = MoneyApplication.accounts;
+        List<Account> accountList = Collections.emptyList();
+        try {
+            dbHelper = MoneyApplication.getInstance().GetDBHelper();
+            accountList = dbHelper.getAccountDAO().queryForAll();
+            transactionEdit.setAccount(accountList.get(0));
+        } catch (SQLException ex) {
+
+        }
         Currency c = CurrencyCache.getCurrencyOrEmpty();
-        if (accountList != null) {
-            String[] accountsWithBalance = new String[accountList.size()];
-            for (int i = 0; i < accountList.size(); i++) {
-                Account acc = accountList.get(i);
-                accountsWithBalance[i] = FormatUtils.attachAmountToText(acc.getName(), c, acc.getBalance(), false);
+        String[] res = new String[accountList.size()];
+        AccountSpinnerAdapter adapter = new AccountSpinnerAdapter(this, android.R.layout.simple_spinner_dropdown_item , res,accountList, c);
+        accountSpin.setAdapter(adapter);
+        accountSpin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                transactionEdit.setAccount(adapter.getAccount(position));
             }
 
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, accountsWithBalance);
-            accountSpin.setAdapter(adapter);
-        }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     @Override
@@ -283,24 +296,22 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
 
     private CreatedItem addOutcome() throws java.sql.SQLException {
         dbHelper = MoneyApplication.getInstance().GetDBHelper();
-        Date dateAdded;
+
         String outcomeNote = description.getText().toString();
         double outcomeAmount = Double.parseDouble(amount.getText().toString());
-        Category selectedCategory = categories.get(categorySpin.getSelectedItemPosition());
 
-        dateAdded = new Date(transactionEdit.getDate());
-
-        int id = accountSpin.getSelectedItemPosition();
-        Account account = dbHelper.getAccountDAO().queryForAll().get(id);
+        Account account = transactionEdit.getAccount();
         account.setBalance(account.getBalance() - outcomeAmount);
 
-        Transaction outcome = new Transaction(TransactionType.OUTCOME, outcomeNote, selectedCategory, dateAdded, outcomeAmount, account);
+        Transaction outcome = transactionEdit.getModel();
+        outcome.setAmount(outcomeAmount);
+        outcome.setNotes(outcomeNote);
         outcome.setPhoto(transactionEdit.getPhotoPath());
 
         dbHelper.getTransactionDAO().create(outcome);
         dbHelper.getAccountDAO().update(account);
 
-        return new CreatedItem(outcome.getId(), selectedCategory.getTitle(), outcomeAmount, account.getId());
+        return new CreatedItem(outcome.getId(), outcome.getCategory().getTitle(), outcomeAmount, account.getId());
     }
 
     @Override
@@ -387,7 +398,7 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
-    private void setTags(List<Tag> tags){
+    private void setTags(List<Tag> tags) {
         final int tagBackgroundColor = ThemeUtils.getColor(AddOutcomeActivity.this, R.attr.backgroundColorSecondary);
         final float tagBackgroundRadius = getResources().getDimension(R.dimen.tag_radius);
         if (tags == null) {
@@ -402,7 +413,7 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
         tagsButton.setText(ssb);
     }
 
-    private void startTagsActivity(List<Tag> selectedTags){
+    private void startTagsActivity(List<Tag> selectedTags) {
         Intent intent = new Intent(this, TagsActivity.class);
         final Parcelable[] parcelables = new Parcelable[selectedTags.size()];
         int index = 0;

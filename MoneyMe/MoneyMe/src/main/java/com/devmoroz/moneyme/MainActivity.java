@@ -43,6 +43,7 @@ import com.devmoroz.moneyme.helpers.CurrencyHelper;
 import com.devmoroz.moneyme.helpers.DBHelper;
 import com.devmoroz.moneyme.logging.L;
 import com.devmoroz.moneyme.models.Account;
+import com.devmoroz.moneyme.models.CreatedItem;
 import com.devmoroz.moneyme.models.Currency;
 import com.devmoroz.moneyme.utils.AppUtils;
 import com.devmoroz.moneyme.utils.Constants;
@@ -59,7 +60,6 @@ public class MainActivity extends AppCompatActivity {
 
     final int REQUEST_CODE_INCOME = 918;
     final int REQUEST_CODE_OUTCOME = 1218;
-    private String createdItemId = "";
 
     public static final int VIEW_SPLASH = 0;
     public static final int VIEW_CONTENT = 1;
@@ -395,18 +395,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(final int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            createdItemId = extras.getString(Constants.CREATED_ITEM_ID);
-            if (FormatUtils.isNotEmpty(createdItemId)) {
-                String operationName = extras.getString(Constants.CREATED_ITEM_CATEGORY);
-                final String accId = extras.getString(Constants.CREATED_ITEM_ACCOUNT);
-                final double amount = extras.getDouble(Constants.CREATED_ITEM_AMOUNT);
+            CreatedItem createdItem = data.getParcelableExtra(Constants.CREATED_TRANSACTION_DETAILS);
+            if (!createdItem.isEmpty()) {
                 String sign = CurrencyCache.getCurrencyOrEmpty().getSymbol();
                 String info = "";
                 if (requestCode == REQUEST_CODE_INCOME) {
-                    info = getString(R.string.added_income, operationName, amount, sign);
+                    info = getString(R.string.added_income, createdItem.getCategory(), createdItem.getAmount(), sign);
                 } else if (requestCode == REQUEST_CODE_OUTCOME) {
-                    info = getString(R.string.added_outcome, operationName, amount, sign);
+                    info = getString(R.string.added_outcome, createdItem.getCategory(), createdItem.getAmount(), sign);
                 }
                 final Snackbar snackBar = Snackbar.make(coordinator, info, Snackbar.LENGTH_LONG);
                 snackBar.setCallback(new Snackbar.Callback() {
@@ -432,14 +428,14 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         try {
                             DBHelper dbhelper = MoneyApplication.getInstance().GetDBHelper();
-                            Account acc = dbhelper.getAccountDAO().queryForId(UUID.fromString(accId));
+                            Account acc = dbhelper.getAccountDAO().queryForId(UUID.fromString(createdItem.getAccountId()));
                             if (requestCode == REQUEST_CODE_INCOME) {
-                                acc.setBalance(acc.getBalance() - amount);
+                                acc.setBalance(acc.getBalance() - createdItem.getAmount());
                             } else if (requestCode == REQUEST_CODE_OUTCOME) {
-                                acc.setBalance(acc.getBalance() + amount);
+                                acc.setBalance(acc.getBalance() + createdItem.getAmount());
                             }
                             dbhelper.getAccountDAO().update(acc);
-                            dbhelper.getTransactionDAO().deleteById(UUID.fromString(createdItemId));
+                            dbhelper.getTransactionDAO().deleteById(UUID.fromString(createdItem.getItemId()));
                             BusProvider.postOnMain(new WalletChangeEvent());
                         } catch (SQLException ex) {
                             L.t(MainActivity.this, "Something went wrong.Please,try again.");
