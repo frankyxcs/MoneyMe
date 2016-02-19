@@ -37,7 +37,6 @@
     <string name="date">Дата</string>
     <string name="category">Категория</string>
     <string name="note">Заметка</string>
-    <string name="add_account_c">ДОБАВИТЬ СЧЁТ</string>
     <string name="add_account">Добавить счёт</string>
     <string name="account_name">Название счёта</string>
     <string name="save">Сохранить</string>
@@ -126,7 +125,6 @@
     <string name="goal_current_amount">Уже накопленная сумма(если есть)</string>
     <string name="goal_finish_date">Дата завершения</string>
     <string name="add_goal">Добавить цель</string>
-    <string name="add_goal_c">ДОБАВИТЬ ЦЕЛЬ</string>
     <string name="application_info_title">Информация о приложении</string>
     <string name="libraries_title">Libraries &amp; Resources</string>
     <string name="license_title">License</string>
@@ -254,15 +252,15 @@
 
     <string name="app_key">sdasdas</string>
     <string name="greeting">Добро пожаловать</string>
-    <string name="tags">Тэги</string>
+    <string name="tags">Теги</string>
     <string name="permission_not_granted">Разрешение не получено.</string>
     <string name="permission_coarse_location">Предоставьте разрешение на определение вашего местоположения для добавления координат к транзакции</string>
     <string name="search_location">Введите адрес</string>
     <string name="use_current_location">Текущее местоположение</string>
     <string name="confirm">Подтвердить</string>
     <string name="location_not_found">Местоположение не определено</string>
-    <string name="tags_empty_text">У вас еще нет сохраненных тэгов. Нажмите \"+\" чтобы добавить новый.</string>
-    <string name="tag_with_current_name_exist">Тэг с таким именем уже существует.</string>
-    <string name="add_new_tag">Добавить тэг</string>
+    <string name="tags_empty_text">У вас еще нет сохраненных тегов. Нажмите \"+\" чтобы добавить новый.</string>
+    <string name="tag_with_current_name_exist">Тег с таким именем уже существует.</string>
+    <string name="add_new_tag">Добавить тег</string>
     <string name="add_tag_dialog_title">Название</string>
 </resources>

@@ -23,8 +23,7 @@
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:text="Счет"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                style="@style/Text.Title"/>
 
             <ImageView
                 android:id="@+id/accountIcon"
@@ -44,8 +43,7 @@
             android:layout_weight="1"
             android:gravity="right|end"
             android:text="@string/balance"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            style="@style/Text.Body2"/>
     </LinearLayout>
 
     <TextView
@@ -55,5 +53,5 @@
         android:layout_gravity="right|end"
         android:textColor="@color/fab_outcome_normal"
         android:text="@string/header_expenses"
-        android:textSize="14sp" />
+        style="@style/Text.Body2" />
 </LinearLayout>

@@ -35,4 +35,21 @@
         <item>@string/c_other</item>
     </string-array>
 
+    <array name="category_color_palette">
+    <item>#EF5350</item>
+    <item>#EC407A</item>
+    <item>#AB47BC</item>
+    <item>#7E57C2</item>
+    <item>#5C6BC0</item>
+    <item>#42A5F5</item>
+    <item>#0097A7</item>
+    <item>#009688</item>
+    <item>#43A047</item>
+    <item>#689F38</item>
+    <item>#827717</item>
+    <item>#EF6C00</item>
+    <item>#FF5722</item>
+    <item>#8D6E63</item>
+    </array>
+
 </resources>

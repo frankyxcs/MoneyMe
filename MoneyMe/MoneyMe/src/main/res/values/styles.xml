@@ -9,12 +9,23 @@
     <style name="AppDefault" parent="AppTheme">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorControlNormal">@color/colorWhite</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccentDark">@color/colorAccentDark</item>
+        <item name="colorControlNormal">@color/colorPrimaryText</item>
+        <item name="colorControlHighlight">@color/colorControlHighlight</item>
         <item name="android:textColorPrimary">@color/colorPrimaryText</item>
         <item name="android:textColorSecondary">@color/colorSecondaryText</item>
         <item name="preferenceTheme">@style/AppPreferenceThemeOverlay</item>
         <item name="backgroundColorSecondary">@color/backgroundColorSecondary</item>
+        <item name="android:dialogTheme">@style/AppTheme.DialogTheme</item>
+    </style>
+
+    <style name="AppDefaultTransaction" parent="AppDefault">
+        <item name="colorControlActivated">@color/colorPrimaryDark</item>
+    </style>
+
+    <style name="AppSettings" parent="AppDefault">
+        <item name="colorControlNormal">@color/colorPrimaryText</item>
     </style>
 
     <style name="DetailsIncome" parent="AppDefault">
@@ -27,8 +38,8 @@
         <item name="colorPrimaryDark">@color/fab_outcome_normal</item>
     </style>
 
-    <style name="AppDefaultOutcome" parent="AppTheme">
-        <item name="colorControlActivated">@color/colorPrimaryDark</item>
+    <style name="AppTheme.DialogTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/colorPrimary</item>
     </style>
 
     <style name="CustomActionBar" parent="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
@@ -157,19 +168,87 @@
         <item name="android:layout_height">1.34dp</item>
     </style>
 
+    <style name="Button" />
+
+    <style name="Button.Flat">
+        <item name="android:background">?selectableItemBackground</item>
+    </style>
+
+    <style name="Button.Flat.ButtonBar">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:textColor">?android:textColorPrimaryInverse</item>
+        <item name="android:background">?selectableItemBackgroundBorderless</item>
+    </style>
+
+    <style name="Button.Flat.Borderless">
+        <item name="android:background">?selectableItemBackgroundBorderless</item>
+    </style>
+
+    <style name="Button.Flat.Select">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textColor">?android:textColorPrimary</item>
+        <item name="android:textColorHint">?android:textColorSecondary</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textAppearance">@style/Text.Subhead</item>
+    </style>
+
     <style name="Text" parent="TextAppearance.AppCompat">
         <item name="android:textSize">14sp</item>
+        <item name="fontPath">fonts/Roboto-Regular.ttf</item>
+    </style>
+
+    <style name="Text.Body1" parent="TextAppearance.AppCompat.Body1">
+        <item name="android:textSize">14sp</item>
+        <item name="fontPath">fonts/Roboto-Regular.ttf</item>
+    </style>
+
+    <style name="Text.Body2" parent="TextAppearance.AppCompat.Body2">
+        <item name="android:textSize">14sp</item>
+        <item name="fontPath">fonts/Roboto-Medium.ttf</item>
+    </style>
+
+    <style name="Text.Button" parent="TextAppearance.AppCompat.Button">
+        <item name="fontPath">fonts/Roboto-Medium.ttf</item>
+    </style>
+
+    <style name="Text.Caption" parent="TextAppearance.AppCompat.Caption">
+        <item name="fontPath">fonts/Roboto-Regular.ttf</item>
+    </style>
+
+    <style name="Text.Display1" parent="TextAppearance.AppCompat.Display1">
+        <item name="fontPath">fonts/Roboto-Regular.ttf</item>
     </style>
 
     <style name="Text.Display2" parent="TextAppearance.AppCompat.Display2">
+        <item name="fontPath">fonts/Roboto-Regular.ttf</item>
+    </style>
+
+    <style name="Text.Display3" parent="TextAppearance.AppCompat.Display3">
+        <item name="fontPath">fonts/Roboto-Regular.ttf</item>
+    </style>
+
+    <style name="Text.Display4" parent="TextAppearance.AppCompat.Display4">
+        <item name="fontPath">fonts/Roboto-Light.ttf</item>
+    </style>
+
+    <style name="Text.Headline" parent="TextAppearance.AppCompat.Headline">
+        <item name="fontPath">fonts/Roboto-Regular.ttf</item>
+    </style>
+
+    <style name="Text.Subhead" parent="TextAppearance.AppCompat.Subhead">
+        <item name="fontPath">fonts/Roboto-Regular.ttf</item>
+    </style>
+
+    <style name="Text.Title" parent="TextAppearance.AppCompat.Title">
+        <item name="fontPath">fonts/Roboto-Medium.ttf</item>
     </style>
 
     <style name="ToolbarStyle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">?actionBarSize</item>
         <item name="android:minHeight">?actionBarSize</item>
-        <item name="android:background">?colorPrimary</item>
-        <item name="android:elevation" tools:ignore="NewApi">3dp</item>
+        <item name="android:background">@color/colorPrimary</item>
         <item name="contentInsetStart">72dp</item>
         <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
         <item name="theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>

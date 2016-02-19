@@ -14,8 +14,7 @@ android:background="?android:attr/selectableItemBackground">
         android:layout_height="wrap_content"
         android:singleLine="true"
         android:fadingEdge="horizontal"
-        android:textColor="@color/colorPrimaryText"
-        android:textSize="16sp" />
+        style="@style/Text.Body2" />
 
     <TextView android:id="@android:id/summary"
         android:layout_width="wrap_content" android:layout_height="wrap_content"

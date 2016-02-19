@@ -58,6 +58,20 @@ public class TransactionDAO extends BaseDaoImpl<Transaction, UUID> {
         return val;
     }
 
+    public double getTotalOutcomeForAccount(String accountId) throws SQLException {
+        double val = 0;
+
+        QueryBuilder<Transaction, UUID> queryBuilder = queryBuilder();
+        queryBuilder.selectRaw("SUM(amount)");
+        queryBuilder.where().eq("account_id", UUID.fromString(accountId)).and().eq("type", TransactionType.OUTCOME);
+        String[] result = queryRaw(queryBuilder.prepareStatementString()).getFirstResult();
+        if (result != null && result.length >= 1 && result[0]!=null) {
+            val = Double.parseDouble(result[0]);
+        }
+
+        return val;
+    }
+
     public List<Transaction> queryTransactionsByTypeForAccount(TransactionType type, String accountId) throws SQLException {
         QueryBuilder<Transaction, UUID> queryBuilder = queryBuilder();
         queryBuilder.where().eq("account_id", UUID.fromString(accountId)).and().eq("type", type);

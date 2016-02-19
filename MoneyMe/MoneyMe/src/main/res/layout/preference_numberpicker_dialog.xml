@@ -31,6 +31,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:text="@string/number"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            style="@style/Text.Body1" />
     </LinearLayout>
 </ScrollView>

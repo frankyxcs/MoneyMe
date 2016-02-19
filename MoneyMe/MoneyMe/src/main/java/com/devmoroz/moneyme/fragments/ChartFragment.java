@@ -159,8 +159,8 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
     private SpannableString generateCenterText() {
         String centerText = String.format("%s\n%s", totalOut, balance);
         SpannableString s = new SpannableString(centerText);
-        s.setSpan(new ForegroundColorSpan(Color.RED), 0, totalOut.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        s.setSpan(new ForegroundColorSpan(Color.GREEN), totalOut.length(), s.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        s.setSpan(new ForegroundColorSpan(CustomColorTemplate.OUTCOME_COLOR), 0, totalOut.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        s.setSpan(new ForegroundColorSpan(CustomColorTemplate.INCOME_COLOR), totalOut.length(), s.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         return s;
     }
 
@@ -207,7 +207,7 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
         PieDataSet ds1 = new PieDataSet(entries, "");
         ds1.setColors(colors);
         ds1.setSliceSpace(2f);
-        ds1.setValueTextColor(CustomColorTemplate.SECONDARY_TEXT);
+        ds1.setValueTextColor(CustomColorTemplate.WHITE_TEXT);
         ds1.setValueTextSize(8f);
         ds1.setDrawValues(false);
 

@@ -4,6 +4,7 @@ package com.devmoroz.moneyme.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.devmoroz.moneyme.utils.FormatUtils;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -68,6 +69,19 @@ public class Tag implements Parcelable{
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    @Override public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Tag)) return false;
+
+        final Tag model = (Tag) o;
+
+        return !(FormatUtils.isEmpty(getId()) || FormatUtils.isEmpty(model.getId())) && id.equals(model.id);
+    }
+
+    @Override public int hashCode() {
+        return id != null ? id.hashCode() : 0;
     }
 
 }

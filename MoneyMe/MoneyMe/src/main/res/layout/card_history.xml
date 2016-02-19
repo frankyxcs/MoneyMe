@@ -56,7 +56,7 @@
 
                         <TextView
                             android:id="@+id/card_main_categoryLetter"
-                            android:textSize="18sp"
+                            style="@style/Text.Title"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
@@ -87,8 +87,7 @@
                         android:ellipsize="end"
                         android:singleLine="true"
                         android:text="Medium Text"
-                        android:textColor="@color/colorPrimaryText"
-                        android:textSize="16sp" />
+                        style="@style/Text.Body2" />
 
                     <TextView
                         android:id="@+id/card_main_amount"
@@ -97,9 +96,7 @@
                         android:layout_gravity="right"
                         android:layout_marginLeft="8dp"
                         android:text="New Text"
-                        android:textStyle="bold"
-                        android:textColor="@color/colorSecondaryText"
-                        android:textSize="15sp" />
+                        style="@style/Text.Body2"/>
 
                     </LinearLayout>
                     <LinearLayout
@@ -111,9 +108,8 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:textColor="?android:textColorSecondary"
                             android:text="Tag text"
-                            android:textSize="14sp"/>
+                            style="@style/Text.Caption"/>
 
                         <TextView
                             android:id="@+id/card_main_date"
@@ -123,7 +119,7 @@
                             android:layout_marginLeft="8dp"
                             android:ellipsize="end"
                             android:singleLine="true"
-                            android:textSize="14sp"
+                            style="@style/Text.Caption"
                             android:text="Account/Date" />
 
                     </LinearLayout>
@@ -158,7 +154,7 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_edit_gray"
                 android:background="@drawable/white_button"
-                android:padding="4dp"
+                android:padding="8dp"
                 android:id="@+id/card_main_editButton"
                 android:layout_marginRight="8dp"
                 android:layout_marginEnd="8dp"/>
@@ -167,7 +163,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_delete_gray"
-                android:padding="4dp"
+                android:padding="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginEnd="8dp"
                 android:id="@+id/card_main_deleteButton"

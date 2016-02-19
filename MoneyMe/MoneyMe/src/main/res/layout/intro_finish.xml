@@ -36,8 +36,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:padding="16dp"
-                android:textSize="16sp"
+                android:textAppearance="@style/Text.Subhead"
                 android:lines="1"
                 android:maxLength="20"
                 android:theme="@style/WhiteInput"/>
@@ -51,13 +50,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
-                android:textSize="16sp"
+                android:textAppearance="@style/Text.Subhead"
                 android:textColor="@color/colorWhite"
                 android:layout_gravity="center"
                 android:text="@string/type"/>
             <Spinner
                 android:id="@+id/intro_accountAddType"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:theme="@style/WhiteInput"
@@ -76,8 +75,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:padding="16dp"
-                android:textSize="16sp"
+                android:textAppearance="@style/Text.Subhead"
                 android:inputType="number|numberDecimal"
                 android:lines="1"
                 android:maxLength="9"
@@ -95,21 +93,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
-                android:textSize="16sp"
+                android:textAppearance="@style/Text.Subhead"
                 android:layout_gravity="center"
                 android:textColor="@color/colorWhite"
                 android:text="@string/currency"/>
 
             <Button
                 android:id="@+id/intro_accountCurrency"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="2"
                 android:singleLine="true"
                 android:layout_gravity="center"
-                android:gravity="center_vertical"
                 android:theme="@style/WhiteInput"
-                android:textSize="14sp"
-                style="@style/TextAppearance.EditEvent_SpinnerButton" />
+                style="@style/Button.Flat.Select"  />
         </LinearLayout>
     </LinearLayout>
     <TextView

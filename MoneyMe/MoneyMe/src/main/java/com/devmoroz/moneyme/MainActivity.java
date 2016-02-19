@@ -165,7 +165,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void initToolbar() {
         toolbar.setTitle(R.string.app_name);
-        toolbar.setTitleTextColor(Color.WHITE);
         setSupportActionBar(toolbar);
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override

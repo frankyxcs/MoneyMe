@@ -15,7 +15,7 @@
     <TextView
         android:id="@+id/dropbox_text"
         android:maxLines="1"
-        android:textSize="@dimen/abc_text_size_body_1_material"
+        style="@style/Text.Subhead"
         android:layout_marginLeft="16dp"
         android:layout_gravity="center_vertical"
         android:layout_width="match_parent"

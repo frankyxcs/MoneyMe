@@ -24,6 +24,8 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 
+import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
+
 public class MoneyApplication extends Application {
 
     private static MoneyApplication wInstance;
@@ -114,6 +116,10 @@ public class MoneyApplication extends Application {
         DBHelperFactory.setHelper(getApplicationContext());
         dbHelper = DBHelperFactory.getHelper();
         CurrencyCache.initialize(dbHelper);
+        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
+                        .setFontAttrId(R.attr.fontPath)
+                        .build()
+        );
         initialize();
     }
 

@@ -105,10 +105,17 @@ public class AccountsFragment extends Fragment {
 
     private void CheckWallet(){
         accounts = MoneyApplication.getInstance().getAccounts();
+        DBHelper dbHelper = MoneyApplication.getInstance().GetDBHelper();
         data.clear();
         totalBalance = 0;
         for (Account acc : accounts) {
-            data.add(new AccountRow(acc.getId(),acc.getName(),acc.getBalance(),0,acc.getType()));
+            double spendings = 0;
+            try {
+                spendings = dbHelper.getTransactionDAO().getTotalOutcomeForAccount(acc.getId());
+            }catch(SQLException ex){
+
+            }
+            data.add(new AccountRow(acc.getId(), acc.getName(), acc.getBalance(), spendings, acc.getType()));
             totalBalance += acc.getBalance();
         }
         SetTotalBalance();

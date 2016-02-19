@@ -16,9 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:padding="16dp"
-            android:textSize="14sp"
-            android:theme="@style/BlackInput"/>
+            android:textAppearance="@style/Text.Subhead"/>
 
     </android.support.design.widget.TextInputLayout>
 
@@ -33,11 +31,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:padding="16dp"
-            android:textSize="14sp"
             android:inputType="number"
             android:maxLength="9"
-            android:theme="@style/BlackInput"/>
+            android:textAppearance="@style/Text.Subhead"/>
 
     </android.support.design.widget.TextInputLayout>
 
@@ -52,36 +48,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:padding="16dp"
-            android:textSize="14sp"
+            android:textAppearance="@style/Text.Subhead"
             android:inputType="number"
-            android:maxLength="9"
-            android:theme="@style/BlackInput"/>
+            android:maxLength="9"/>
 
     </android.support.design.widget.TextInputLayout>
-
-    <LinearLayout
-        android:id="@+id/from_row"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="?android:attr/listPreferredItemHeight">
-        <TextView
-            android:id="@+id/from_label"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:text="@string/goal_finish_date"
-            style="@style/EditEvent_LabelSmall" />
-        <Button
-            android:id="@+id/goalAddDeadlineDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:gravity="center_vertical"
-            android:textSize="14sp"
-            android:theme="@style/BlackInput"
-            style="@style/TextAppearance.EditEvent_SpinnerButton" />
-    </LinearLayout>
 
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
@@ -94,12 +65,39 @@
             android:id="@+id/goalAddNote"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:textSize="14sp"
+            android:textAppearance="@style/Text.Subhead"
             android:inputType="textShortMessage|textAutoCorrect|textCapSentences|textMultiLine|textAutoComplete"
             android:maxLength="200"
-            android:maxLines="2"
-            android:theme="@style/BlackInput"/>
+            android:maxLines="2"  />
     </android.support.design.widget.TextInputLayout>
+
+    <LinearLayout
+        android:id="@+id/from_row"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="?android:attr/listPreferredItemHeight"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/from_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:gravity="center_vertical"
+            android:text="@string/goal_finish_date"
+            android:textAppearance="@style/Text.Body1" />
+        <Button
+            android:id="@+id/goalAddDeadlineDate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:singleLine="true"
+            android:gravity="center_vertical"
+            android:textAppearance="@style/Text.Subhead"
+            android:textAllCaps="false"
+            android:text="12-12-12"
+            android:background="?selectableItemBackground"/>
+    </LinearLayout>
 
 </LinearLayout>

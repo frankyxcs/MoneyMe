@@ -3,6 +3,7 @@ package com.devmoroz.moneyme;
 import android.Manifest;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -22,6 +23,8 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.format.DateFormat;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -36,6 +39,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -100,6 +104,7 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
     private EditText description;
     private TextInputLayout floatingAmountLabel;
     private Button date;
+    private Button time;
     private Button locationButton;
     private Button tagsButton;
     private Spinner categorySpin;
@@ -125,10 +130,18 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
     protected void onCreate(Bundle savedInstanceState) {
         Intent intent = getIntent();
         defaultCategory = intent.getStringExtra(Constants.OUTCOME_DEFAULT_CATEGORY);
-        setTheme(R.style.AppDefaultOutcome);
+        setTheme(R.style.AppDefaultTransaction);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_outcome);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
+        if (savedInstanceState == null) {
+            transactionEdit = new TransactionEdit();
+            transactionEdit.setDate(new Date().getTime());
+            transactionEdit.setTransactionType(TransactionType.OUTCOME);
+        } else {
+            transactionEdit = savedInstanceState.getParcelable(Constants.STATE_TRANSACTION_EDIT);
+        }
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Places.GEO_DATA_API)
@@ -144,12 +157,14 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
         amount.setFilters(new InputFilter[]{new DecimalDigitsInputFilter()});
         description = (EditText) findViewById(R.id.add_outcome_note);
         date = (Button) findViewById(R.id.add_outcome_date);
+        time = (Button) findViewById(R.id.add_outcome_time);
         tagsButton = (Button) findViewById(R.id.add_outcome_tags);
         locationButton = (Button) findViewById(R.id.add_outcome_location);
         categorySpin = (Spinner) findViewById(R.id.add_outcome_category);
         categoryColor = (ImageView) findViewById(R.id.add_outcome_category_color);
         accountSpin = (Spinner) findViewById(R.id.add_outcome_account);
-        date.setText(TimeUtils.formatShortDate(getApplicationContext(), new Date()));
+        date.setText(TimeUtils.formatShortDate(getApplicationContext(), new Date(transactionEdit.getDate())));
+        time.setText(TimeUtils.formatShortTime(getApplicationContext(), new Date(transactionEdit.getDate())));
         floatingAmountLabel = (TextInputLayout) findViewById(R.id.text_input_layout_out_amount);
         ll_album = (ViewGroup) findViewById(R.id.ll_album);
         add = View.inflate(this, R.layout.item_photo, null);
@@ -162,13 +177,9 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
         locationButton.setOnClickListener(this);
         tagsButton.setOnClickListener(this);
         date.setOnClickListener(this);
+        time.setOnClickListener(this);
 
-        if (savedInstanceState == null) {
-            transactionEdit = new TransactionEdit();
-            transactionEdit.setTransactionType(TransactionType.OUTCOME);
-        } else {
-            transactionEdit = savedInstanceState.getParcelable(Constants.STATE_TRANSACTION_EDIT);
-        }
+
 
         initToolbar();
         initCategorySpinner();
@@ -212,7 +223,6 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
     private void initToolbar() {
         if (toolbar != null) {
             toolbar.setTitle(R.string.outcome_toolbar_name);
-            toolbar.setTitleTextColor(Color.WHITE);
             setSupportActionBar(toolbar);
             getSupportActionBar().setHomeButtonEnabled(true);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -292,6 +302,12 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
         DatePickerFragment newFragment = new DatePickerFragment();
         newFragment.setDate(date);
         newFragment.show(getSupportFragmentManager(), "datePicker");
+    }
+
+    public void showTimePickerDialog() {
+        TimePickerFragment newFragment = new TimePickerFragment();
+        newFragment.setDate(time);
+        newFragment.show(getSupportFragmentManager(), "timePicker");
     }
 
     private CreatedItem addOutcome() throws java.sql.SQLException {
@@ -580,6 +596,9 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
             case R.id.add_outcome_date:
                 showDatePickerDialog();
                 break;
+            case R.id.add_outcome_time:
+                showTimePickerDialog();
+                break;
             case R.id.add_outcome_tags:
                 startTagsActivity(transactionEdit.getTags() != null ? transactionEdit.getTags() : Collections.<Tag>emptyList());
                 break;
@@ -623,6 +642,36 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
             cal.set(Calendar.DAY_OF_MONTH, day);
             transactionEdit.setDate(cal.getTime().getTime());
             date.setText(TimeUtils.formatShortDate(getContext(), cal.getTime()));
+        }
+    }
+
+    public static class TimePickerFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
+
+        private Button time;
+
+        public void setDate(Button time) {
+            this.time = time;
+        }
+
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+
+            final Calendar c = Calendar.getInstance();
+            int hour = c.get(Calendar.HOUR_OF_DAY);
+            int minute = c.get(Calendar.MINUTE);
+            transactionEdit.setDate(c.getTime().getTime());
+
+            return new TimePickerDialog(getActivity(), this, hour, minute,
+                    DateFormat.is24HourFormat(getActivity()));
+        }
+
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+            Calendar cal = Calendar.getInstance();
+            cal.set(Calendar.HOUR_OF_DAY, hourOfDay);
+            cal.set(Calendar.MINUTE,minute);
+            transactionEdit.setDate(cal.getTime().getTime());
+            time.setText(TimeUtils.formatShortTime(time.getContext(), cal.getTime()));
         }
     }
 

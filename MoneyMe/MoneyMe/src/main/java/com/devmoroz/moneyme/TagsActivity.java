@@ -171,6 +171,12 @@ public class TagsActivity extends AppCompatActivity {
                 .positiveText(R.string.save)
                 .positiveColorRes(R.color.colorPrimary)
                 .negativeColorRes(R.color.colorPrimary)
+                .input(null, null, new MaterialDialog.InputCallback() {
+                    @Override
+                    public void onInput(MaterialDialog dialog, CharSequence input) {
+                        // Do something
+                    }
+                })
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {

@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:textAlignment="center"
+    android:textAppearance="@style/Text.Subhead"
     android:textColor="@color/colorPrimaryText"
     android:textColorHint="@color/colorPrimaryTextLighter"
     android:padding="16dp"/>

@@ -16,11 +16,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:padding="16dp"
-            android:textSize="14sp"
             android:inputType="number"
             android:maxLength="9"
-            android:theme="@style/BlackInput"/>
+            android:textAppearance="@style/Text.Subhead"/>
 
     </android.support.design.widget.TextInputLayout>
 
@@ -36,16 +34,17 @@
             android:text="@string/date"
             android:layout_marginRight="8dp"
             android:layout_marginEnd="8dp"
-            style="@style/EditEvent_LabelSmall" />
+            android:textAppearance="@style/Text.Subhead" />
         <Button
             android:id="@+id/editEntryDate"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="2"
             android:singleLine="true"
             android:gravity="center_vertical"
-            android:textSize="14sp"
-            android:theme="@style/BlackInput"
-            style="@style/TextAppearance.EditEvent_SpinnerButton" />
+            android:text="12-12-12"
+            android:textAppearance="@style/Text.Subhead"
+            android:background="?selectableItemBackground"  />
     </LinearLayout>
 
     <android.support.design.widget.TextInputLayout
@@ -59,12 +58,10 @@
             android:id="@+id/editEntryNote"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:textSize="14sp"
+            android:textAppearance="@style/Text.Subhead"
             android:inputType="textShortMessage|textAutoCorrect|textCapSentences|textMultiLine|textAutoComplete"
             android:maxLength="200"
-            android:maxLines="2"
-            android:theme="@style/BlackInput"/>
+            android:maxLines="2"/>
     </android.support.design.widget.TextInputLayout>
 
 </LinearLayout>

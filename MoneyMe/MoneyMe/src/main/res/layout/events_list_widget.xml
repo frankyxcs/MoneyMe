@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="2sp" >
+    android:padding="2dp" >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,11 +17,11 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center_vertical"
-            android:padding="5sp"
+            android:padding="5dp"
             android:background="@color/colorPrimary"
             android:text="События и заметки"
             android:textColor="@android:color/white"
-            android:textSize="16sp" />
+            style="@style/Text.Button" />
 
         <ImageView
             android:id="@android:id/button2"
@@ -42,8 +42,8 @@
         android:id="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginLeft="2sp"
-        android:layout_marginRight="2sp"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
         android:layout_weight="1"
         android:background="@color/translucent_white"
         android:orientation="vertical" >

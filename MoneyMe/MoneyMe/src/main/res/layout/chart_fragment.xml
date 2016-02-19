@@ -27,16 +27,14 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:textSize="14sp"
-                android:textStyle="bold"
+                style="@style/Text.Body2"
                 android:text="@string/category"/>
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:textStyle="bold"
+                style="@style/Text.Body2"
                 android:gravity="center"
                 android:text="@string/amount"/>
 
@@ -44,8 +42,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:textStyle="bold"
+                style="@style/Text.Body2"
                 android:text="@string/amount_percent"
                 android:gravity="center"/>
 

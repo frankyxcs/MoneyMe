@@ -27,7 +27,7 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="Баланс: 2000$"
-                android:textSize="12sp" />
+                style="@style/Text.Body2" />
             <TextView
                 android:id="@+id/text_date_period"
                 android:layout_width="0dp"
@@ -35,7 +35,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="right"
                 android:text="Nov 05 - Dec 1"
-                android:textSize="12sp" />
+                style="@style/Text.Body1" />
         </LinearLayout>
 
         <LinearLayout
@@ -58,7 +58,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="@string/text_total_income"
-                    android:textSize="12sp" />
+                    style="@style/Text.Body1"/>
 
                 <TextView
                     android:id="@+id/walletTotalIncome"
@@ -68,7 +68,7 @@
                     android:layout_marginTop="3dp"
                     android:text="12345.00 $"
                     android:textColor="@color/positive_amount"
-                    android:textSize="22sp" />
+                    style="@style/Text.Title" />
 
             </LinearLayout>
 
@@ -84,7 +84,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="@string/text_total_outcome"
-                    android:textSize="12sp" />
+                    style="@style/Text.Body1" />
                 <TextView
                     android:id="@+id/walletTotalOutcome"
                     android:layout_width="wrap_content"
@@ -93,7 +93,7 @@
                     android:text="12345.00 $"
                     android:gravity="center"
                     android:textColor="@color/negative_amount"
-                    android:textSize="22sp" />
+                    style="@style/Text.Title" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
@@ -108,7 +108,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:visibility="gone"
+
         android:orientation="vertical">
 
        <TextView
@@ -117,7 +117,7 @@
            android:gravity="center"
            android:textColor="@color/disable_gray"
            android:text="@string/no_data_available"
-           android:textSize="17sp"/>
+           style="@style/Text.Title"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -125,7 +125,7 @@
             android:gravity="center"
             android:text="@string/no_data_add_new"
             android:textColor="@color/disable_gray"
-            android:textSize="15sp"/>
+            style="@style/Text.Subhead"/>
 
     </LinearLayout>
 

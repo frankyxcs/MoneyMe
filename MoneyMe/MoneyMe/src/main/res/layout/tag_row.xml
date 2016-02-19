@@ -13,8 +13,6 @@
 
     <CheckBox
         android:id="@+id/selectCheckBox"
-        android:paddingLeft="16dp"
-        android:textSize="14sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="-4dp"
@@ -28,7 +26,7 @@
 
     <TextView
         android:id="@+id/titleTextView"
-        android:textSize="14sp"
+        style="@style/Text.Subhead"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:text="Coffe" />

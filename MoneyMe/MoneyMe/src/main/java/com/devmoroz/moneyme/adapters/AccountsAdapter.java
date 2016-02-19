@@ -49,7 +49,7 @@ public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.Accoun
         AccountRow current = accountData.get(position);
 
         holder.accountName.setText(current.name);
-        holder.accountAvailable.setText(FormatUtils.attachAmountToTextWithoutBrackets(context.getString(R.string.balance),currency, current.total,true));
+        holder.accountAvailable.setText(FormatUtils.attachAmountToTextWithoutBrackets(context.getString(R.string.balance),currency, current.total, false));
         holder.accountExpense.setText(FormatUtils.attachAmountToTextWithoutBrackets(context.getString(R.string.header_expenses),currency, current.expense, false));
         holder.accountIcon.setImageResource(typesOfAccountIcons[current.type]);
     }

@@ -10,10 +10,8 @@
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/add_outcome_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/colorPrimary"
-        android:theme="@style/AppDefault"/>
+        style="@style/ToolbarStyle"
+        android:elevation="3dp"/>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -43,6 +41,7 @@
                 android:layout_height="wrap_content"
                 android:digits="1234567890."
                 android:hint="@string/amount"
+
                 android:imeOptions="actionNext"
                 android:inputType="numberDecimal"/>
 
@@ -70,6 +69,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
+                android:textAppearance="@style/Text.Subhead"
                 android:entries="@array/transaction_categories" />
         </LinearLayout>
 
@@ -97,7 +97,8 @@
                 android:id="@+id/add_outcome_account"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"/>
+                android:gravity="center_vertical"
+                android:textAppearance="@style/Text.Subhead"/>
 
         </LinearLayout>
 
@@ -126,12 +127,17 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:text="12-12-12"
-                android:gravity="center_vertical"
-                android:textAllCaps="false"
-                android:background="?selectableItemBackground"
-                android:onClick="showDatePickerDialog"
-                android:theme="@style/BlackInput" />
+                android:text="12 Dec."
+                style="@style/Button.Flat.Select" />
+
+            <Button
+                android:id="@+id/add_outcome_time"
+                style="@style/Button.Flat.Select"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end|center_vertical"
+                tools:text="12:00" />
 
         </LinearLayout>
 
@@ -158,12 +164,9 @@
                 android:id="@+id/add_outcome_tags"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
+                android:layout_weight="1"
                 android:text="@string/tags"
-                android:gravity="center_vertical"
-                android:textAllCaps="false"
-                android:background="?selectableItemBackground"
-                android:theme="@style/BlackInput" />
+                style="@style/Button.Flat.Select"  />
         </LinearLayout>
 
         <View
@@ -190,12 +193,9 @@
                 android:id="@+id/add_outcome_location"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
+                android:layout_weight="1"
                 android:text="@string/location"
-                android:gravity="center_vertical"
-                android:textAllCaps="false"
-                android:background="?selectableItemBackground"
-                android:theme="@style/BlackInput" />
+                style="@style/Button.Flat.Select"  />
         </LinearLayout>
 
         <View

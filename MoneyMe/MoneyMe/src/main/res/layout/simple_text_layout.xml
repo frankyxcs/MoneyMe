@@ -3,6 +3,5 @@
     android:id="@+id/textview"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:textSize="13sp"
-    android:textColor="@color/colorPrimaryText"
+    style="@style/Text.Body2"
     android:padding="6dp" />

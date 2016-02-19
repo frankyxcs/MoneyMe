@@ -19,8 +19,7 @@
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
             android:layout_weight="1"
-            android:textSize="16sp"
-            android:textColor="@color/colorPrimaryText"
+            style="@style/Text.Title"
             android:ellipsize="end"
             android:maxLines="1"
             tools:text="Название"/>
@@ -47,9 +46,8 @@
             android:id="@+id/goal_needed_available_amount"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/colorSecondaryText"
             android:layout_weight="1"
-            android:textSize="14sp"
+            style="@style/Text.Body1"
             android:ellipsize="end"
             android:maxLines="1"
             tools:text="1000/500"/>

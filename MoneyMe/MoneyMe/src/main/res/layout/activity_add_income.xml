@@ -8,10 +8,8 @@
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/add_income_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/colorPrimary"
-            android:theme="@style/AppDefault"/>
+            style="@style/ToolbarStyle"
+            android:elevation="3dp"/>
 
 
     <LinearLayout
@@ -64,6 +62,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
+            android:textAppearance="@style/Text.Subhead"
             android:entries="@array/transaction_categories" />
 
         </LinearLayout>
@@ -93,13 +92,47 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:text="12-12-12"
-            android:gravity="center_vertical"
-            android:textAllCaps="false"
-            android:background="?selectableItemBackground"
-            android:onClick="showIncomeDatePickerDialog"
-            android:theme="@style/BlackInput"/>
+            style="@style/Button.Flat.Select"
+            android:text="12 Jan" />
 
+            <Button
+                android:id="@+id/add_income_time"
+                style="@style/Button.Flat.Select"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end|center_vertical"
+                tools:text="12:00" />
+
+        </LinearLayout>
+
+        <View
+            style="@style/Divider.Thick"
+            android:layout_marginLeft="72dp"
+            android:layout_marginRight="16dp"
+            tools:ignore="RtlHardcoded" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:animateLayoutChanges="true"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp">
+
+            <ImageView
+                android:id="@+id/add_income_tags_icon"
+                style="@style/ImageView.Form"
+                android:src="@drawable/ic_tag_multiple"
+                tools:ignore="RtlHardcoded"  />
+
+            <Button
+                android:id="@+id/add_income_tags"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/tags"
+                style="@style/Button.Flat.Select" />
         </LinearLayout>
 
         <View
@@ -144,16 +177,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/coordinator_outcome">
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/add_income_save"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/floating_action_button"
-            app:fabSize="normal"
-            android:layout_gravity="bottom|right|end"
-            app:backgroundTint="@color/colorGreen"
-            android:src="@drawable/ic_fab_check" />
 
     </android.support.design.widget.CoordinatorLayout>
 

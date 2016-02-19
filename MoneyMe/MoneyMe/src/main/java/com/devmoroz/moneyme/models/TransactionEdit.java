@@ -161,7 +161,7 @@ public class TransactionEdit implements Parcelable {
         if (isTagsSet || tags != null) {
             StringBuilder builder = new StringBuilder();
             for(Tag t : tags) {
-                builder.append(t);
+                builder.append(t.getTitle());
                 builder.append(";");
             }
             return builder.toString();

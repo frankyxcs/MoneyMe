@@ -15,9 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:padding="16dp"
-        android:textSize="16sp"
-        android:theme="@style/BlackInput"/>
+        android:textAppearance="@style/Text.Subhead"/>
 
     </android.support.design.widget.TextInputLayout>
 
@@ -29,7 +27,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="16dp"
-        android:textSize="16sp"
+        android:textAppearance="@style/Text.Subhead"
         android:layout_gravity="center"
         android:text="@string/type"/>
     <Spinner
@@ -37,7 +35,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:theme="@style/BlackInput"
+        android:textAppearance="@style/Text.Subhead"
         android:minHeight="?android:attr/listPreferredItemHeight"/>
     </LinearLayout>
 
@@ -52,11 +50,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:padding="16dp"
-        android:textSize="16sp"
+        android:textAppearance="@style/Text.Subhead"
         android:inputType="number|numberDecimal"
-        android:maxLength="9"
-        android:theme="@style/BlackInput"/>
+        android:maxLength="9"/>
 
     </android.support.design.widget.TextInputLayout>
 

@@ -25,7 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:textSize="11sp"
+        style="@style/Text.Caption"
         android:text="@string/category"/>
     </LinearLayout>
 
@@ -34,7 +34,7 @@
         android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_height="wrap_content"
-        android:textSize="11sp"
+        style="@style/Text.Caption"
         android:gravity="center"
         android:text="@string/amount"/>
 
@@ -43,7 +43,7 @@
         android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_height="wrap_content"
-        android:textSize="11sp"
+        style="@style/Text.Caption"
         android:text="@string/amount_percent"
         android:gravity="center"/>
 

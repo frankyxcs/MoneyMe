@@ -81,6 +81,7 @@ public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.MainViewHolder
             super(itemView);
             selectCheckBox = (CheckBox) itemView.findViewById(R.id.selectCheckBox);
             titleTextView = (TextView) itemView.findViewById(R.id.titleTextView);
+            itemView.setOnClickListener(this);
         }
 
         public void bind(Tag model,int position, boolean isSelected) {

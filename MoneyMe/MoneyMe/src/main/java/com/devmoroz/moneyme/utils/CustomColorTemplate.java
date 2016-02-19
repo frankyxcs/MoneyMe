@@ -16,22 +16,23 @@ import java.util.List;
 public class CustomColorTemplate {
 
     public static final int[] PIECHART_COLORS = {
-            Color.rgb(192, 255, 140),
-            Color.rgb(26, 255, 255),
-            Color.rgb(255, 247, 140),
-            Color.rgb(255, 208, 140),
-            Color.rgb(176, 190, 196),
-            Color.rgb(181, 138, 255),
-            Color.rgb(255, 66, 129),
-            Color.rgb(139, 195, 74),
-            Color.rgb(106, 240, 176),
-            Color.rgb(140, 234, 255),
-            Color.rgb(255, 140, 157),
-            Color.rgb(188, 170, 164),
-            Color.rgb(140, 158, 255),
-            Color.rgb(121, 85, 72)
+            Color.parseColor("#EF5350"),
+            Color.parseColor("#EC407A"),
+            Color.parseColor("#AB47BC"),
+            Color.parseColor("#7E57C2"),
+            Color.parseColor("#5C6BC0"),
+            Color.parseColor("#42A5F5"),
+            Color.parseColor("#0097A7"),
+            Color.parseColor("#009688"),
+            Color.parseColor("#43A047"),
+            Color.parseColor("#689F38"),
+            Color.parseColor("#827717"),
+            Color.parseColor("#EF6C00"),
+            Color.parseColor("#FF5722"),
+            Color.parseColor("#8D6E63")
     };
 
+    public static final int WHITE_TEXT =  Color.parseColor("#FFFFFF");
     public static final int SECONDARY_TEXT = Color.rgb(114, 114, 114);
     public static final int INCOME_COLOR = Color.parseColor("#388E3C");
     public static final int OUTCOME_COLOR = Color.parseColor("#D32F2F");

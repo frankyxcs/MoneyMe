@@ -60,7 +60,7 @@ dependencies {
     compile 'com.google.code.gson:gson:2.5'
     compile 'io.nlopez.smartlocation:library:3.2.1'
     compile 'com.tbruyelle.rxpermissions:rxpermissions:0.5.1@aar'
-
+    compile 'uk.co.chrisjenx:calligraphy:2.1.0'
     compile files('libs/ormlite-android-4.48.jar')
     compile files('libs/ormlite-core-4.48.jar')
 }
