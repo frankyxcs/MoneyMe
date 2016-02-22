@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -51,6 +52,7 @@ public class AccountsFragment extends Fragment {
     private List<Account> accounts;
     private double totalBalance = 0;
     private CardView btnAddAccount;
+    private View transferContainerView;
 
     private TextInputLayout accountNameInput;
     private View positiveAction;
@@ -82,6 +84,7 @@ public class AccountsFragment extends Fragment {
         recyclerView = (EmptyRecyclerView) view.findViewById(R.id.accountsList);
         btnAddAccount = (CardView) view.findViewById(R.id.add_new_account);
         balanceTextView = (TextView) view.findViewById(R.id.balanceTextView);
+        transferContainerView = view.findViewById(R.id.transferContainerView);
         btnAddAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -105,6 +108,12 @@ public class AccountsFragment extends Fragment {
 
     private void CheckWallet(){
         accounts = MoneyApplication.getInstance().getAccounts();
+        if(accounts.size()>=2){
+            transferContainerView.setVisibility(View.VISIBLE);
+        }
+        else{
+            transferContainerView.setVisibility(View.GONE);
+        }
         DBHelper dbHelper = MoneyApplication.getInstance().GetDBHelper();
         data.clear();
         totalBalance = 0;

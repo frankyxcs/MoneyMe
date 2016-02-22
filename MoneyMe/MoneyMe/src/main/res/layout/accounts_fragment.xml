@@ -9,24 +9,59 @@
         android:id="@+id/balanceContainerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
         android:gravity="center_vertical"
         android:minHeight="72dp"
         android:padding="16dp"
         tools:ignore="UnusedAttribute">
 
+        <FrameLayout
+            android:id="@+id/transferContainerView"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:layout_width="56dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center_vertical"
+                android:scaleType="centerInside"
+                android:src="@drawable/circle"
+                tools:ignore="ContentDescription,RtlHardcoded" />
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center_vertical"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_swap_vertical"
+                android:contentDescription="@string/transfer_money"
+                tools:ignore="RtlHardcoded"
+                android:tint="@color/colorGreen" />
+
+        </FrameLayout>
+
         <me.grantland.widget.AutofitTextView
             android:id="@+id/balanceTextView"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="56dp"
+            android:gravity="center"
             android:singleLine="true"
-            android:textColor="?android:textColorPrimaryInverse"
+            android:textColor="@color/colorPrimary"
             android:textAppearance="@style/Text.Display2"
             tools:ignore="RtlHardcoded"
             tools:text="20,461.39 $" />
 
     </LinearLayout>
+    <View
+        style="@style/Divider"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        tools:ignore="RtlHardcoded" />
 
     <android.support.v7.widget.CardView
         android:id="@+id/add_new_account"

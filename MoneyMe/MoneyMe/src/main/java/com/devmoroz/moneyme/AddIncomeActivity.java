@@ -63,7 +63,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-public class AddIncomeActivity extends AppCompatActivity implements View.OnClickListener{
+public class AddIncomeActivity extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener{
 
     private static final int TAGS_REQUEST_CODE = 3123;
 
@@ -106,13 +106,17 @@ public class AddIncomeActivity extends AppCompatActivity implements View.OnClick
         timeButton.setText(TimeUtils.formatShortTime(getApplicationContext(), new Date(transactionEdit.getDate())));
         floatingAmountLabel = (TextInputLayout) findViewById(R.id.text_input_layout_income_amount);
 
-        dateButton.setOnClickListener(this);
-        timeButton.setOnClickListener(this);
-        tagsButton.setOnClickListener(this);
-
+        initButtonListeners();
         initToolbar();
         initAccountSpinner();
         setupFloatingLabelError();
+    }
+
+    private void initButtonListeners() {
+        dateButton.setOnClickListener(this);
+        timeButton.setOnClickListener(this);
+        tagsButton.setOnClickListener(this);
+        tagsButton.setOnLongClickListener(this);
     }
 
     private void saveNewIncomeTransaction() {
@@ -277,6 +281,17 @@ public class AddIncomeActivity extends AppCompatActivity implements View.OnClick
     }
 
     @Override
+    public boolean onLongClick(View v) {
+        switch(v.getId()){
+            case R.id.add_income_tags:
+                transactionEdit.setTags(null);
+                tagsButton.setText(R.string.tags);
+                return true;
+        }
+        return false;
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
@@ -297,6 +312,7 @@ public class AddIncomeActivity extends AppCompatActivity implements View.OnClick
         }
         intent.putExtra(Constants.EXTRA_SELECTED_TAGS, parcelables);
         startActivityForResult(intent, TAGS_REQUEST_CODE);
+        overridePendingTransition(R.anim.activity_open_translate,R.anim.activity_close_scale);
     }
 
     public static List<Tag> getTagsExtra(Intent data) {

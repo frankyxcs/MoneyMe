@@ -4,6 +4,7 @@ package com.devmoroz.moneyme.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.devmoroz.moneyme.utils.FormatUtils;
 import com.google.android.gms.maps.model.LatLng;
 
 public class Location implements Parcelable {
@@ -126,5 +127,26 @@ public class Location implements Parcelable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getStringLatLng(){
+        return latlng.latitude+","+latlng.longitude;
+    }
+
+    public static LatLng getCoordinatesFromString(String latlng) {
+        double lat = 50.4021702;
+        double lng  = 30.3926087;
+        if(FormatUtils.isNotEmpty(latlng)){
+            String[] ltln = latlng.split(",");
+            try {
+                lat = Double.parseDouble(ltln[0]);
+                lng = Double.parseDouble(ltln[1]);
+                return new LatLng(lat,lng);
+            } catch (NumberFormatException | NullPointerException var3) {
+                lat = 50.4021702;
+                lng  = 30.3926087;
+            }
+        }
+        return new LatLng(lat,lng);
     }
 }

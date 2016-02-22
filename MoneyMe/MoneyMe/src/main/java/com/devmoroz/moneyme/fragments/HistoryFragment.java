@@ -43,6 +43,9 @@ import java.util.List;
 
 public class HistoryFragment extends Fragment {
 
+    private final int ACTION_SEARCHED_TRIGGERED = 1;
+    private final int ACTION_SEARCHED_CANCELED = 2;
+
     private List<Transaction> mListWalletEntries = Collections.emptyList();
     private List<SectionedRecyclerViewAdapter.Section> mSections;
     private List<Account> accounts;
@@ -58,6 +61,7 @@ public class HistoryFragment extends Fragment {
     private TextView walletDatePeriod;
     private View view;
     private FloatingActionsMenu fab;
+    private boolean isEmptyTextChanged = false;
 
     private HistoryAdapter wAdapter;
 
@@ -224,16 +228,37 @@ public class HistoryFragment extends Fragment {
         for (Transaction item : mListWalletEntries) {
             String notes = item.getNotes() != null ? item.getNotes() : "";
             String category = item.getCategory() != null ? item.getCategory().getTitle() : item.getAccountName();
-            if (category.toLowerCase().contains(term) || notes.toLowerCase().contains(term)) {
+            String accountName = item.getAccountName();
+            String tags = item.getTags() != null ? item.getTags() : "";
+            String locationName = item.getLocationName() != null ? item.getLocationName() : "";
+            if (category.toLowerCase().contains(term) || notes.toLowerCase().contains(term) || accountName.toLowerCase().contains(term) || tags.toLowerCase().contains(term) || locationName.toLowerCase().contains(term)) {
                 searchedItems.add(item);
             }
         }
+        changeEmptyText(ACTION_SEARCHED_TRIGGERED);
         wAdapter.setInOutData(searchedItems);
         initHistoryAdapter(searchedItems);
     }
 
+    private void changeEmptyText(int action) {
+        TextView text1 = (TextView) mTextError.findViewById(R.id.walletHistoryEmptyText1);
+        TextView text2 = (TextView) mTextError.findViewById(R.id.walletHistoryEmptyText2);
+        switch (action){
+            case ACTION_SEARCHED_TRIGGERED:
+                text1.setText(R.string.no_transactions_found);
+                text2.setVisibility(View.INVISIBLE);
+                break;
+            case ACTION_SEARCHED_CANCELED:
+                text1.setText(R.string.no_data_available);
+                text2.setVisibility(View.VISIBLE);
+                break;
+        }
+
+    }
+
     @Subscribe
     public void OnSearchCanceled(SearchCanceled event) {
+        changeEmptyText(ACTION_SEARCHED_CANCELED);
         CheckWallet();
     }
 }

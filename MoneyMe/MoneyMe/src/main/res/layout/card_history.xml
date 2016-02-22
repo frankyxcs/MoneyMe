@@ -123,6 +123,33 @@
                             android:text="Account/Date" />
 
                     </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/card_main_location_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="4dp"
+                        android:paddingBottom="4dp"
+                        >
+
+                        <ImageView
+                            android:layout_height="20dp"
+                            android:layout_width="20dp"
+                            android:src="@drawable/ic_map_marker"/>
+
+                        <TextView
+                            android:id="@+id/card_main_location_link"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginLeft="4dp"
+                            android:singleLine="true"
+                            android:clickable="true"
+                            android:textColor="@color/colorPrimaryDark"
+                            style="@style/Text.Body1"
+                            android:text="Main St." />
+
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
             <TextView

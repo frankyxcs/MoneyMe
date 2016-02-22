@@ -38,6 +38,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -90,7 +91,7 @@ import java.util.List;
 import static com.devmoroz.moneyme.utils.PhotoUtil.extractImageUrlFromGallery;
 import static com.devmoroz.moneyme.utils.PhotoUtil.setImageWithGlide;
 
-public class AddOutcomeActivity extends AppCompatActivity implements View.OnClickListener {
+public class AddOutcomeActivity extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener {
 
     private static final int FROM_GALLERY_REQUEST_CODE = 1;
     private static final int SAVE_REQUEST_CODE = 2;
@@ -107,9 +108,12 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
     private Button time;
     private Button locationButton;
     private Button tagsButton;
+    private Button chequeButton;
     private Spinner categorySpin;
     private ImageView categoryColor;
     private Spinner accountSpin;
+    private LinearLayout album;
+    private LinearLayout imageContainerView;
     private ViewGroup ll_album;
     private View add;
 
@@ -160,31 +164,38 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
         time = (Button) findViewById(R.id.add_outcome_time);
         tagsButton = (Button) findViewById(R.id.add_outcome_tags);
         locationButton = (Button) findViewById(R.id.add_outcome_location);
+        chequeButton = (Button) findViewById(R.id.add_outcome_cheque);
         categorySpin = (Spinner) findViewById(R.id.add_outcome_category);
         categoryColor = (ImageView) findViewById(R.id.add_outcome_category_color);
         accountSpin = (Spinner) findViewById(R.id.add_outcome_account);
         date.setText(TimeUtils.formatShortDate(getApplicationContext(), new Date(transactionEdit.getDate())));
         time.setText(TimeUtils.formatShortTime(getApplicationContext(), new Date(transactionEdit.getDate())));
         floatingAmountLabel = (TextInputLayout) findViewById(R.id.text_input_layout_out_amount);
+        album = (LinearLayout) findViewById(R.id.album);
+        imageContainerView = (LinearLayout) findViewById(R.id.imageContainerView);
         ll_album = (ViewGroup) findViewById(R.id.ll_album);
         add = View.inflate(this, R.layout.item_photo, null);
-        chequeImage = (ImageView) add.findViewById(R.id.add_outcome_cheque);
-        imageDeletePhoto = (ImageView) add.findViewById(R.id.delete_outcome_cheque);
+        chequeImage = (ImageView) add.findViewById(R.id.image_cheque);
+        imageDeletePhoto = (ImageView) add.findViewById(R.id.image_delete_cheque);
         ll_album.addView(add);
 
-        chequeImage.setOnClickListener(this);
-        imageDeletePhoto.setOnClickListener(this);
-        locationButton.setOnClickListener(this);
-        tagsButton.setOnClickListener(this);
-        date.setOnClickListener(this);
-        time.setOnClickListener(this);
 
-
-
+        initButtonListeners();
         initToolbar();
         initCategorySpinner();
         initAccountSpinner();
         setupFloatingLabelError();
+    }
+
+    private void initButtonListeners() {
+        chequeButton.setOnClickListener(this);
+        imageDeletePhoto.setOnClickListener(this);
+        locationButton.setOnClickListener(this);
+        locationButton.setOnLongClickListener(this);
+        tagsButton.setOnClickListener(this);
+        tagsButton.setOnLongClickListener(this);
+        date.setOnClickListener(this);
+        time.setOnClickListener(this);
     }
 
     @Override
@@ -438,6 +449,7 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
         }
         intent.putExtra(Constants.EXTRA_SELECTED_TAGS, parcelables);
         startActivityForResult(intent, TAGS_REQUEST_CODE);
+        overridePendingTransition(R.anim.activity_open_translate,R.anim.activity_close_scale);
     }
 
     private void takePhoto() {
@@ -478,7 +490,8 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
     private void setPic() {
         if (FormatUtils.isNotEmpty(transactionEdit.getPhotoPath())) {
             setImageWithGlide(getApplicationContext(), transactionEdit.getPhotoPath(), chequeImage);
-            imageDeletePhoto.setVisibility(View.VISIBLE);
+            imageContainerView.setVisibility(View.GONE);
+            album.setVisibility(View.VISIBLE);
         }
     }
 
@@ -487,10 +500,11 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
             return;
         }
         if (transactionEdit.getPhotoPath() != null && imageDeletePhoto != null) {
-            imageDeletePhoto.setVisibility(View.INVISIBLE);
+            imageContainerView.setVisibility(View.VISIBLE);
+            album.setVisibility(View.GONE);
             photoFileName = null;
             transactionEdit.setPhotoPath(null);
-            chequeImage.setImageResource(R.drawable.ic_paperclip);
+            chequeImage.setImageResource(R.drawable.ic_image_black);
         }
     }
 
@@ -518,25 +532,6 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
                         }
                     })
                     .build();
-
-            autoCompView.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                }
-
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    if (s.length() == 0) {
-                        dialog.getActionButton(DialogAction.POSITIVE).setEnabled(false);
-                    }
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-                }
-            });
-
             dialog.show();
         });
 
@@ -608,10 +603,25 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
             case R.id.add_outcome_cheque:
                 addPictureAttachment();
                 break;
-            case R.id.delete_outcome_cheque:
+            case R.id.image_delete_cheque:
                 removePic();
                 break;
         }
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        switch(v.getId()){
+            case R.id.add_outcome_location:
+                transactionEdit.setLocation(null);
+                locationButton.setText(R.string.location);
+                return true;
+            case R.id.add_outcome_tags:
+                transactionEdit.setTags(null);
+                tagsButton.setText(R.string.tags);
+                return true;
+        }
+        return false;
     }
 
     public static class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {

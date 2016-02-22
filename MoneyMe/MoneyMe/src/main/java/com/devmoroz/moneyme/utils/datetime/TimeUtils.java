@@ -30,6 +30,16 @@ public class TimeUtils {
         return format.format(time);
     }
 
+    public static String formatShortTime(Context context, long date) {
+        Date time = new Date(date);
+        return formatShortTime(context, time);
+    }
+
+    public static String formatShortDate(Context context, long date) {
+        Date dateTime = new Date(date);
+        return formatShortDate(context,dateTime);
+    }
+
     public static String formatShortDate(Context context, Date date) {
         StringBuilder sb = new StringBuilder();
         Formatter formatter = new Formatter(sb);

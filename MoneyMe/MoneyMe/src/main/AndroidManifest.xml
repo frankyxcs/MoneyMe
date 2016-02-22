@@ -11,6 +11,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-feature android:glEsVersion="0x00020000" android:required="true"/>
 
     <application
         android:name=".MoneyApplication"
@@ -48,6 +49,10 @@
         <activity android:name=".TagsActivity" android:screenOrientation="portrait"
             android:label="@string/tags"
             android:configChanges="orientation|screenSize" android:windowSoftInputMode="adjustResize">
+        </activity>
+
+        <activity android:name=".MapActivity"
+            android:label="@string/map"  android:windowSoftInputMode="stateAlwaysHidden">
         </activity>
 
         <activity android:name=".AddIncomeActivity" android:screenOrientation="portrait"

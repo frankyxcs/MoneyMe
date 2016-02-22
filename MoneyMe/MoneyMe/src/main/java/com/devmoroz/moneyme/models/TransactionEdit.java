@@ -193,6 +193,20 @@ public class TransactionEdit implements Parcelable {
         return null;
     }
 
+    public String getLocationName() {
+        if (isLocationSet || location != null) {
+            return location.getName();
+        }
+        return null;
+    }
+
+    public String getLocationLatLng() {
+        if (isLocationSet || location != null) {
+            return location.getStringLatLng();
+        }
+        return null;
+    }
+
     public void setLocation(Location location) {
         this.location = location;
         isLocationSet = true;
@@ -244,6 +258,8 @@ public class TransactionEdit implements Parcelable {
         transaction.setNotes(getNote());
         transaction.setType(getTransactionType());
         transaction.setPhoto(getPhotoPath());
+        transaction.setLocationName(getLocationName());
+        transaction.setLocation(getLocationLatLng());
 
         return transaction;
     }

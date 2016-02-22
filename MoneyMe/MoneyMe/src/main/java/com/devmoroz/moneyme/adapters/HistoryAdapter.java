@@ -5,20 +5,28 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.style.UnderlineSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.devmoroz.moneyme.DetailsActivity;
 import com.devmoroz.moneyme.FullScreenImageActivity;
+import com.devmoroz.moneyme.MapActivity;
 import com.devmoroz.moneyme.R;
+import com.devmoroz.moneyme.logging.L;
+import com.devmoroz.moneyme.models.MapMode;
 import com.devmoroz.moneyme.models.Transaction;
 import com.devmoroz.moneyme.models.TransactionType;
+import com.devmoroz.moneyme.utils.AppUtils;
 import com.devmoroz.moneyme.utils.Constants;
 import com.devmoroz.moneyme.utils.CustomColorTemplate;
 import com.devmoroz.moneyme.utils.FormatUtils;
@@ -39,6 +47,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
 
     public interface Callback {
         void onDeleteClick(String id, TransactionType type);
+
         void onEditClick(String id, TransactionType type);
     }
 
@@ -75,9 +84,9 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
         ImageView colorCircle = holder.colorCircle;
         TextView tagsTextView = holder.textTags;
 
-        if(wData.getType() == TransactionType.INCOME){
+        if (wData.getType() == TransactionType.INCOME) {
             colorCircle.setColorFilter(CustomColorTemplate.INCOME_COLOR);
-        }else{
+        } else {
             colorCircle.setColorFilter(wData.getCategory().getColor());
         }
 
@@ -87,15 +96,14 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
         textCircle.setText(categ.substring(0, 1));
         textDateAdded.setText(TimeUtils.formatHumanFriendlyShortDate(appContext, wData.getDateLong()));
 
-        if(FormatUtils.isNotEmpty(wData.getNotes())){
+        if (FormatUtils.isNotEmpty(wData.getNotes())) {
             textNotes.setText(wData.getNotes());
             textNotes.setVisibility(View.VISIBLE);
-        }
-        else {
+        } else {
             textNotes.setText(wData.getNotes());
             textNotes.setVisibility(View.GONE);
         }
-        if (wData.getTags()!= null && wData.getTags().length() > 0) {
+        if (wData.getTags() != null && wData.getTags().length() > 0) {
             final int tagBackgroundColor = ThemeUtils.getColor(appContext, R.attr.backgroundColorSecondary);
             final float tagBackgroundRadius = appContext.getResources().getDimension(R.dimen.tag_radius);
             final SpannableStringBuilder tags = new SpannableStringBuilder();
@@ -111,30 +119,52 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
             tagsTextView.setVisibility(View.INVISIBLE);
         }
 
-        if(FormatUtils.isNotEmpty(wData.getPhoto())){
-            PhotoUtil.setImageWithGlide(appContext,wData.getPhoto(),photoView);
+        if (FormatUtils.isNotEmpty(wData.getPhoto())) {
+            PhotoUtil.setImageWithGlide(appContext, wData.getPhoto(), photoView);
             photoView.setVisibility(View.VISIBLE);
             holder.attachedPhoto.setOnClickListener(v -> {
-                Context context = v.getContext();
-                Intent intent = new Intent(context, FullScreenImageActivity.class);
+                Intent intent = new Intent(appContext, FullScreenImageActivity.class);
                 intent.putExtra(Constants.IMAGE_PATH, wData.getPhoto());
 
-                context.startActivity(intent);
+                appContext.startActivity(intent);
             });
-        }
-        else
-        {
+        } else {
             photoView.setVisibility(View.GONE);
             photoView.setImageDrawable(null);
         }
 
+        if (FormatUtils.isNotEmpty(wData.getLocationName())) {
+            SpannableString content = new SpannableString(wData.getLocationName());
+            content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
+            holder.textLocation.setText(content);
+            holder.textLocation.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (AppUtils.isNetworkOn(appContext)) {
+                        Intent intent = new Intent(appContext, MapActivity.class);
+                        intent.putExtra(Constants.EXTRA_MAP_MODE, MapMode.Single);
+                        intent.putExtra(Constants.EXTRA_MAP_ITEM_DETAILS, holder.itemId);
+
+                        appContext.startActivity(intent);
+
+                    }
+                    else{
+                        L.T(appContext,appContext.getString(R.string.no_internet_connection));
+                    }
+                }
+            });
+            holder.locationContainer.setVisibility(View.VISIBLE);
+        } else {
+            holder.locationContainer.setVisibility(View.GONE);
+            holder.textLocation.setText("");
+        }
+
         holder.mView.setOnClickListener(v -> {
-            Context context = v.getContext();
-            Intent intent = new Intent(context, DetailsActivity.class);
+            Intent intent = new Intent(appContext, DetailsActivity.class);
             intent.putExtra(Constants.DETAILS_ITEM_TYPE, holder.itemType.toString());
             intent.putExtra(Constants.DETAILS_ITEM_ID, holder.itemId);
 
-            context.startActivity(intent);
+            appContext.startActivity(intent);
         });
     }
 
@@ -143,7 +173,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
         return transactions.size();
     }
 
-    public class MainViewHolder extends RecyclerView.ViewHolder{
+    public class MainViewHolder extends RecyclerView.ViewHolder {
 
         View mView;
         TextView textAmount;
@@ -156,10 +186,12 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
         TextView textTags;
         ImageButton deleteButton;
         ImageButton editButton;
+        LinearLayout locationContainer;
+        TextView textLocation;
         String itemId;
         TransactionType itemType;
 
-        public void setItemDetails(String id, TransactionType type){
+        public void setItemDetails(String id, TransactionType type) {
             itemId = id;
             itemType = type;
         }
@@ -177,18 +209,20 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
             this.textTags = (TextView) v.findViewById(R.id.card_main_tags);
             this.deleteButton = (ImageButton) v.findViewById(R.id.card_main_deleteButton);
             this.editButton = (ImageButton) v.findViewById(R.id.card_main_editButton);
+            this.locationContainer = (LinearLayout) v.findViewById(R.id.card_main_location_container);
+            this.textLocation = (TextView) v.findViewById(R.id.card_main_location_link);
 
             this.deleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mCallback.onDeleteClick(itemId,itemType);
+                    mCallback.onDeleteClick(itemId, itemType);
                 }
             });
 
             this.editButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mCallback.onEditClick(itemId,itemType);
+                    mCallback.onEditClick(itemId, itemType);
                 }
             });
         }

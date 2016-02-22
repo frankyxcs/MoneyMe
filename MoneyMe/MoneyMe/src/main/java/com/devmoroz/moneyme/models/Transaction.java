@@ -1,7 +1,10 @@
 package com.devmoroz.moneyme.models;
 
 
+import android.content.Context;
+
 import com.devmoroz.moneyme.utils.CurrencyCache;
+import com.devmoroz.moneyme.utils.datetime.TimeUtils;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -41,6 +44,9 @@ public class Transaction {
 
     @DatabaseField
     private String location;
+
+    @DatabaseField
+    private String locationName;
 
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = ACCOUNT_ID_FIELD_NAME)
     private Account account;
@@ -153,6 +159,14 @@ public class Transaction {
         return location;
     }
 
+    public String getLocationName() {
+        return locationName;
+    }
+
+    public void setLocationName(String locationName) {
+        this.locationName = locationName;
+    }
+
     public Account getAccount() {
         return account;
     }
@@ -214,5 +228,21 @@ public class Transaction {
         decimalFormat.setGroupingSize(3);
 
         return decimalFormat.format(amount);
+    }
+
+    public String getMarkerSnippet(Context context,Currency c){
+        StringBuilder sb = new StringBuilder();
+        if (c == null) {
+            c = Currency.EMPTY;
+        }
+        sb.append(category!= null ? category.getTitle() : account.getName());
+        sb.append(":");
+        String a = c.getFormat().format(amount);
+        sb.append(a);
+        sb.append(System.lineSeparator());
+
+        sb.append(TimeUtils.formatHumanFriendlyShortDate(context,getDateLong()) + "," + TimeUtils.formatShortTime(context,getDateLong()));
+
+        return sb.toString();
     }
 }

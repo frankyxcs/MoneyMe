@@ -28,6 +28,7 @@
     <string name="new_picture">Сфотографировать</string>
     <string name="select_from_gallery">Выбрать из галереи</string>
     <string name="select_image">Выберите фото..</string>
+    <string name="cheque_image">Фотография чека</string>
     <string name="location">Местоположение</string>
     <string name="total_amount">Общая сумма</string>
     <string name="balance">Баланс</string>
@@ -253,6 +254,7 @@
     <string name="app_key">sdasdas</string>
     <string name="greeting">Добро пожаловать</string>
     <string name="tags">Теги</string>
+    <string name="map">Карта</string>
     <string name="permission_not_granted">Разрешение не получено.</string>
     <string name="permission_coarse_location">Предоставьте разрешение на определение вашего местоположения для добавления координат к транзакции</string>
     <string name="search_location">Введите адрес</string>
@@ -263,4 +265,7 @@
     <string name="tag_with_current_name_exist">Тег с таким именем уже существует.</string>
     <string name="add_new_tag">Добавить тег</string>
     <string name="add_tag_dialog_title">Название</string>
+    <string name="transfer_money">Трансфер средств</string>
+    <string name="no_internet_connection">Проверьте подключение к интернету и попробуйте еще раз.</string>
+    <string name="no_transactions_found">Ничего не найдено :(</string>
 </resources>

@@ -205,6 +205,43 @@
             tools:ignore="RtlHardcoded" />
 
         <LinearLayout
+            android:id="@+id/imageContainerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:animateLayoutChanges="true"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp">
+
+            <ImageView
+                android:id="@+id/add_outcome_image_icon"
+                style="@style/ImageView.Form"
+                android:src="@drawable/ic_image_black"
+                tools:ignore="RtlHardcoded"  />
+
+            <Button
+                android:id="@+id/add_outcome_cheque"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/cheque_image"
+                style="@style/Button.Flat.Select"  />
+        </LinearLayout>
+
+        <View
+            style="@style/Divider.Thick"
+            android:layout_marginLeft="72dp"
+            android:layout_marginRight="16dp"
+            tools:ignore="RtlHardcoded" />
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -235,20 +272,14 @@
 
         </LinearLayout>
 
-    </LinearLayout>
-</ScrollView>
-    <android.support.design.widget.CoordinatorLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/coordinator_outcome">
-
         <LinearLayout
             android:id="@+id/album"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:layout_margin="8dp"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="16dp"
+            android:visibility="gone">
             <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -261,5 +292,10 @@
             </HorizontalScrollView>
         </LinearLayout>
 
-    </android.support.design.widget.CoordinatorLayout>
+    </LinearLayout>
+</ScrollView>
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/coordinator_outcome"/>
 </LinearLayout>

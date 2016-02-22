@@ -4,7 +4,7 @@
     android:layout_height="84dp" >
     <ImageView
         android:layout_margin="2dp"
-        android:id="@+id/add_outcome_cheque"
+        android:id="@+id/image_cheque"
         android:src="@drawable/ic_image_black"
         android:layout_width="80dp"
         android:layout_height="80dp"
@@ -13,11 +13,10 @@
         android:scaleType="centerCrop" >
     </ImageView>
     <ImageView
-        android:id="@+id/delete_outcome_cheque"
+        android:id="@+id/image_delete_cheque"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_alignParentRight="true"
         android:layout_margin="2dp"
-        android:visibility="invisible"
         android:src="@drawable/ic_close" />
 </RelativeLayout>

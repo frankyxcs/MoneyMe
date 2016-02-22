@@ -31,6 +31,24 @@ public class TransactionDAO extends BaseDaoImpl<Transaction, UUID> {
         return result;
     }
 
+    public List<Transaction> queryTransactionsWithLocationForCategory(String category) throws SQLException {
+        QueryBuilder<Transaction, UUID> queryBuilder = queryBuilder();
+        queryBuilder.where().eq("category_id", UUID.fromString(category)).and().isNotNull("location");
+        PreparedQuery<Transaction> preparedQuery = queryBuilder.prepare();
+        List<Transaction> result = query(preparedQuery);
+
+        return result;
+    }
+
+    public List<Transaction> queryTransactionsWithLocation() throws SQLException {
+        QueryBuilder<Transaction, UUID> queryBuilder = queryBuilder();
+        queryBuilder.where().isNotNull("location");
+        PreparedQuery<Transaction> preparedQuery = queryBuilder.prepare();
+        List<Transaction> result = query(preparedQuery);
+
+        return result;
+    }
+
     public float getTotalSpendingForCategoryForPeriod(String category, long start, long end) throws SQLException {
         float val = 0f;
         QueryBuilder<Transaction, UUID> queryBuilder = queryBuilder();
