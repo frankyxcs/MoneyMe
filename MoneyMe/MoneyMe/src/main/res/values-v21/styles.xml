@@ -23,16 +23,6 @@
         <item name="colorControlNormal">@color/colorPrimaryText</item>
     </style>
 
-    <style name="DetailsIncome" parent="AppDefault">
-        <item name="colorPrimary">@color/fab_income_pressed</item>
-        <item name="colorPrimaryDark">@color/fab_income_normal</item>
-    </style>
-
-    <style name="DetailsOutcome" parent="AppDefault">
-        <item name="colorPrimary">@color/fab_outcome_pressed</item>
-        <item name="colorPrimaryDark">@color/fab_outcome_normal</item>
-    </style>
-
     <style name="AppTheme.DialogTheme" parent="Theme.AppCompat.Light.Dialog">
         <item name="colorAccent">@color/colorPrimary</item>
     </style>
@@ -184,5 +174,9 @@
         <item name="contentInsetStart">72dp</item>
         <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
         <item name="theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
+    </style>
+
+    <style name="ToolbarStyle.Transparent">
+        <item name="android:background">@android:color/transparent</item>
     </style>
 </resources>

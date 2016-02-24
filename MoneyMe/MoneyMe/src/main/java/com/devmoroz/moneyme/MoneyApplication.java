@@ -20,6 +20,8 @@ import com.devmoroz.moneyme.utils.CurrencyCache;
 import com.devmoroz.moneyme.utils.Preferences;
 import com.squareup.otto.Subscribe;
 
+import net.danlew.android.joda.JodaTimeAndroid;
+
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
@@ -120,6 +122,7 @@ public class MoneyApplication extends Application {
                         .setFontAttrId(R.attr.fontPath)
                         .build()
         );
+        JodaTimeAndroid.init(this);
         initialize();
     }
 

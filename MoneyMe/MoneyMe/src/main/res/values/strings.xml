@@ -8,6 +8,7 @@
     <string name="view_navigation_close">Close</string>
     <string name="income_toolbar_name">Доход</string>
     <string name="outcome_toolbar_name">Расход</string>
+    <string name="transfer_toolbar_name">Перевод</string>
     <string name="default_add_toolbar_name">Кошелек</string>
     <string name="text_undo">Отмена</string>
     <string name="added_income" formatted="false">%s: добавлено %10.2f%s</string>
@@ -28,8 +29,8 @@
     <string name="new_picture">Сфотографировать</string>
     <string name="select_from_gallery">Выбрать из галереи</string>
     <string name="select_image">Выберите фото..</string>
-    <string name="cheque_image">Фотография чека</string>
-    <string name="location">Местоположение</string>
+    <string name="cheque_image">Добавьте фотографию</string>
+    <string name="location">Укажите местоположение</string>
     <string name="total_amount">Общая сумма</string>
     <string name="balance">Баланс</string>
     <string name="header_expenses">Расходы</string>
@@ -40,6 +41,8 @@
     <string name="note">Заметка</string>
     <string name="add_account">Добавить счёт</string>
     <string name="account_name">Название счёта</string>
+    <string name="title">Название</string>
+    <string name="content">Содержание</string>
     <string name="save">Сохранить</string>
     <string name="cancel">Отмена</string>
     <string name="add_amount">Добавить сумму</string>
@@ -186,6 +189,10 @@
     <string name="history_period_12">Год</string>
     <string name="history_period_all">За всё время</string>
 
+    <string name="period_week">Неделя</string>
+    <string name="period_month">Месяц</string>
+    <string name="period_year">Год</string>
+
     <string name="backup_frequency_everyday">Каждый день</string>
     <string name="backup_frequency_everyweek">Раз в неделю</string>
     <string name="backup_frequency_everymonth">Раз в месяц</string>
@@ -254,6 +261,7 @@
     <string name="app_key">sdasdas</string>
     <string name="greeting">Добро пожаловать</string>
     <string name="tags">Теги</string>
+    <string name="add_tags">Выберите теги</string>
     <string name="map">Карта</string>
     <string name="permission_not_granted">Разрешение не получено.</string>
     <string name="permission_coarse_location">Предоставьте разрешение на определение вашего местоположения для добавления координат к транзакции</string>
@@ -262,10 +270,13 @@
     <string name="confirm">Подтвердить</string>
     <string name="location_not_found">Местоположение не определено</string>
     <string name="tags_empty_text">У вас еще нет сохраненных тегов. Нажмите \"+\" чтобы добавить новый.</string>
+    <string name="todo_empty_text">Здесь будут ваши напоминания и заметки. Нажмите \"+\" чтобы добавить новое задание.</string>
     <string name="tag_with_current_name_exist">Тег с таким именем уже существует.</string>
     <string name="add_new_tag">Добавить тег</string>
     <string name="add_tag_dialog_title">Название</string>
     <string name="transfer_money">Трансфер средств</string>
     <string name="no_internet_connection">Проверьте подключение к интернету и попробуйте еще раз.</string>
     <string name="no_transactions_found">Ничего не найдено :(</string>
+    <string name="trends">Тенденции</string>
+    <string name="remind_me_text">Напомнить</string>
 </resources>

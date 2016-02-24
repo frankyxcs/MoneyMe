@@ -12,6 +12,7 @@ import android.text.style.UnderlineSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -34,6 +35,8 @@ import com.devmoroz.moneyme.utils.PhotoUtil;
 import com.devmoroz.moneyme.utils.ThemeUtils;
 import com.devmoroz.moneyme.utils.datetime.TimeUtils;
 import com.devmoroz.moneyme.widgets.TextBackgroundSpan;
+
+import org.joda.time.DateTime;
 
 import java.util.Collections;
 import java.util.List;
@@ -77,7 +80,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
 
         TextView textAmount = holder.textAmount;
         TextView textCategory = holder.textCategory;
-        TextView textDateAdded = holder.textDateAdded;
+        TextView textAccountDetails = holder.textDateAdded;
         TextView textCircle = holder.textCircle;
         ImageView photoView = holder.attachedPhoto;
         TextView textNotes = holder.textNotes;
@@ -91,10 +94,24 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
         }
 
         textAmount.setText(wData.getFormatedAmount());
-        String categ = wData.getType() == TransactionType.OUTCOME ? wData.getCategory().getTitle() : wData.getAccountName();
-        textCategory.setText(categ);
-        textCircle.setText(categ.substring(0, 1));
-        textDateAdded.setText(TimeUtils.formatHumanFriendlyShortDate(appContext, wData.getDateLong()));
+
+        String accountName = wData.getAccountName();
+        String title = "";
+        switch (wData.getType()){
+            case INCOME:
+                title = appContext.getString(R.string.income_toolbar_name);
+                break;
+            case OUTCOME:
+                title = wData.getCategory().getTitle();
+                break;
+            case TRANSFER:
+                title = appContext.getString(R.string.transfer_toolbar_name);
+        }
+        textCategory.setText(title);
+        DateTime date = new DateTime(wData.getDateAdded());
+        textCircle.setText(date.dayOfWeek().getAsShortText());
+
+        textAccountDetails.setText(accountName);
 
         if (FormatUtils.isNotEmpty(wData.getNotes())) {
             textNotes.setText(wData.getNotes());
@@ -187,7 +204,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
         ImageButton deleteButton;
         ImageButton editButton;
         LinearLayout locationContainer;
-        TextView textLocation;
+        Button textLocation;
         String itemId;
         TransactionType itemType;
 
@@ -210,7 +227,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
             this.deleteButton = (ImageButton) v.findViewById(R.id.card_main_deleteButton);
             this.editButton = (ImageButton) v.findViewById(R.id.card_main_editButton);
             this.locationContainer = (LinearLayout) v.findViewById(R.id.card_main_location_container);
-            this.textLocation = (TextView) v.findViewById(R.id.card_main_location_link);
+            this.textLocation = (Button) v.findViewById(R.id.card_main_location_link);
 
             this.deleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override

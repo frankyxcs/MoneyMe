@@ -56,7 +56,7 @@ dependencies {
     compile 'com.dropbox.core:dropbox-core-sdk:2.0-beta-2'
     compile 'com.github.paolorotolo:appintro:3.4.0'
     compile 'me.grantland:autofittextview:0.2.+'
-    compile 'joda-time:joda-time:2.7'
+    compile 'net.danlew:android.joda:2.9.2'
     compile 'com.google.code.gson:gson:2.5'
     compile 'io.nlopez.smartlocation:library:3.2.1'
     compile 'com.tbruyelle.rxpermissions:rxpermissions:0.5.1@aar'

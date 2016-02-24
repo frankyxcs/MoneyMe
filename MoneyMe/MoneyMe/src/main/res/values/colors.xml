@@ -6,8 +6,8 @@
     <color name="colorAccent">#FFD740</color>
     <color name="colorAccentDark">#FFC400</color>
     <color name="colorControlHighlight">#FFE57F</color>
-    <color name="colorPrimaryTextLighter">#212121</color>
-    <color name="colorPrimaryText">#9b000000</color>
+    <color name="colorPrimaryTextLighter">#424242</color>
+    <color name="colorPrimaryText">#212121</color>
     <color name="colorSecondaryText">#727272</color>
     <color name="colorDivider">#B6B6B6</color>
     <color name="mainBackground">#E3F2FD</color>

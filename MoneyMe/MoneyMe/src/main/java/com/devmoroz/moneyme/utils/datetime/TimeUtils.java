@@ -35,9 +35,14 @@ public class TimeUtils {
         return formatShortTime(context, time);
     }
 
+    public static String formatHumanFriendlyShortDateTime(Context context, long date) {
+        Date time = new Date(date);
+        return formatHumanFriendlyShortDate(context,date) + " " + formatShortTime(context, time);
+    }
+
     public static String formatShortDate(Context context, long date) {
         Date dateTime = new Date(date);
-        return formatShortDate(context,dateTime);
+        return formatShortDate(context, dateTime);
     }
 
     public static String formatShortDate(Context context, Date date) {

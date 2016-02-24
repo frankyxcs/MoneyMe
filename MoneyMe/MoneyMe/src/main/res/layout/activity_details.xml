@@ -34,7 +34,9 @@
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/details_toolbar"
-                style="@style/ToolbarStyle"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
                 app:layout_collapseMode="pin" />
 
         </android.support.design.widget.CollapsingToolbarLayout>
@@ -109,14 +111,30 @@
                     android:paddingBottom="24dp"
                     android:paddingTop="24dp">
 
-                    <TextView
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="16dp"
-                        android:paddingRight="16dp"
-                        android:layout_marginBottom="8dp"
-                        android:text="Palette"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="8dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="16dp"
+                            android:text="@string/trends"
+                            style="@style/Text.Title" />
+
+                        <Spinner
+                            android:id="@+id/detailsPeriodSpinner"
+                            android:paddingRight="16dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="right|end"
+                            android:textAppearance="@style/Text.Subhead"/>
+                    </LinearLayout>
+
+
 
                     <com.github.mikephil.charting.charts.LineChart
                         android:id="@+id/details_chart"
@@ -135,7 +153,8 @@
                 android:layout_marginRight="16dp"
                 app:cardCornerRadius="3dp"
                 app:cardElevation="3dp"
-                app:cardUseCompatPadding="true">
+                app:cardUseCompatPadding="true"
+                android:visibility="gone">
 
                 <LinearLayout
                     android:layout_width="match_parent"

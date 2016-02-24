@@ -37,8 +37,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:background="@color/colorPrimary"
-                    app:tabIndicatorColor="@android:color/white"
-                    app:tabIndicatorHeight="6dp"
+                    app:tabIndicatorColor="@color/colorAccentDark"
+                    app:tabIndicatorHeight="2dp"
                     app:tabSelectedTextColor="@android:color/white"
                     app:tabTextColor="@android:color/white" />
 

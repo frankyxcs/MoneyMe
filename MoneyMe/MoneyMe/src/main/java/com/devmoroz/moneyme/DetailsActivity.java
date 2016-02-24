@@ -17,10 +17,13 @@ import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -38,6 +41,7 @@ import com.devmoroz.moneyme.utils.CurrencyCache;
 import com.devmoroz.moneyme.utils.CustomColorTemplate;
 import com.devmoroz.moneyme.utils.FormatUtils;
 import com.devmoroz.moneyme.utils.PhotoUtil;
+import com.devmoroz.moneyme.utils.datetime.DataInterval;
 import com.devmoroz.moneyme.utils.datetime.TimeUtils;
 import com.devmoroz.moneyme.widgets.DecimalDigitsInputFilter;
 import com.devmoroz.moneyme.widgets.WithCurrencyValueFormatter;
@@ -50,9 +54,11 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
+import org.joda.time.Interval;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.joda.time.Months;
+import org.joda.time.Period;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -60,6 +66,8 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public class DetailsActivity extends AppCompatActivity {
@@ -78,29 +86,26 @@ public class DetailsActivity extends AppCompatActivity {
     private static String note = "";
     private static Category category;
     private static String accountId = "";
-    private long mEarliestTransactionTimestamp;
-    private long mLatestTransactionTimestamp;
-    private static final String X_AXIS_PATTERN = "MMM YY";
     private static final int NO_DATA_COLOR = Color.GRAY;
     private boolean mChartDataPresent = true;
     Currency currency = CurrencyCache.getCurrencyOrEmpty();
     private EditText editAmountInput;
     private EditText editNotesInput;
+    private Spinner detailsPeriodSpinner;
+
+    private DataInterval dInterval;
+    private DataInterval.Type dataIntervalType = DataInterval.Type.WEEK;
+    private int currentSelection = 0;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.AppDefault);
         Intent intent = getIntent();
         itemId = intent.getStringExtra(Constants.DETAILS_ITEM_ID);
         String type = intent.getStringExtra(Constants.DETAILS_ITEM_TYPE);
         itemType = TransactionType.valueOf(type);
-        if (itemType == TransactionType.INCOME) {
-            setTheme(R.style.DetailsIncome);
-        } else if (itemType == TransactionType.OUTCOME) {
-            setTheme(R.style.DetailsOutcome);
-        } else {
-            setTheme(R.style.AppDefault);
-        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
@@ -114,9 +119,13 @@ public class DetailsActivity extends AppCompatActivity {
         dateTextView = (TextView) findViewById(R.id.details_date);
         notesTextView = (TextView) findViewById(R.id.details_notes);
         chart = (LineChart) findViewById(R.id.details_chart);
+        detailsPeriodSpinner = (Spinner) findViewById(R.id.detailsPeriodSpinner);
+
+        dInterval = new DataInterval(this, dataIntervalType);
 
         loadEntity();
         setupFab();
+        initSpinner();
         setupChart();
 
     }
@@ -153,6 +162,37 @@ public class DetailsActivity extends AppCompatActivity {
 
     }
 
+    private void initSpinner() {
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.details_chart_period, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        detailsPeriodSpinner.setAdapter(adapter);
+        detailsPeriodSpinner.setSelection(currentSelection);
+        detailsPeriodSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (currentSelection != position) {
+                    currentSelection = position;
+                    switch (position) {
+                        case 0:
+                            updateChart(DataInterval.Type.WEEK);
+                            break;
+                        case 1:
+                            updateChart(DataInterval.Type.MONTH);
+                            break;
+                        case 2:
+                            updateChart(DataInterval.Type.YEAR);
+                            break;
+                    }
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
     private void setupChart() {
         chart.setDragEnabled(true);
         chart.setScaleEnabled(false);
@@ -161,14 +201,16 @@ public class DetailsActivity extends AppCompatActivity {
         chart.setDescription("");
         chart.getLegend().setEnabled(false);
         chart.getAxisRight().setEnabled(false);
+        chart.setHighlightPerTapEnabled(false);
+        chart.setHighlightPerDragEnabled(false);
 
-        LimitLine llXAxis = new LimitLine(10f, "Index 10");
-        llXAxis.setLineWidth(4f);
-        llXAxis.enableDashedLine(10f, 10f, 0f);
-        llXAxis.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_BOTTOM);
-        llXAxis.setTextSize(10f);
+        updateChart(dataIntervalType);
+    }
 
-        chart.setData(getDataForChart(itemType));
+    private void updateChart(DataInterval.Type type) {
+        dInterval.setType(type);
+
+        chart.setData(getDataForChart(itemType, dInterval.getInterval(), dInterval.getType()));
 
         if (!mChartDataPresent) {
             chart.getAxisLeft().setAxisMaxValue(10);
@@ -185,52 +227,42 @@ public class DetailsActivity extends AppCompatActivity {
             xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
             xAxis.setTextSize(8f);
             xAxis.setDrawAxisLine(true);
-            xAxis.setDrawGridLines(false);
+            xAxis.setDrawGridLines(true);
             xAxis.setAvoidFirstLastClipping(true);
-            chart.animateX(2500);
+            chart.animateX(1000);
         }
 
         chart.invalidate();
     }
 
-    private LineData getDataForChart(TransactionType type) {
+    private LineData getDataForChart(TransactionType type, Interval wholeInterval, DataInterval.Type intervalType) {
         try {
+            Period period = getPeriod(intervalType);
+            Interval firstInterval = new Interval(wholeInterval.getStart(), period);
+
             DBHelper dbHelper = MoneyApplication.getInstance().GetDBHelper();
-            List<Transaction> transactions = Collections.emptyList();
+
+            List<Transaction> transactions;
             if (type == TransactionType.OUTCOME) {
                 transactions = dbHelper.getTransactionDAO().queryTransactionsForCategory(category.getId());
             } else {
                 transactions = dbHelper.getTransactionDAO().queryTransactionsByTypeForAccount(type, accountId);
             }
             if (!transactions.isEmpty()) {
-                mChartDataPresent = true;
-                mEarliestTransactionTimestamp = transactions.get(0).getDateLong();
-                mLatestTransactionTimestamp = transactions.get(transactions.size() - 1).getDateLong();
-
-                LocalDate startDate = new LocalDate(mEarliestTransactionTimestamp).withDayOfMonth(1);
-                LocalDate endDate = new LocalDate(mLatestTransactionTimestamp).withDayOfMonth(1);
-                int count = getDateDiff(new LocalDateTime(startDate.toDate().getTime()), new LocalDateTime(endDate.toDate().getTime()));
-
-                List<String> xValues = new ArrayList<>();
-                for (int i = 0; i <= count; i++) {
-                    xValues.add(startDate.toString(X_AXIS_PATTERN));
-                    startDate = startDate.plusMonths(1);
-                }
+                List<String> xValues = getXAxis(dInterval);
 
                 List<ILineDataSet> dataSets = new ArrayList<>();
 
-                LocalDateTime earliest = new LocalDateTime(mEarliestTransactionTimestamp);
-                LocalDateTime latest = new LocalDateTime(mLatestTransactionTimestamp);
-                count = getDateDiff(earliest, latest);
+                int count = getDateDiff(intervalType);
                 List<Entry> values = new ArrayList<>(count + 1);
+                Interval interval = firstInterval;
                 for (int i = 0; i <= count; i++) {
                     long start = 0;
                     long end = 0;
 
-                    start = earliest.dayOfMonth().withMinimumValue().millisOfDay().withMinimumValue().toDate().getTime();
-                    end = earliest.dayOfMonth().withMaximumValue().millisOfDay().withMaximumValue().toDate().getTime();
+                    start = interval.getStartMillis();
+                    end = interval.getEndMillis();
 
-                    earliest = earliest.plusMonths(1);
                     float balance = 0f;
                     if (type == TransactionType.OUTCOME) {
                         balance = dbHelper.getTransactionDAO().getTotalSpendingForCategoryForPeriod(category.getId(), start, end);
@@ -238,23 +270,28 @@ public class DetailsActivity extends AppCompatActivity {
                         balance = dbHelper.getTransactionDAO().getTotalIncomeForAccountForPeriod(accountId, start, end);
                     }
                     values.add(new Entry(balance, i));
+                    if (isNotAfterLastInterval(interval, wholeInterval) && values.size() < count) {
+                        interval = getNextInterval(interval, period);
+                    } else {
+                        break;
+                    }
+                }
+                if (!values.isEmpty()) {
+                    mChartDataPresent = true;
                 }
                 LineDataSet set = new LineDataSet(values, "");
                 WithCurrencyValueFormatter vFormatter = new WithCurrencyValueFormatter(currency.getSymbol());
                 set.setValueFormatter(vFormatter);
                 set.setDrawFilled(false);
-                set.setLineWidth(4);
-
+                set.setLineWidth(3f);
                 set.setDrawCubic(true);
+
                 if (type == TransactionType.OUTCOME) {
                     int col = category.getColor();
                     set.setColor(col);
-                    set.setCircleColor(col);
-                    set.setCircleColorHole(col);
+                    set.setDrawCircles(false);
                 } else {
                     set.setColor(CustomColorTemplate.INCOME_COLOR);
-                    set.setCircleColor(CustomColorTemplate.INCOME_COLOR);
-                    set.setCircleColorHole(CustomColorTemplate.INCOME_COLOR);
                 }
                 dataSets.add(set);
                 LineData lineData = new LineData(xValues, dataSets);
@@ -270,8 +307,51 @@ public class DetailsActivity extends AppCompatActivity {
         return getEmptyData();
     }
 
-    private int getDateDiff(LocalDateTime start, LocalDateTime end) {
-        return Months.monthsBetween(start.withDayOfMonth(1).withMillisOfDay(0), end.withDayOfMonth(1).withMillisOfDay(0)).getMonths();
+    private List<String> getXAxis(DataInterval baseInterval) {
+        final List<String> values = new ArrayList<>();
+        final Period period = DataInterval.getSubPeriod(baseInterval.getType(), baseInterval.getLength());
+
+        Interval interval = new Interval(baseInterval.getInterval().getStart(), period);
+        while (interval.overlaps(baseInterval.getInterval())) {
+            values.add(DataInterval.getSubTypeShortestTitle(interval, baseInterval.getType()));
+            interval = new Interval(interval.getEnd(), period);
+        }
+
+        return values;
+    }
+
+    private Period getPeriod(DataInterval.Type intervalType) {
+        switch (intervalType) {
+            case WEEK:
+            case MONTH:
+                return Period.days(1);
+            case YEAR:
+                return Period.months(1);
+            default:
+                throw new IllegalArgumentException("Type " + intervalType + " is not supported.");
+        }
+    }
+
+    private Interval getNextInterval(Interval interval, Period period) {
+        return new Interval(interval.getEnd(), period);
+    }
+
+    private boolean isNotAfterLastInterval(Interval interval, Interval wholeInterval) {
+        return interval.overlaps(wholeInterval);
+    }
+
+    private int getDateDiff(DataInterval.Type intervalType) {
+        switch (intervalType) {
+            case WEEK:
+                return 7;
+            case MONTH:
+                Calendar c = Calendar.getInstance();
+                return c.getActualMaximum(Calendar.DAY_OF_MONTH);
+            case YEAR:
+                return 12;
+            default:
+                throw new IllegalArgumentException("Type " + intervalType + " is not supported.");
+        }
     }
 
     private LineData getEmptyData() {

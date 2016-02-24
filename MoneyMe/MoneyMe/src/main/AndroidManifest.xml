@@ -67,7 +67,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-        <activity android:name=".FullScreenImageActivity" android:screenOrientation="portrait"
+        <activity android:name=".FullScreenImageActivity"
             android:configChanges="screenSize" android:windowSoftInputMode="adjustResize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

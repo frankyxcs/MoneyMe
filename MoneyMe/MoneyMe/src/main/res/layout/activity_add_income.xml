@@ -36,7 +36,7 @@
                 android:layout_height="wrap_content"
                 android:digits="1234567890."
                 android:hint="@string/amount"
-                android:imeOptions="actionNext"
+                android:imeOptions="actionDone"
                 android:inputType="numberDecimal"/>
 
         </android.support.design.widget.TextInputLayout>
@@ -131,7 +131,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/tags"
+                android:text="@string/add_tags"
                 style="@style/Button.Flat.Select" />
         </LinearLayout>
 
@@ -166,7 +166,8 @@
                 android:layout_height="wrap_content"
                 android:inputType="textShortMessage|textAutoCorrect|textCapSentences|textMultiLine|textAutoComplete"
                 android:maxLength="200"
-                android:maxLines="2"/>
+                android:maxLines="2"
+                android:imeOptions="actionDone"/>
         </android.support.design.widget.TextInputLayout>
 
         </LinearLayout>

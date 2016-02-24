@@ -12,6 +12,7 @@ import com.devmoroz.moneyme.dao.CurrencyDAO;
 import com.devmoroz.moneyme.dao.GoalDAO;
 import com.devmoroz.moneyme.dao.PayeeDAO;
 import com.devmoroz.moneyme.dao.TagDAO;
+import com.devmoroz.moneyme.dao.TodoDAO;
 import com.devmoroz.moneyme.dao.TransactionDAO;
 import com.devmoroz.moneyme.models.Account;
 import com.devmoroz.moneyme.models.Budget;
@@ -20,6 +21,7 @@ import com.devmoroz.moneyme.models.Currency;
 import com.devmoroz.moneyme.models.Goal;
 import com.devmoroz.moneyme.models.Payee;
 import com.devmoroz.moneyme.models.Tag;
+import com.devmoroz.moneyme.models.Todo;
 import com.devmoroz.moneyme.models.Transaction;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.support.ConnectionSource;
@@ -46,6 +48,7 @@ public class DBHelper extends OrmLiteSqliteOpenHelper {
     private BudgetDAO budgetDAO = null;
     private PayeeDAO payeeDAO = null;
     private TagDAO tagDAO = null;
+    private TodoDAO todoDAO = null;
 
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -57,12 +60,13 @@ public class DBHelper extends OrmLiteSqliteOpenHelper {
         try {
             TableUtils.createTable(connectionSource, Payee.class);
             TableUtils.createTable(connectionSource, Category.class);
-            TableUtils.createTable(connectionSource, Goal.class);
+            TableUtils.createTable(connectionSource, Account.class);
             TableUtils.createTable(connectionSource, Transaction.class);
             TableUtils.createTable(connectionSource, Currency.class);
-            TableUtils.createTable(connectionSource, Account.class);
             TableUtils.createTable(connectionSource, Budget.class);
+            TableUtils.createTable(connectionSource, Goal.class);
             TableUtils.createTable(connectionSource, Tag.class);
+            TableUtils.createTable(connectionSource, Todo.class);
             addDefaults();
         } catch (SQLException e) {
             Log.e(TAG, "error creating DB " + DATABASE_NAME);
@@ -102,6 +106,7 @@ public class DBHelper extends OrmLiteSqliteOpenHelper {
         budgetDAO = null;
         payeeDAO = null;
         tagDAO = null;
+        todoDAO = null;
     }
 
     public GoalDAO getGoalDAO() throws SQLException {
@@ -158,6 +163,13 @@ public class DBHelper extends OrmLiteSqliteOpenHelper {
             tagDAO = new TagDAO(getConnectionSource(), Tag.class);
         }
         return tagDAO;
+    }
+
+    public TodoDAO getTodoDAO() throws SQLException {
+        if (todoDAO == null) {
+            todoDAO = new TodoDAO(getConnectionSource(), Todo.class);
+        }
+        return todoDAO;
     }
 
 }

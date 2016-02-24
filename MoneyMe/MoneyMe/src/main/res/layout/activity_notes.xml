@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/mainBackground">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/todos_toolbar"
+        style="@style/ToolbarStyle" />
+
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/todo_coordinator"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+            <com.devmoroz.moneyme.widgets.EmptyRecyclerView
+                android:id="@+id/todoRecyclerView"
+                android:padding="4dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+        <LinearLayout
+            android:id="@+id/todosEmpty"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:textColor="@color/disable_gray"
+                android:text="@string/todo_empty_text"
+                style="@style/Text.Subhead"/>
+        </LinearLayout>
+
+    </android.support.design.widget.CoordinatorLayout>
+</LinearLayout>

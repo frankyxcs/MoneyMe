@@ -56,7 +56,7 @@
 
                         <TextView
                             android:id="@+id/card_main_categoryLetter"
-                            style="@style/Text.Title"
+                            style="@style/Text.Caption"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
@@ -124,32 +124,6 @@
 
                     </LinearLayout>
 
-                    <LinearLayout
-                        android:id="@+id/card_main_location_container"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingTop="4dp"
-                        android:paddingBottom="4dp"
-                        >
-
-                        <ImageView
-                            android:layout_height="20dp"
-                            android:layout_width="20dp"
-                            android:src="@drawable/ic_map_marker"/>
-
-                        <TextView
-                            android:id="@+id/card_main_location_link"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:layout_marginLeft="4dp"
-                            android:singleLine="true"
-                            android:clickable="true"
-                            android:textColor="@color/colorPrimaryDark"
-                            style="@style/Text.Body1"
-                            android:text="Main St." />
-
-                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
             <TextView
@@ -169,12 +143,51 @@
             card_view:aspectRatio="1.78"
             android:visibility="gone"/>
 
+        <View
+            style="@style/Divider"
+            tools:ignore="RtlHardcoded" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/line_top"
-            android:gravity="right"
-            android:padding="1dp">
+            android:padding="1dp"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/card_main_location_container"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:gravity="left|center"
+                android:layout_gravity="center_vertical">
+
+                <ImageView
+                    android:layout_height="20dp"
+                    android:layout_width="20dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"
+                    android:src="@drawable/ic_map_marker"
+                    android:layout_gravity="center_vertical"/>
+
+             <Button
+                android:id="@+id/card_main_location_link"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                style="@style/Button.Flat.Borderless"
+                android:text="Main.st jfgjhdjfg dfghdl kgfhkdfjgkh fjgdlfjg fgdks"
+                android:textAllCaps="false"
+                android:layout_gravity="center_vertical"
+                android:padding="8dp"
+                 android:ellipsize="end"
+                 android:maxLines="1"
+                 android:textColor="@color/colorPrimaryDark" />
+            </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="right">
+
 
             <ImageButton
                 android:layout_width="wrap_content"
@@ -195,6 +208,8 @@
                 android:layout_marginEnd="8dp"
                 android:id="@+id/card_main_deleteButton"
                 android:background="@drawable/white_button"/>
+
+        </LinearLayout>
 
         </LinearLayout>
 
