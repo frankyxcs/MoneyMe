@@ -52,8 +52,9 @@
                 </android.support.design.widget.TextInputLayout>
 
             </LinearLayout>
+
             <LinearLayout
-                android:id="@+id/todoReminderAndDateContainerLayout"
+                android:id="@+id/toDoContentAndDateContainerLayout"
                 android:layout_weight="1.5"
                 android:layout_width="match_parent"
                 android:orientation="vertical"
@@ -69,6 +70,12 @@
                     android:layout_marginRight="16dp"
                     android:layout_width="match_parent"
                     android:layout_height="0dp">
+
+                    <View
+                        android:id="@+id/todo_color_marker"
+                        android:layout_width="7dp"
+                        android:layout_height="match_parent"
+                        android:background="@null"/>
 
                     <android.support.design.widget.TextInputLayout
                         android:gravity="center"
@@ -124,7 +131,7 @@
                         android:layout_height="wrap_content" />
 
                     <android.support.v7.widget.SwitchCompat
-                        android:id="@+id/toDoHasDateSwitchCompat"
+                        android:id="@+id/toDoHasDateSwitch"
                         android:layout_gravity="center"
                         android:padding="8dp"
                         android:gravity="center"
@@ -135,7 +142,6 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/toDoEnterDateLinearLayout"
                     android:animateLayoutChanges="true"
                     android:layout_weight="1"
                     android:layout_width="match_parent"
@@ -146,14 +152,14 @@
                     android:layout_height="0dp">
 
                     <LinearLayout
-
+                        android:id="@+id/toDoDateLinearLayout"
                         android:layout_width="match_parent"
                         android:gravity="top"
                         android:layout_weight="1"
                         android:layout_height="0dp">
 
                         <Button
-                            android:id="@+id/newToDoChooseDateButton"
+                            android:id="@+id/toDoDateButton"
                             android:text="23 Jan,2016"
                             android:textColor="@color/colorAccentDark"
                             style="@style/Button.Flat"
@@ -165,7 +171,7 @@
 
                         <Button
                             android:layout_marginLeft="4dp"
-                            android:id="@+id/newToDoChooseTimeButton"
+                            android:id="@+id/toDoTimeButton"
                             android:textColor="@color/colorAccentDark"
                             android:text="12:30"
                             style="@style/Button.Flat"
@@ -176,8 +182,8 @@
 
                     <TextView
                         android:layout_weight="2"
-                        android:id="@+id/newToDoDateTimeReminderTextView"
-                        android:textSize="14sp"
+                        android:id="@+id/toDoDateTimeTextView"
+                        style="@style/Text.Body1"
                         android:gravity="end"
                         android:text="23 Jan, 2016 12:30"
                         android:textColor="@color/colorSecondaryText"
@@ -192,7 +198,7 @@
         </LinearLayout>
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/makeToDoFloatingActionButton"
+            android:id="@+id/saveToDoFAB"
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
             android:src="@drawable/ic_fab_check"

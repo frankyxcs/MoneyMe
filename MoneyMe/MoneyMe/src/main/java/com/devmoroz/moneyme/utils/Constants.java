@@ -22,6 +22,7 @@ public class Constants {
     public static final String EXTRA_MAP_ITEM_DETAILS = "EXTRA_MAP_ITEM_DETAILS";
     public static final String EXTRA_MAP_DATA_TYPE = "EXTRA_MAP_DATA_TYPE";
     public static final String EXTRA_TODO_ITEM = "EXTRA_TODO_ITEM";
+    public static final String STATE_TODO_ITEM = "STATE_TODO_ITEM";
     public static final String[] BACKUP_TABLES = {
             "account",
             "budget",

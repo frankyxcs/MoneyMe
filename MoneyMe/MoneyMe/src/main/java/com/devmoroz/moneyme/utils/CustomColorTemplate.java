@@ -32,7 +32,18 @@ public class CustomColorTemplate {
             Color.parseColor("#8D6E63")
     };
 
-    public static final int WHITE_TEXT =  Color.parseColor("#FFFFFF");
+    public static final Integer[] TODO_COLORS = {
+            Color.parseColor("#EEEEEE"),
+            Color.parseColor("#E6EE9C"),
+            Color.parseColor("#81D4FA"),
+            Color.parseColor("#A5D6A7"),
+            Color.parseColor("#B39DDB"),
+            Color.parseColor("#F48FB1"),
+            Color.parseColor("#CE93D8"),
+            Color.parseColor("#EF9A9A")
+    };
+
+    public static final int WHITE_TEXT = Color.parseColor("#FFFFFF");
     public static final int SECONDARY_TEXT = Color.rgb(114, 114, 114);
     public static final int INCOME_COLOR = Color.parseColor("#388E3C");
     public static final int OUTCOME_COLOR = Color.parseColor("#D32F2F");

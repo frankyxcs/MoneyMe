@@ -197,13 +197,19 @@ public class TagsActivity extends AppCompatActivity {
         data.putExtra(Constants.RESULT_EXTRA_TAGS, parcelables);
         setResult(Activity.RESULT_OK, data);
         finish();
-        overridePendingTransition(R.anim.activity_open_scale,R.anim.activity_close_translate);
+        overridePendingTransition(R.anim.activity_open_scale, R.anim.activity_close_translate);
     }
 
     private void onTagsSelectCanceled() {
         setResult(Activity.RESULT_CANCELED);
         finish();
         overridePendingTransition(R.anim.activity_open_scale,R.anim.activity_close_translate);
+    }
+
+    @Override
+    public void onBackPressed() {
+        onTagsSelectCanceled();
+        super.onBackPressed();
     }
 
     private void updateRecycler() {

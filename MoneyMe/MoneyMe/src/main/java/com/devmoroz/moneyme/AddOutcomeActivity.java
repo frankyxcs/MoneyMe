@@ -47,6 +47,8 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.devmoroz.moneyme.adapters.AccountSpinnerAdapter;
 import com.devmoroz.moneyme.adapters.CategorySpinnerWithIconsAdapter;
+import com.devmoroz.moneyme.fragments.custom.DatePickerFragment;
+import com.devmoroz.moneyme.fragments.custom.TimePickerFragment;
 import com.devmoroz.moneyme.helpers.DBHelper;
 import com.devmoroz.moneyme.helpers.GoogleApiHelper;
 import com.devmoroz.moneyme.helpers.PermissionsHelper;
@@ -311,13 +313,25 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
 
     public void showDatePickerDialog() {
         DatePickerFragment newFragment = new DatePickerFragment();
-        newFragment.setDate(date);
+        newFragment.setDateButton(date);
+        newFragment.setCallback(new DatePickerFragment.Callback() {
+            @Override
+            public void onDateSet(Date date) {
+                transactionEdit.setDate(date.getTime());
+            }
+        });
         newFragment.show(getSupportFragmentManager(), "datePicker");
     }
 
     public void showTimePickerDialog() {
         TimePickerFragment newFragment = new TimePickerFragment();
-        newFragment.setDate(time);
+        newFragment.setTimeButton(time);
+        newFragment.setCallback(new TimePickerFragment.Callback() {
+            @Override
+            public void onTimeSet(Date date) {
+                transactionEdit.setDate(date.getTime());
+            }
+        });
         newFragment.show(getSupportFragmentManager(), "timePicker");
     }
 
@@ -622,67 +636,6 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
                 return true;
         }
         return false;
-    }
-
-    public static class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
-
-        private Button date;
-
-        public void setDate(Button date) {
-            this.date = date;
-        }
-
-        @NonNull
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-
-            final Calendar c = Calendar.getInstance();
-            int year = c.get(Calendar.YEAR);
-            int month = c.get(Calendar.MONTH);
-            int day = c.get(Calendar.DAY_OF_MONTH);
-            transactionEdit.setDate(c.getTime().getTime());
-
-            return new DatePickerDialog(getActivity(), this, year, month, day);
-        }
-
-        public void onDateSet(DatePicker view, int year, int month, int day) {
-            Calendar cal = Calendar.getInstance();
-            cal.set(Calendar.YEAR, year);
-            cal.set(Calendar.MONTH, month);
-            cal.set(Calendar.DAY_OF_MONTH, day);
-            transactionEdit.setDate(cal.getTime().getTime());
-            date.setText(TimeUtils.formatShortDate(getContext(), cal.getTime()));
-        }
-    }
-
-    public static class TimePickerFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
-
-        private Button time;
-
-        public void setDate(Button time) {
-            this.time = time;
-        }
-
-        @NonNull
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-
-            final Calendar c = Calendar.getInstance();
-            int hour = c.get(Calendar.HOUR_OF_DAY);
-            int minute = c.get(Calendar.MINUTE);
-            transactionEdit.setDate(c.getTime().getTime());
-
-            return new TimePickerDialog(getActivity(), this, hour, minute,
-                    DateFormat.is24HourFormat(getActivity()));
-        }
-
-        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-            Calendar cal = Calendar.getInstance();
-            cal.set(Calendar.HOUR_OF_DAY, hourOfDay);
-            cal.set(Calendar.MINUTE,minute);
-            transactionEdit.setDate(cal.getTime().getTime());
-            time.setText(TimeUtils.formatShortTime(time.getContext(), cal.getTime()));
-        }
     }
 
     private void setupFloatingLabelError() {

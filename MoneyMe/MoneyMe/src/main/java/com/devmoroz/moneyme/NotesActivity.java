@@ -16,7 +16,6 @@ import com.devmoroz.moneyme.helpers.DBHelper;
 import com.devmoroz.moneyme.logging.L;
 import com.devmoroz.moneyme.models.Todo;
 import com.devmoroz.moneyme.utils.Constants;
-import com.devmoroz.moneyme.widgets.DividerItemDecoration;
 import com.devmoroz.moneyme.widgets.EmptyRecyclerView;
 
 import java.sql.SQLException;
@@ -54,10 +53,10 @@ public class NotesActivity extends AppCompatActivity {
     }
 
     private void initToolbar() {
-        Toolbar mToolbar = (Toolbar)findViewById(R.id.todos_toolbar);
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.todos_toolbar);
         setSupportActionBar(mToolbar);
 
-        if(getSupportActionBar()!=null){
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setElevation(0);
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -90,14 +89,14 @@ public class NotesActivity extends AppCompatActivity {
         try {
             DBHelper dbHelper = MoneyApplication.getInstance().GetDBHelper();
             todos = dbHelper.getTodoDAO().queryForAllSorted();
-        }catch (SQLException ex){
-            L.T(NotesActivity.this,"Something went wrong. Please, try again.");
+        } catch (SQLException ex) {
+            L.T(NotesActivity.this, "Something went wrong. Please, try again.");
         }
     }
 
-    private void addEditTodo(Todo mTodo){
+    private void addEditTodo(Todo mTodo) {
         Intent intentTodo = new Intent(NotesActivity.this, TodoActivity.class);
-        Todo item = new Todo("","",new Date(),false);
+        Todo item = new Todo("", "", new Date(), false);
 
         intentTodo.putExtra(Constants.EXTRA_TODO_ITEM, mTodo != null ? mTodo : item);
         startActivityForResult(intentTodo, REQUEST_TODO_ITEM);
@@ -105,31 +104,19 @@ public class NotesActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode!= RESULT_CANCELED && requestCode == REQUEST_TODO_ITEM){
+        if (resultCode != RESULT_CANCELED && requestCode == REQUEST_TODO_ITEM) {
             Todo item = data.getParcelableExtra(Constants.EXTRA_TODO_ITEM);
 
             boolean existed = false;
 
-            if(item.isHasReminder()){
-               // Intent i = new Intent(this, TodoNotificationService.class);
-               // i.putExtra(TodoNotificationService.TODOTEXT, item.getToDoText());
-               // i.putExtra(TodoNotificationService.TODOUUID, item.getIdentifier());
-               // createAlarm(i, item.getIdentifier().hashCode(), item.getToDoDate().getTime());
-            }
-
-            for(int i = 0; i<todos.size();i++){
-                if(item.getId().equals(todos.get(i).getId())){
-                    mAdapter.update(item);
-                    existed = true;
-                    break;
-                }
-            }
-            if(!existed) {
-                mAdapter.add(item);
+            if (item.isHasReminder()) {
             }
 
             loadTodos();
-
+            mAdapter.setList(todos);
+        } else {
+            loadTodos();
+            mAdapter.setList(todos);
         }
     }
 }

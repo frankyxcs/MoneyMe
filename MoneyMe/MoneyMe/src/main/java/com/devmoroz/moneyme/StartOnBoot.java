@@ -5,7 +5,9 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 
+import com.devmoroz.moneyme.notification.NotificationUpdaterService;
 import com.devmoroz.moneyme.utils.FormatUtils;
 import com.devmoroz.moneyme.utils.Preferences;
 import com.devmoroz.moneyme.utils.datetime.TimeUtils;
@@ -17,6 +19,7 @@ public class StartOnBoot extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+
         setAlarm(context);
     }
 
@@ -38,7 +41,7 @@ public class StartOnBoot extends BroadcastReceiver {
         calendar.set(Calendar.HOUR_OF_DAY, hour);
         calendar.set(Calendar.MINUTE, minute);
         calendar.set(Calendar.SECOND, 00);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 24*60*60*1000 , pendingIntent);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 24 * 60 * 60 * 1000, pendingIntent);
     }
 
     public static void cancelAlarm(Context context){
@@ -48,4 +51,5 @@ public class StartOnBoot extends BroadcastReceiver {
 
         alarmManager.cancel(pendingIntent);
     }
+
 }

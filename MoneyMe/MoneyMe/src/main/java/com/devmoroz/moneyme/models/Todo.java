@@ -49,7 +49,7 @@ public class Todo implements Parcelable {
         this.content = content;
         this.date = date;
         this.hasReminder = hasReminder;
-        this.color = Color.parseColor("#F0F4C3");
+        this.color = 0;
     }
 
     public Todo(String title, String content, int color, Date date, boolean hasReminder) {

@@ -12,10 +12,29 @@ import android.support.v7.app.NotificationCompat;
 
 public class AlarmService extends Service {
 
+    public static final String ACTION_TODO_START = "com.devmoroz.moneyme.intent.ACTION_TODO_START";
+    public static final String ACTION_TODO_DELETE = "com.devmoroz.moneyme.intent.ACTION_TODO_DELETE";
+    public static final String ACTION_REGULAR_START = "com.devmoroz.moneyme.intent.ACTION_REGULAR_START";
+    public static final String ACTION_REGULAR_DELETE = "com.devmoroz.moneyme.intent.ACTION_REGULAR_DELETE";
+    static final String ACTION_FASTBOOT = "com.htc.intent.action.QUICKBOOT_POWERON";
+
     private NotificationManager mManager;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
+        String intentAction = intent.getAction();
+
+        if (intentAction != null)
+        {
+            switch (intentAction)
+            {
+                case Intent.ACTION_BOOT_COMPLETED:
+                case Intent.ACTION_REBOOT:
+                case ACTION_FASTBOOT:
+
+            }
+        }
 
         final Notification note = buildNotification();
         mManager =

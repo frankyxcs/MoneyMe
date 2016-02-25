@@ -51,6 +51,18 @@
             android:configChanges="orientation|screenSize" android:windowSoftInputMode="adjustResize">
         </activity>
 
+        <activity android:name=".NotesActivity" android:screenOrientation="portrait"
+            android:label="@string/notes"
+            android:configChanges="orientation|screenSize" android:windowSoftInputMode="adjustResize">
+        </activity>
+
+        <activity android:name=".TodoActivity" android:screenOrientation="portrait"
+            android:configChanges="orientation|screenSize" android:windowSoftInputMode="adjustResize">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".NotesActivity" />
+        </activity>
+
         <activity android:name=".MapActivity"
             android:label="@string/map"  android:windowSoftInputMode="stateAlwaysHidden">
         </activity>
@@ -122,6 +134,9 @@
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="android.intent.action.TIME_SET"/>
+                <action android:name="android.intent.action.TIMEZONE_CHANGED"/>
+                <action android:name="android.intent.action.DATE_CHANGED"/>
             </intent-filter>
         </receiver>
 
