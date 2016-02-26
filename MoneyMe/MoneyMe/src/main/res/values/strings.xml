@@ -282,4 +282,6 @@
     <string name="choose_todo_color">Цвет события</string>
     <string name="notes">Заметки</string>
     <string name="share">Поделиться</string>
+    <string name="snooze">Отложить на</string>
+    <string name="minute">мин.</string>
 </resources>

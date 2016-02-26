@@ -26,6 +26,9 @@ public class Todo implements Parcelable {
     @DatabaseField(generatedId = true)
     private UUID id;
 
+    @DatabaseField()
+    private int alarm_id;
+
     @DatabaseField(canBeNull = false)
     private String title;
 
@@ -41,32 +44,42 @@ public class Todo implements Parcelable {
     @DatabaseField
     private boolean hasReminder;
 
+    @DatabaseField
+    private boolean checkList;
+
     public Todo() {
+        this.alarm_id = (int) System.currentTimeMillis();
     }
 
-    public Todo(String title, String content, Date date, boolean hasReminder) {
+    public Todo(String title, String content, Date date, boolean hasReminder, boolean checkList) {
         this.title = title;
         this.content = content;
         this.date = date;
         this.hasReminder = hasReminder;
+        this.checkList = checkList;
         this.color = 0;
+        this.alarm_id = (int) System.currentTimeMillis();
     }
 
-    public Todo(String title, String content, int color, Date date, boolean hasReminder) {
+    public Todo(String title, String content, int color, Date date, boolean hasReminder, boolean checkList) {
         this.title = title;
         this.content = content;
         this.color = color;
         this.date = date;
         this.hasReminder = hasReminder;
+        this.checkList = checkList;
+        this.alarm_id = (int) System.currentTimeMillis();
     }
 
     public Todo(Parcel parcel) {
         setId(parcel.readString());
+        setAlarm_id(getAlarm_id());
         setTitle(parcel.readString());
         setContent(parcel.readString());
         setColor(parcel.readInt());
         setDate((Date) parcel.readSerializable());
         setHasReminder(parcel.readInt() != 0);
+        setCheckList(parcel.readInt() != 0);
     }
 
     @Override public int describeContents() {
@@ -75,11 +88,21 @@ public class Todo implements Parcelable {
 
     @Override public void writeToParcel(Parcel parcel, int flags) {
         parcel.writeString(getId());
+        parcel.writeInt(getAlarm_id());
         parcel.writeString(title);
         parcel.writeString(content);
         parcel.writeInt(color);
         parcel.writeSerializable(date);
         parcel.writeInt(hasReminder ? 1: 0);
+        parcel.writeInt(checkList ? 1: 0);
+    }
+
+    public int getAlarm_id() {
+        return alarm_id;
+    }
+
+    public void setAlarm_id(int alarm_id) {
+        this.alarm_id = alarm_id;
     }
 
     public String getId() {
@@ -132,5 +155,13 @@ public class Todo implements Parcelable {
 
     public void setHasReminder(boolean hasReminder) {
         this.hasReminder = hasReminder;
+    }
+
+    public boolean isCheckList() {
+        return checkList;
+    }
+
+    public void setCheckList(boolean checkList) {
+        this.checkList = checkList;
     }
 }

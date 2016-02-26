@@ -9,7 +9,8 @@ import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 
 import com.devmoroz.moneyme.R;
-import com.devmoroz.moneyme.StartOnBoot;
+import com.devmoroz.moneyme.ScheduleAlarmReceiver;
+import com.devmoroz.moneyme.notification.MoneyMeScheduler;
 import com.devmoroz.moneyme.utils.preference.NumberPickerPreference;
 import com.devmoroz.moneyme.utils.preference.NumberPickerPreferenceDialog;
 import com.devmoroz.moneyme.utils.preference.TimePickerPreference;
@@ -58,8 +59,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                 if(key.equals(getString(R.string.pref_notify_time))){
                     Context context = getContext();
-                    StartOnBoot.cancelAlarm(context);
-                    StartOnBoot.setAlarm(context);
+                    MoneyMeScheduler.cancelDailyAlarm(context);
+                    MoneyMeScheduler.scheduleDailyAlarm(context);
                 }
             }
         };

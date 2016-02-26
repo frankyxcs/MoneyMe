@@ -88,6 +88,16 @@ public class Preferences {
         return sharedPreferences.getString(context.getString(R.string.pref_notify_time), null);
     }
 
+    public static boolean isAutoBackupEnabled(Context context) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPreferences.getBoolean(context.getString(R.string.pref_auto_backup), false);
+    }
+
+    public static int getAutoBackupFrequency(Context context) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPreferences.getInt(context.getString(R.string.pref_backup_frequency), 1);
+    }
+
     public static void removeDropboxKeys(Context context) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         sharedPreferences.edit()

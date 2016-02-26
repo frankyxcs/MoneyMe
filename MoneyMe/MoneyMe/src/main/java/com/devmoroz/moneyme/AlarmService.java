@@ -6,43 +6,83 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.NotificationCompat;
+import android.text.Spanned;
+
+import com.devmoroz.moneyme.models.Todo;
+import com.devmoroz.moneyme.notification.MoneyMeScheduler;
+import com.devmoroz.moneyme.notification.NotificationsHelper;
+import com.devmoroz.moneyme.utils.Constants;
+import com.devmoroz.moneyme.utils.TextUtils;
 
 
 public class AlarmService extends Service {
 
-    public static final String ACTION_TODO_START = "com.devmoroz.moneyme.intent.ACTION_TODO_START";
-    public static final String ACTION_TODO_DELETE = "com.devmoroz.moneyme.intent.ACTION_TODO_DELETE";
-    public static final String ACTION_REGULAR_START = "com.devmoroz.moneyme.intent.ACTION_REGULAR_START";
-    public static final String ACTION_REGULAR_DELETE = "com.devmoroz.moneyme.intent.ACTION_REGULAR_DELETE";
-    static final String ACTION_FASTBOOT = "com.htc.intent.action.QUICKBOOT_POWERON";
+    public static final String ACTION_SCHEDULED_BACKUP = "com.devmoroz.moneyme.intent.ACTION_SCHEDULED_BACKUP";
+    public static final String ACTION_SCHEDULE_AUTO_BACKUP = "com.devmoroz.moneyme.intent.ACTION_SCHEDULE_AUTO_BACKUP";
+    public static final String ACTION_AUTO_BACKUP = "com.devmoroz.moneyme.intent.ACTION_AUTO_BACKUP";
+
+    public static final String ACTION_SCHEDULED_TODO_ALARM = "com.devmoroz.moneyme.intent.ACTION_SCHEDULED_ALARM";
+    public static final String ACTION_SCHEDULE_ALL = "com.devmoroz.moneyme.intent.ACTION_SCHEDULE_ALL";
+
+    public static final String ACTION_DAILY_NOTIFICATION = "com.devmoroz.moneyme.intent.ACTION_DAILY_NOTIFICATION";
+
 
     private NotificationManager mManager;
+    private MoneyMeScheduler scheduler;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         String intentAction = intent.getAction();
-
-        if (intentAction != null)
-        {
-            switch (intentAction)
-            {
-                case Intent.ACTION_BOOT_COMPLETED:
-                case Intent.ACTION_REBOOT:
-                case ACTION_FASTBOOT:
-
+        scheduler = new MoneyMeScheduler();
+        if (intentAction != null) {
+            switch (intentAction) {
+                case ACTION_SCHEDULE_ALL:
+                    scheduleAll();
+                case ACTION_SCHEDULE_AUTO_BACKUP:
+                    scheduleNextAutoBackup();
+                case ACTION_AUTO_BACKUP:
+                    doAutoBackup();
+                case ACTION_SCHEDULED_TODO_ALARM:
+                    notifyTodo(intent);
+                case ACTION_DAILY_NOTIFICATION:
+                    makeDailyNotification(startId);
             }
         }
 
-        final Notification note = buildNotification();
-        mManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        mManager.notify(startId,note);
-
         return START_NOT_STICKY;
     }
+
+    private void scheduleAll() {
+        scheduler.scheduleAll(this);
+    }
+
+    private void scheduleNextAutoBackup() {
+        scheduler.scheduleNextAutoBackup(this);
+    }
+
+    private void doAutoBackup() {
+        try {
+
+        } finally {
+            scheduleNextAutoBackup();
+        }
+    }
+
+    private void notifyTodo(Intent intent) {
+
+    }
+
+    private void makeDailyNotification(int startId){
+        final Notification note = buildNotification();
+        mManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        mManager.notify(startId, note);
+    }
+
     @Override
     public IBinder onBind(Intent intent) {
         return null;
@@ -51,7 +91,7 @@ public class AlarmService extends Service {
     private Notification buildNotification() {
         Intent notifyIntent =
                 new Intent(this, MainActivity.class);
-        PendingIntent contentIntent = PendingIntent.getActivity(this,0,notifyIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(this);
@@ -75,5 +115,46 @@ public class AlarmService extends Service {
         Notification note = expandedStyle.build();
 
         return note;
+    }
+
+    private void createNotification(Context mContext, Todo todo, int startId) {
+
+
+        // Prepare text contents
+        String title = todo.getTitle();
+        String text = TextUtils.parseContent(todo);
+
+        Intent snoozeIntent = new Intent(mContext, SnoozeActivity.class);
+        snoozeIntent.setAction(Constants.ACTION_SNOOZE);
+        snoozeIntent.putExtra(Constants.EXTRA_TODO_ITEM, todo);
+        PendingIntent piSnooze = PendingIntent.getActivity(mContext, todo.getAlarm_id(), snoozeIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        String snoozeDelay = "5";
+
+        // Next create the bundle and initialize it
+        Intent intent = new Intent(mContext, TodoActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(Constants.EXTRA_TODO_ITEM, todo);
+        intent.putExtras(bundle);
+
+        // Sets the Activity to start in a new, empty task
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        // Workaround to fix problems with multiple notifications
+        intent.setAction(Constants.ACTION_NOTIFICATION_CLICK + Long.toString(System.currentTimeMillis()));
+
+        // Creates the PendingIntent
+        PendingIntent notifyIntent = PendingIntent.getActivity(mContext, todo.getAlarm_id(), intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        NotificationsHelper notificationsHelper = new NotificationsHelper(mContext);
+        notificationsHelper.createNotification(R.drawable.ic_alarm_white_24dp, title, notifyIntent).setLedActive()
+                .setMessage(text);
+
+        notificationsHelper.getBuilder()
+                .addAction(R.drawable.ic_alarm_white_24dp, TextUtils
+                        .capitalize(mContext.getString(R.string.snooze)) + ": " + snoozeDelay + mContext.getString(R.string.minute), piSnooze);
+
+        notificationsHelper.show(todo.getAlarm_id());
     }
 }

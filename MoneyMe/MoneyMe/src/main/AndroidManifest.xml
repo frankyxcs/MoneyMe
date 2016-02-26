@@ -2,7 +2,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.devmoroz.moneyme">
 
-    <uses-feature android:name="android.hardware.camera" android:required="false"/>
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -11,7 +14,10 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-feature android:glEsVersion="0x00020000" android:required="true"/>
+
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
 
     <application
         android:name=".MoneyApplication"
@@ -21,126 +27,171 @@
         android:theme="@style/AppTheme"
         android:windowSoftInputMode="stateHidden">
 
-        <meta-data tools:replace="android:value" android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version"
+            tools:replace="android:value" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDGww6BVqsgVCMBlqUexcVeCK_Apqf4CBw"/>
+            android:value="AIzaSyDGww6BVqsgVCMBlqUexcVeCK_Apqf4CBw" />
 
-        <activity android:name=".MainActivity" android:screenOrientation="portrait"
-            android:configChanges="orientation|screenSize">
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name=".FirstRunIntro" android:screenOrientation="portrait"
-            android:configChanges="orientation|screenSize" android:windowSoftInputMode="adjustResize"
-            android:theme="@style/FullscreenTheme">
-        </activity>
+        <activity
+            android:name=".FirstRunIntro"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:theme="@style/FullscreenTheme"
+            android:windowSoftInputMode="adjustResize"></activity>
 
-        <activity android:name=".AddOutcomeActivity" android:screenOrientation="portrait"
-            android:configChanges="orientation|screenSize" android:windowSoftInputMode="adjustResize">
+        <activity
+            android:name=".AddOutcomeActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
 
-        <activity android:name=".TagsActivity" android:screenOrientation="portrait"
+        <activity
+            android:name=".TagsActivity"
+            android:configChanges="orientation|screenSize"
             android:label="@string/tags"
-            android:configChanges="orientation|screenSize" android:windowSoftInputMode="adjustResize">
-        </activity>
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"></activity>
 
-        <activity android:name=".NotesActivity" android:screenOrientation="portrait"
+        <activity
+            android:name=".NotesActivity"
+            android:configChanges="orientation|screenSize"
             android:label="@string/notes"
-            android:configChanges="orientation|screenSize" android:windowSoftInputMode="adjustResize">
-        </activity>
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"></activity>
 
-        <activity android:name=".TodoActivity" android:screenOrientation="portrait"
-            android:configChanges="orientation|screenSize" android:windowSoftInputMode="adjustResize">
+        <activity
+            android:name=".TodoActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".NotesActivity" />
         </activity>
 
-        <activity android:name=".MapActivity"
-            android:label="@string/map"  android:windowSoftInputMode="stateAlwaysHidden">
-        </activity>
+        <activity
+            android:name=".MapActivity"
+            android:label="@string/map"
+            android:windowSoftInputMode="stateAlwaysHidden"></activity>
 
-        <activity android:name=".AddIncomeActivity" android:screenOrientation="portrait"
-            android:configChanges="orientation|screenSize" android:windowSoftInputMode="adjustResize">
+        <activity
+            android:name=".AddIncomeActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-        <activity android:name=".DetailsActivity" android:screenOrientation="portrait"
-            android:configChanges="orientation|screenSize" android:windowSoftInputMode="adjustResize">
+        <activity
+            android:name=".DetailsActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-        <activity android:name=".FullScreenImageActivity"
-            android:configChanges="screenSize" android:windowSoftInputMode="adjustResize">
+        <activity
+            android:name=".FullScreenImageActivity"
+            android:configChanges="screenSize"
+            android:windowSoftInputMode="adjustResize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
         <activity
             android:name=".AboutActivity"
+            android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_about"
-            android:screenOrientation="portrait"
-            android:configChanges="orientation|screenSize" >
-        </activity>
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".SettingsActivity"
-            android:screenOrientation="portrait"
             android:configChanges="orientation|screenSize"
-            android:label="@string/option_settings" >
-        </activity>
+            android:label="@string/option_settings"
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".DropboxSyncActivity"
-            android:screenOrientation="portrait"
             android:configChanges="orientation|screenSize"
-            android:label="@string/synchronize" >
-        </activity>
+            android:label="@string/synchronize"
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".DropboxLoginActivity"
-            android:screenOrientation="portrait"
-            android:configChanges="orientation|screenSize">
-        </activity>
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name="com.dropbox.core.android.AuthActivity"
             android:configChanges="orientation|keyboard"
-            android:launchMode="singleTask" >
+            android:launchMode="singleTask">
             <intent-filter>
                 <!-- Change this to be db- followed by your app key -->
                 <data android:scheme="db-asdasdas" />
 
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".SnoozeActivity"
+            android:excludeFromRecents="true"
+            android:launchMode="singleInstance"
+            android:noHistory="true"
+            android:theme="@style/AppDefault.NoDisplay" />
+
         <receiver android:name=".widgets.WalletWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
-            <meta-data android:name="android.appwidget.provider"
+            <meta-data
+                android:name="android.appwidget.provider"
                 android:resource="@xml/wallet_widget_provider" />
         </receiver>
 
-        <receiver android:name=".StartOnBoot">
+        <receiver
+            android:name=".ScheduleAlarmReceiver"
+            android:exported="false">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.ACTION_REBOOT" />
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
-                <action android:name="android.intent.action.TIME_SET"/>
-                <action android:name="android.intent.action.TIMEZONE_CHANGED"/>
-                <action android:name="android.intent.action.DATE_CHANGED"/>
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" />
+                <action android:name="com.devmoroz.moneyme.intent.ACTION_SCHEDULED_BACKUP" />
             </intent-filter>
         </receiver>
 
-        <service android:name=".AlarmService" />
+        <service
+            android:name=".AlarmService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.devmoroz.moneyme.intent.ACTION_SCHEDULE_AUTO_BACKUP" />
+                <action android:name="com.devmoroz.moneyme.intent.ACTION_SCHEDULE_ALL" />
+                <action android:name="com.devmoroz.moneyme.intent.ACTION_AUTO_BACKUP" />
+                <action android:name="com.devmoroz.moneyme.intent.ACTION_SCHEDULED_ALARM" />
+                <action android:name="com.devmoroz.moneyme.intent.ACTION_DAILY_NOTIFICATION" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>
