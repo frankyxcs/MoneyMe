@@ -2,6 +2,8 @@ package com.devmoroz.moneyme.utils;
 
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -54,5 +56,19 @@ public class AppUtils {
     public static PackageInfo getPackageInfo(Context context) throws PackageManager.NameNotFoundException {
         PackageManager manager = context.getPackageManager();
         return manager.getPackageInfo(context.getPackageName(), 0);
+    }
+
+    public static void restartApp(Context context){
+        Intent intentLaunch = new Intent(context, MainActivity.class);
+        int mPendingIntentId = 54321;
+        intentLaunch.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intentLaunch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        PendingIntent mPendingIntent = PendingIntent.getActivity(context, mPendingIntentId, intentLaunch,
+                PendingIntent.FLAG_CANCEL_CURRENT);
+        AlarmManager mgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
+
+        System.exit(0);
     }
 }

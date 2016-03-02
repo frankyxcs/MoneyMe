@@ -31,6 +31,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -92,6 +94,7 @@ import java.util.List;
 
 import static com.devmoroz.moneyme.utils.PhotoUtil.extractImageUrlFromGallery;
 import static com.devmoroz.moneyme.utils.PhotoUtil.setImageWithGlide;
+import static com.devmoroz.moneyme.utils.StorageUtils.checkStorage;
 
 public class AddOutcomeActivity extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener {
 
@@ -210,8 +213,8 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
 
     private void saveNewOutcomeTransaction() {
         if (amount.getText().toString().isEmpty()) {
-            floatingAmountLabel.setError(getString(R.string.outcome_amount_required));
-            floatingAmountLabel.setErrorEnabled(true);
+            Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
+            floatingAmountLabel.startAnimation(shake);
             return;
         }
         Intent intent;
@@ -229,7 +232,7 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_outcome, menu);
+        getMenuInflater().inflate(R.menu.menu_transaction, menu);
         return true;
     }
 
@@ -239,17 +242,17 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
             setSupportActionBar(toolbar);
             getSupportActionBar().setHomeButtonEnabled(true);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            toolbar.inflateMenu(R.menu.menu_outcome);
+            toolbar.inflateMenu(R.menu.menu_transaction);
         }
     }
 
     private void initCategorySpinner() {
         try {
-            dbHelper = MoneyApplication.getInstance().GetDBHelper();
+            dbHelper = MoneyApplication.GetDBHelper();
             categories = dbHelper.getCategoryDAO().getSortedCategories();
             if (FormatUtils.isNotEmpty(defaultCategory)) {
                 transactionEdit.setCategory(dbHelper.getCategoryDAO().getCategoryByName(defaultCategory));
-            }else {
+            } else {
                 transactionEdit.setCategory(categories.get(0));
             }
         } catch (SQLException ex) {
@@ -278,20 +281,20 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
     private void initAccountSpinner() {
         List<Account> accountList = Collections.emptyList();
         try {
-            dbHelper = MoneyApplication.getInstance().GetDBHelper();
+            dbHelper = MoneyApplication.GetDBHelper();
             accountList = dbHelper.getAccountDAO().queryForAll();
-            transactionEdit.setAccount(accountList.get(0));
+            transactionEdit.setAccountFrom(accountList.get(0));
         } catch (SQLException ex) {
 
         }
         Currency c = CurrencyCache.getCurrencyOrEmpty();
         String[] res = new String[accountList.size()];
-        AccountSpinnerAdapter adapter = new AccountSpinnerAdapter(this, android.R.layout.simple_spinner_dropdown_item , res,accountList, c);
+        AccountSpinnerAdapter adapter = new AccountSpinnerAdapter(this, android.R.layout.simple_spinner_dropdown_item, res, accountList, c);
         accountSpin.setAdapter(adapter);
         accountSpin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                transactionEdit.setAccount(adapter.getAccount(position));
+                transactionEdit.setAccountFrom(adapter.getAccount(position));
             }
 
             @Override
@@ -336,12 +339,12 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
     }
 
     private CreatedItem addOutcome() throws java.sql.SQLException {
-        dbHelper = MoneyApplication.getInstance().GetDBHelper();
+        dbHelper = MoneyApplication.GetDBHelper();
 
         String outcomeNote = description.getText().toString();
         double outcomeAmount = Double.parseDouble(amount.getText().toString());
 
-        Account account = transactionEdit.getAccount();
+        Account account = transactionEdit.getAccountFrom();
         account.setBalance(account.getBalance() - outcomeAmount);
 
         Transaction outcome = transactionEdit.getModel();
@@ -362,7 +365,7 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
             case (android.R.id.home):
                 NavUtils.navigateUpFromSameTask(this);
                 return true;
-            case (R.id.save_outcome_toolbar):
+            case (R.id.save_transaction_toolbar):
                 saveNewOutcomeTransaction();
                 return true;
             default:
@@ -426,9 +429,6 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
                     Uri contentUri = Uri.fromFile(f);
                     L.appendLog("take photo");
                     L.appendLog(transactionEdit.getPhotoPath());
-                    Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-                    intent.setData(contentUri);
-                    this.sendBroadcast(intent);
                     setPic();
                     break;
                 case TAGS_REQUEST_CODE:
@@ -463,7 +463,7 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
         }
         intent.putExtra(Constants.EXTRA_SELECTED_TAGS, parcelables);
         startActivityForResult(intent, TAGS_REQUEST_CODE);
-        overridePendingTransition(R.anim.activity_open_translate,R.anim.activity_close_scale);
+        overridePendingTransition(R.anim.activity_open_translate, R.anim.activity_close_scale);
     }
 
     private void takePhoto() {
@@ -471,14 +471,19 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             File photoFile = null;
             try {
-                photoFile = filename();
+                if (checkStorage()) {
+                    photoFile = filename();
+                }
             } catch (IOException ex) {
                 L.t(getApplicationContext(), "No SD card");
             }
             if (photoFile != null) {
+                transactionEdit.setPhotoPath(photoFile.getAbsolutePath());
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
                 startActivityForResult(takePictureIntent, SAVE_REQUEST_CODE);
             }
+        } else {
+            showMessage(R.string.feature_not_available_on_this_device);
         }
     }
 
@@ -497,13 +502,13 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
             photoDir.mkdirs();
         }
         File image = new File(photoDir, photoFileName);
-        transactionEdit.setPhotoPath("file:" + image.getAbsolutePath());
+        transactionEdit.setPhotoPath(Uri.fromFile(image).toString());
         return image;
     }
 
     private void setPic() {
         if (FormatUtils.isNotEmpty(transactionEdit.getPhotoPath())) {
-            setImageWithGlide(getApplicationContext(), transactionEdit.getPhotoPath(), chequeImage);
+            setImageWithGlide(getApplicationContext(), Uri.fromFile(new File(transactionEdit.getPhotoPath())), chequeImage);
             imageContainerView.setVisibility(View.GONE);
             album.setVisibility(View.VISIBLE);
         }
@@ -625,7 +630,7 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public boolean onLongClick(View v) {
-        switch(v.getId()){
+        switch (v.getId()) {
             case R.id.add_outcome_location:
                 transactionEdit.setLocation(null);
                 locationButton.setText(R.string.location);
@@ -642,31 +647,6 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
         String currencyName = CurrencyCache.getCurrencyOrEmpty().getName();
         String labelHint = String.format("%s, %s:", getString(R.string.amount), currencyName);
         floatingAmountLabel.setHint(labelHint);
-        floatingAmountLabel.getEditText().addTextChangedListener(new TextWatcher() {
-            @Override
-            public void onTextChanged(CharSequence text, int start, int count, int after) {
-                if (text.length() > 0) {
-                    floatingAmountLabel.setErrorEnabled(false);
-                } else {
-                    floatingAmountLabel.setError(getString(R.string.outcome_amount_required));
-                    floatingAmountLabel.setErrorEnabled(true);
-                }
-            }
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count,
-                                          int after) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (s.toString().length() == 0) {
-                    floatingAmountLabel.setError(getString(R.string.outcome_amount_required));
-                    floatingAmountLabel.setErrorEnabled(true);
-                }
-            }
-        });
     }
 
     public void showMessage(int messageResId) {

@@ -26,9 +26,9 @@
             android:id="@+id/menu_bottom1"
             android:checkableBehavior="none">
             <item
-                android:id="@+id/item_navigation_drawer_regular"
-                android:icon="@drawable/ic_regular"
-                android:title="@string/regular_transactions" />
+                android:id="@+id/item_navigation_drawer_notes"
+                android:icon="@drawable/ic_lists"
+                android:title="@string/notes_and_todo" />
             <item
                 android:id="@+id/item_navigation_drawer_statistics"
                 android:icon="@drawable/ic_statistics"

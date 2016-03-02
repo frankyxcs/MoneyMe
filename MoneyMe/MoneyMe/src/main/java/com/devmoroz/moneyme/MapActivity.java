@@ -95,7 +95,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     private void addMarkersToMap() {
-        DBHelper dbHelper = MoneyApplication.getInstance().GetDBHelper();
+        DBHelper dbHelper = MoneyApplication.GetDBHelper();
         Currency c = CurrencyCache.getCurrencyOrEmpty();
         try {
             if (mode == MapMode.Single && FormatUtils.isNotEmpty(details)) {

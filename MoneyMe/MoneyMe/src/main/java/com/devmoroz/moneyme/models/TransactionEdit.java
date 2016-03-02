@@ -23,7 +23,8 @@ public class TransactionEdit implements Parcelable {
     private TransactionType transactionType;
     private double amount;
     private Long date;
-    private Account account;
+    private Account accountFrom;
+    private Account accountTo;
     private Category category;
     private List<Tag> tags;
     private String note;
@@ -32,7 +33,8 @@ public class TransactionEdit implements Parcelable {
 
     private boolean isAmountSet = false;
     private boolean isDateSet = false;
-    private boolean isAccountSet = false;
+    private boolean isAccountFromSet = false;
+    private boolean isAccountToSet = false;
     private boolean isCategorySet = false;
     private boolean isTagsSet = false;
     private boolean isNoteSet = false;
@@ -47,7 +49,8 @@ public class TransactionEdit implements Parcelable {
         transactionType = (TransactionType) in.readSerializable();
         amount = (double) in.readValue(Double.class.getClassLoader());
         date = (Long) in.readValue(Long.class.getClassLoader());
-        account = in.readParcelable(Account.class.getClassLoader());
+        accountFrom = in.readParcelable(Account.class.getClassLoader());
+        accountTo = in.readParcelable(Account.class.getClassLoader());
         category = in.readParcelable(Category.class.getClassLoader());
         final boolean hasTags = in.readInt() != 0;
         if (hasTags) {
@@ -59,7 +62,8 @@ public class TransactionEdit implements Parcelable {
         location = in.readParcelable(Location.class.getClassLoader());
         isAmountSet = in.readInt() == 1;
         isDateSet = in.readInt() == 1;
-        isAccountSet = in.readInt() == 1;
+        isAccountFromSet = in.readInt() == 1;
+        isAccountToSet = in.readInt() == 1;
         isCategorySet = in.readInt() == 1;
         isTagsSet = in.readInt() == 1;
         isNoteSet = in.readInt() == 1;
@@ -77,7 +81,8 @@ public class TransactionEdit implements Parcelable {
         dest.writeSerializable(transactionType);
         dest.writeValue(amount);
         dest.writeValue(date);
-        dest.writeParcelable(account, flags);
+        dest.writeParcelable(accountFrom, flags);
+        dest.writeParcelable(accountTo, flags);
         dest.writeParcelable(category, flags);
         final boolean hasTags = tags != null;
         dest.writeInt(hasTags ? 1 : 0);
@@ -89,7 +94,8 @@ public class TransactionEdit implements Parcelable {
         dest.writeParcelable(location, flags);
         dest.writeInt(isAmountSet ? 1 : 0);
         dest.writeInt(isDateSet ? 1 : 0);
-        dest.writeInt(isAccountSet ? 1 : 0);
+        dest.writeInt(isAccountFromSet ? 1 : 0);
+        dest.writeInt(isAccountToSet ? 1 : 0);
         dest.writeInt(isCategorySet ? 1 : 0);
         dest.writeInt(isTagsSet ? 1 : 0);
         dest.writeInt(isNoteSet ? 1 : 0);
@@ -126,16 +132,28 @@ public class TransactionEdit implements Parcelable {
         isDateSet = true;
     }
 
-    public Account getAccount() {
-        if (isAccountSet || account != null) {
-            return account;
+    public Account getAccountFrom() {
+        if (isAccountFromSet || accountFrom != null) {
+            return accountFrom;
         }
         return null;
     }
 
-    public void setAccount(Account account) {
-        this.account = account;
-        isAccountSet = true;
+    public void setAccountFrom(Account accountFrom) {
+        this.accountFrom = accountFrom;
+        isAccountFromSet = true;
+    }
+
+    public Account getAccountTo() {
+        if (isAccountToSet || accountTo != null) {
+            return accountTo;
+        }
+        return null;
+    }
+
+    public void setAccountTo(Account accountTo) {
+        this.accountTo = accountTo;
+        isAccountToSet = true;
     }
 
     public Category getCategory() {
@@ -232,8 +250,11 @@ public class TransactionEdit implements Parcelable {
         return isDateSet;
     }
 
-    public boolean isAccountSet() {
-        return isAccountSet;
+    public boolean isAccountFromSet() {
+        return isAccountFromSet;
+    }
+    public boolean isAccountToSet() {
+        return isAccountToSet;
     }
 
     public boolean isCategorySet() {
@@ -248,9 +269,42 @@ public class TransactionEdit implements Parcelable {
         return isNoteSet;
     }
 
+    public boolean validateAccountFrom() {
+        if (getTransactionType() == TransactionType.OUTCOME) {
+            return true;
+        }
+
+        if (getAccountFrom() == null) {
+            return false;
+        }
+
+        if (getTransactionType() == TransactionType.TRANSFER && getAccountFrom().equals(getAccountTo())) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean validateAccountTo() {
+        if (getTransactionType() == TransactionType.INCOME) {
+            return true;
+        }
+
+        if (getAccountTo() == null) {
+            return false;
+        }
+
+        if (getTransactionType() == TransactionType.TRANSFER && getAccountTo().equals(getAccountFrom())) {
+            return false;
+        }
+
+        return true;
+    }
+
     public Transaction getModel() {
         final Transaction transaction = new Transaction();
-        transaction.setAccount(getAccount());
+        transaction.setAccountFrom(getAccountFrom());
+        transaction.setAccountTo(getAccountTo());
         transaction.setCategory(getCategory());
         transaction.setTags(getStringTags());
         transaction.setDateAdded(new Date(getDate()));

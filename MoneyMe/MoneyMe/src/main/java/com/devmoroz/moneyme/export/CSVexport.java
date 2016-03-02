@@ -41,7 +41,7 @@ public class CSVexport extends Exporter {
     public CSVexport(Context context, OutputStream outputStream) {
         super(context, outputStream);
         this.context = context;
-        dbHelper = MoneyApplication.getInstance().GetDBHelper();
+        dbHelper = MoneyApplication.GetDBHelper();
         currency = CurrencyCache.getCurrencyOrEmpty();
     }
 
@@ -70,10 +70,10 @@ public class CSVexport extends Exporter {
             outputLine.append(SEPARATOR).append(QUOTE).append(transaction.getFormatedAmount()).append(QUOTE);
             outputLine.append(SEPARATOR).append(QUOTE).append(currency.getName()).append(QUOTE);
             outputLine.append(SEPARATOR).append(QUOTE).append(transaction.getCategory() != null ? transaction.getCategory().getTitle() : "").append(QUOTE);
-            outputLine.append(SEPARATOR).append(QUOTE).append(transaction.getNotes()).append(QUOTE);
+            outputLine.append(SEPARATOR).append(QUOTE).append(transaction.getNotes() != null ? transaction.getNotes() : "").append(QUOTE);
             outputLine.append(SEPARATOR).append(QUOTE).append(transaction.getTags() != null ? transaction.getTags() : "").append(QUOTE);
             outputLine.append(SEPARATOR).append(QUOTE).append(transaction.getLocation() != null ? transaction.getLocation() : "").append(QUOTE);
-            outputLine.append(SEPARATOR).append(QUOTE).append(transaction.getAccountName()).append(QUOTE);
+            outputLine.append(SEPARATOR).append(QUOTE).append(transaction.getAccount().getName()).append(QUOTE);
             outputLine.append(SEPARATOR).append(QUOTE).append(transaction.getPayee() != null ? transaction.getPayee().getName() : "").append(QUOTE);
             writer.write(outputLine.toString());
             writer.newLine();

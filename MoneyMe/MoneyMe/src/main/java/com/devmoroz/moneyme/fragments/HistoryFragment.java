@@ -17,7 +17,6 @@ import com.devmoroz.moneyme.MoneyApplication;
 import com.devmoroz.moneyme.R;
 import com.devmoroz.moneyme.adapters.HistoryAdapter;
 import com.devmoroz.moneyme.eventBus.BusProvider;
-import com.devmoroz.moneyme.eventBus.DBRestoredEvent;
 import com.devmoroz.moneyme.eventBus.SearchCanceled;
 import com.devmoroz.moneyme.eventBus.SearchTriggered;
 import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
@@ -129,13 +128,13 @@ public class HistoryFragment extends Fragment {
             }
 
             @Override
-            public void onEditClick(String id, TransactionType type) {
-
+            public void onEditClick(int position) {
+                Transaction transaction = wAdapter.getTransationByPosition(position);
             }
         });
         boolean desc = Preferences.isSortByDesc(getContext());
 
-        mListWalletEntries = MoneyApplication.transactions;
+        mListWalletEntries = MoneyApplication.getInstance().getTransactions();
         sorter.sortWalletEntriesByDate(mListWalletEntries, desc);
         wAdapter.setInOutData(mListWalletEntries);
 
@@ -202,7 +201,7 @@ public class HistoryFragment extends Fragment {
     }
 
     public void CheckWallet() {
-        mListWalletEntries = MoneyApplication.transactions;
+        mListWalletEntries = MoneyApplication.getInstance().getTransactions();
         boolean desc = Preferences.isSortByDesc(getContext());
         sorter.sortWalletEntriesByDate(mListWalletEntries, desc);
         initBalanceWidget(desc);
@@ -214,24 +213,19 @@ public class HistoryFragment extends Fragment {
     public void OnWalletChange(WalletChangeEvent event) {
         CheckWallet();
     }
-
-    @Subscribe
-    public void OnDbResore(DBRestoredEvent event) {
-        CheckWallet();
-    }
-
     @Subscribe
     public void OnSearchTriggered(SearchTriggered event) {
         String term = event.term.toLowerCase();
         ArrayList<Transaction> searchedItems = new ArrayList<>();
-        mListWalletEntries = MoneyApplication.transactions;
+        mListWalletEntries = MoneyApplication.getInstance().getTransactions();
         for (Transaction item : mListWalletEntries) {
             String notes = item.getNotes() != null ? item.getNotes() : "";
-            String category = item.getCategory() != null ? item.getCategory().getTitle() : item.getAccountName();
-            String accountName = item.getAccountName();
+            String category = item.getCategory() != null ? item.getCategory().getTitle() : "";
+            String accountFromName = item.getAccountFrom() != null ? item.getAccountFromName(): "";
+            String accountToName = item.getAccountTo() != null ? item.getAccountToName() : "";
             String tags = item.getTags() != null ? item.getTags() : "";
             String locationName = item.getLocationName() != null ? item.getLocationName() : "";
-            if (category.toLowerCase().contains(term) || notes.toLowerCase().contains(term) || accountName.toLowerCase().contains(term) || tags.toLowerCase().contains(term) || locationName.toLowerCase().contains(term)) {
+            if (category.toLowerCase().contains(term) || notes.toLowerCase().contains(term) || accountFromName.toLowerCase().contains(term) || accountToName.toLowerCase().contains(term) || tags.toLowerCase().contains(term) || locationName.toLowerCase().contains(term)) {
                 searchedItems.add(item);
             }
         }

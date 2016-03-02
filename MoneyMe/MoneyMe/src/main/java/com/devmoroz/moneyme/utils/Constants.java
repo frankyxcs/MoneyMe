@@ -4,6 +4,7 @@ public class Constants {
     public final static String CREATED_TRANSACTION_DETAILS = "CREATED_TRANSACTION_DETAILS";
     public final static String OUTCOME_ACTIVITY= "startOutcomeActivity";
     public final static String INCOME_ACTIVITY= "startIncomeActivity";
+    public final static String TRANSFER_ACTIVITY= "startTransferActivity";
     public static final int TAB_HISTORY = 0;
     public static final int TAB_CHART = 1;
     public static final int TAB_GOALS = 3;

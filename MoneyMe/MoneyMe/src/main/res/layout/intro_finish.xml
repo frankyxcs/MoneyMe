@@ -38,8 +38,9 @@
                 android:gravity="center_vertical"
                 android:textAppearance="@style/Text.Subhead"
                 android:lines="1"
-                android:maxLength="20"
-                android:theme="@style/WhiteInput"/>
+                android:inputType="textAutoCorrect|textCapSentences"
+                android:maxLines="1"
+                android:theme="@style/ThemeOverlay.AppCompat.Dark"/>
         </android.support.design.widget.TextInputLayout>
 
         <LinearLayout
@@ -59,7 +60,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:theme="@style/WhiteInput"
+                android:theme="@style/ThemeOverlay.AppCompat.Dark"
                 android:minHeight="?android:attr/listPreferredItemHeight"/>
         </LinearLayout>
 
@@ -79,7 +80,7 @@
                 android:inputType="number|numberDecimal"
                 android:lines="1"
                 android:maxLength="9"
-                android:theme="@style/WhiteInput"/>
+                android:theme="@style/ThemeOverlay.AppCompat.Dark"/>
 
         </android.support.design.widget.TextInputLayout>
 
@@ -105,7 +106,7 @@
                 android:layout_weight="2"
                 android:singleLine="true"
                 android:layout_gravity="center"
-                android:theme="@style/WhiteInput"
+                android:theme="@style/ThemeOverlay.AppCompat.Dark"
                 style="@style/Button.Flat.Select"  />
         </LinearLayout>
     </LinearLayout>

@@ -11,8 +11,9 @@
     <string name="transfer_toolbar_name">Перевод</string>
     <string name="default_add_toolbar_name">Кошелек</string>
     <string name="text_undo">Отмена</string>
-    <string name="added_income" formatted="false">%s: добавлено %10.2f%s</string>
-    <string name="added_outcome" formatted="false">%s: потрачено %10.2f%s</string>
+    <string name="added_income" formatted="false">%s: добавлено %.2f%s</string>
+    <string name="added_outcome" formatted="false">%s: потрачено %.2f%s</string>
+    <string name="added_transfer" formatted="false">%s: переведено %.2f%s</string>
     <string name="outcome_amount_required">Пожалуйста, укажите сумму</string>
     <string name="currencies">Валюты</string>
     <string name="currency">Валюта</string>
@@ -58,6 +59,7 @@
     <string name="goals">Цели</string>
     <string name="calendar">Календарь</string>
     <string name="regular_transactions">Регулярные операции</string>
+    <string name="notes_and_todo">Заметки и списки</string>
     <string name="statistics">Статистика</string>
     <string name="csv_export">Экспорт в CSV</string>
     <string name="csv_export_dialog_content">Будет создан CSV файл ваших транзакий.</string>
@@ -273,6 +275,7 @@
     <string name="todo_empty_text">Здесь будут ваши напоминания и заметки. Нажмите \"+\" чтобы добавить новое задание.</string>
     <string name="tag_with_current_name_exist">Тег с таким именем уже существует.</string>
     <string name="add_new_tag">Добавить тег</string>
+    <string name="create">Создать</string>
     <string name="add_tag_dialog_title">Название</string>
     <string name="transfer_money">Трансфер средств</string>
     <string name="no_internet_connection">Проверьте подключение к интернету и попробуйте еще раз.</string>
@@ -282,6 +285,12 @@
     <string name="choose_todo_color">Цвет события</string>
     <string name="notes">Заметки</string>
     <string name="share">Поделиться</string>
+    <string name="share_chooser_message">Поделиться с помощью</string>
     <string name="snooze">Отложить на</string>
     <string name="minute">мин.</string>
+    <string name="feature_not_available_on_this_device">Функция недоступна на Вашем устройстве</string>
+    <string name="permission_external_storage">Предоставьте разрешение для записи на внешний накопитель для создания резервных копий</string>
+    <string name="from">Из</string>
+    <string name="to">В</string>
+    <string name="alarm_reset_on">Напоминание установлено на:</string>
 </resources>

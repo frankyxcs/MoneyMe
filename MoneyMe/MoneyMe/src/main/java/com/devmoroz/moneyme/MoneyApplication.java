@@ -7,7 +7,6 @@ import android.os.AsyncTask;
 
 import com.devmoroz.moneyme.eventBus.AppInitCompletedEvent;
 import com.devmoroz.moneyme.eventBus.BusProvider;
-import com.devmoroz.moneyme.eventBus.DBRestoredEvent;
 import com.devmoroz.moneyme.eventBus.GoalsChangeEvent;
 import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
 import com.devmoroz.moneyme.helpers.DBHelper;
@@ -37,9 +36,9 @@ public class MoneyApplication extends Application {
         return mIsInitialized;
     }
 
-    public static List<Goal> goals = Collections.emptyList();
-    public static List<Transaction> transactions = Collections.emptyList();
-    public static List<Account> accounts = Collections.emptyList();
+    private static List<Goal> goals = Collections.emptyList();
+    private static List<Transaction> transactions = Collections.emptyList();
+    private static List<Account> accounts = Collections.emptyList();
 
     private DBHelper dbHelper;
 
@@ -57,7 +56,7 @@ public class MoneyApplication extends Application {
             int monthStart = Preferences.getMonthStart(this);
             accounts = dbHelper.getAccountDAO().queryForAll();
             transactions = dbHelper.getTransactionDAO().queryAllForPeriod(period, monthStart);
-
+            goals = dbHelper.getGoalDAO().queryForInProgress();
         } catch (SQLException ex) {
             L.t(this, "Something went wrong.Please,try again.");
         }
@@ -72,11 +71,23 @@ public class MoneyApplication extends Application {
         }
     }
 
-    public void GetGoals() {
+    public List<Transaction> getTransactions() {
+        try {
+            int period = Preferences.getHistoryPeriod(this);
+            int monthStart = Preferences.getMonthStart(this);
+            transactions = dbHelper.getTransactionDAO().queryAllForPeriod(period, monthStart);
+            return transactions;
+        } catch (SQLException ex) {
+            return transactions;
+        }
+    }
+
+    public List<Goal> GetGoals() {
         try {
             goals = dbHelper.getGoalDAO().queryForInProgress();
+            return goals;
         } catch (SQLException ex) {
-            L.t(this, "Something went wrong.Please,try again.");
+            return goals;
         }
     }
 
@@ -91,7 +102,6 @@ public class MoneyApplication extends Application {
             protected Boolean doInBackground(Void... voids) {
                 try {
                     GetCommonData();
-                    GetGoals();
                     return true;
                 } catch (Exception e) {
                     return false;
@@ -106,8 +116,8 @@ public class MoneyApplication extends Application {
         task.execute();
     }
 
-    public DBHelper GetDBHelper() {
-        return dbHelper;
+    public static DBHelper GetDBHelper() {
+        return wInstance.dbHelper;
     }
 
     @Override
@@ -140,12 +150,6 @@ public class MoneyApplication extends Application {
 
     @Subscribe
     public void OnGoalsChange(GoalsChangeEvent event) {
-        getInstance().GetGoals();
-    }
-
-    @Subscribe
-    public void OnDBRestore(DBRestoredEvent event) {
-        getInstance().GetCommonData();
         getInstance().GetGoals();
     }
 

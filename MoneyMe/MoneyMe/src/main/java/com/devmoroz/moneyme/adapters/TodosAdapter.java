@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.devmoroz.moneyme.R;
 import com.devmoroz.moneyme.models.Todo;
+import com.devmoroz.moneyme.utils.CustomColorTemplate;
 import com.devmoroz.moneyme.utils.FormatUtils;
 import com.devmoroz.moneyme.utils.datetime.TimeUtils;
 
@@ -27,8 +28,9 @@ public class TodosAdapter extends RecyclerView.Adapter<TodosAdapter.MainViewHold
     private final OnItemClickListener listener;
 
     public interface OnItemClickListener {
-        void onModelClick(View view, Todo todo, int position);
+        void onModelClick(Todo todo);
         void onDeleteClick(Todo todo, int position);
+        void onShareClick(Todo todo);
     }
 
     public TodosAdapter(Context mContext, List<Todo> list, OnItemClickListener listener) {
@@ -105,6 +107,7 @@ public class TodosAdapter extends RecyclerView.Adapter<TodosAdapter.MainViewHold
         private final TextView mTodoTimeTextView;
         private final ImageView mTodoIconHasReminder;
         private final ImageButton mTodoButtonMore;
+        private final View card;
         private Todo todo;
         private int position;
 
@@ -115,6 +118,7 @@ public class TodosAdapter extends RecyclerView.Adapter<TodosAdapter.MainViewHold
             mTodoTimeTextView = (TextView) itemView.findViewById(R.id.todo_last_edit_text);
             mTodoIconHasReminder = (ImageView) itemView.findViewById(R.id.todo_icon_hasReminder);
             mTodoButtonMore = (ImageButton) itemView.findViewById(R.id.todo_more);
+            card = itemView;
             itemView.setOnClickListener(this);
             mTodoButtonMore.setOnClickListener(this);
         }
@@ -126,6 +130,7 @@ public class TodosAdapter extends RecyclerView.Adapter<TodosAdapter.MainViewHold
             setTextView(mTodoTitleTextView, model.getTitle());
             setTextView(mTodoContentTextView, model.getContent());
             mTodoTimeTextView.setText(TimeUtils.formatHumanFriendlyShortDateTime(context, model.getDateLong()));
+            card.setBackgroundColor(CustomColorTemplate.TODO_COLORS[model.getColor()]);
             if (model.isHasReminder()) {
                 mTodoIconHasReminder.setVisibility(View.VISIBLE);
             } else {
@@ -150,6 +155,9 @@ public class TodosAdapter extends RecyclerView.Adapter<TodosAdapter.MainViewHold
                        case R.id.remove_todo:
                             listener.onDeleteClick(todo,position);
                             return true;
+                        case R.id.share_todo:
+                            listener.onShareClick(todo);
+                            return true;
                         default:
                             return false;
                     }
@@ -163,7 +171,7 @@ public class TodosAdapter extends RecyclerView.Adapter<TodosAdapter.MainViewHold
         public void onClick(View v) {
             switch (v.getId()){
                 case R.id.todo_item_card:
-                    listener.onModelClick(v, todo, position);
+                    listener.onModelClick(todo);
                     break;
                 case R.id.todo_more:
                     showPopUp(v,todo,position);

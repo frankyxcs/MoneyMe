@@ -5,6 +5,8 @@ import android.os.AsyncTask;
 import android.os.Environment;
 
 import com.devmoroz.moneyme.export.ExportParams;
+import com.devmoroz.moneyme.notification.MoneyMeScheduler;
+import com.devmoroz.moneyme.utils.StorageUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -41,34 +43,30 @@ public class BackupTask extends AsyncTask<String, Void, Integer> {
 
     @Override
     protected Integer doInBackground(String... params) {
+        String command = params[0];
+        String backupName = params[1];
+
         //Get a reference to the database
         File dbFile = mContext.getDatabasePath("moneyme.db");
-        //Get a reference to the directory location for the backup
-        File exportDir =
-                new File(ExportParams.BACKUP_FOLDER_PATH);
-        if (!exportDir.exists()) {
-            exportDir.mkdirs();
-        }
-        File backup = new File(exportDir, dbFile.getName());
-        //Check the required operation
-        String command = params[0];
+
+        File backupDir = StorageUtils.getBackupDir();
+
+        File backup = new File(backupDir, backupName);
+
         if (command.equals(COMMAND_BACKUP)) {
-        //Attempt file copy
             try {
-                backup.createNewFile();
                 fileCopy(dbFile, backup);
                 return BACKUP_SUCCESS;
             } catch (IOException e) {
                 return BACKUP_ERROR;
             }
         } else if (command.equals(COMMAND_RESTORE)) {
-        //Attempt file copy
             try {
                 if (!backup.exists()) {
                     return RESTORE_NOFILEERROR;
                 }
-                dbFile.createNewFile();
                 fileCopy(backup, dbFile);
+                resetTodoReminders();
                 return RESTORE_SUCCESS;
             } catch (IOException e) {
                 return BACKUP_ERROR;
@@ -114,5 +112,11 @@ public class BackupTask extends AsyncTask<String, Void, Integer> {
             if (outChannel != null)
                 outChannel.close();
         }
+    }
+
+    private void resetTodoReminders(){
+        long now = System.currentTimeMillis() + 1000;
+        MoneyMeScheduler scheduler = new MoneyMeScheduler();
+        scheduler.scheduleAllTodo(mContext,now);
     }
 }

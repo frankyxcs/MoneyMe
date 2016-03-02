@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.devmoroz.moneyme.utils.FormatUtils;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -18,6 +19,7 @@ public class Todo implements Parcelable {
         public Todo createFromParcel(Parcel in) {
             return new Todo(in);
         }
+
         public Todo[] newArray(int size) {
             return new Todo[size];
         }
@@ -73,28 +75,30 @@ public class Todo implements Parcelable {
 
     public Todo(Parcel parcel) {
         setId(parcel.readString());
-        setAlarm_id(getAlarm_id());
+        setAlarm_id(parcel.readInt());
         setTitle(parcel.readString());
         setContent(parcel.readString());
         setColor(parcel.readInt());
-        setDate((Date) parcel.readSerializable());
+        setDate(new Date(parcel.readLong()));
         setHasReminder(parcel.readInt() != 0);
         setCheckList(parcel.readInt() != 0);
     }
 
-    @Override public int describeContents() {
+    @Override
+    public int describeContents() {
         return 0;
     }
 
-    @Override public void writeToParcel(Parcel parcel, int flags) {
+    @Override
+    public void writeToParcel(Parcel parcel, int flags) {
         parcel.writeString(getId());
         parcel.writeInt(getAlarm_id());
         parcel.writeString(title);
         parcel.writeString(content);
         parcel.writeInt(color);
-        parcel.writeSerializable(date);
-        parcel.writeInt(hasReminder ? 1: 0);
-        parcel.writeInt(checkList ? 1: 0);
+        parcel.writeLong(date.getTime());
+        parcel.writeInt(hasReminder ? 1 : 0);
+        parcel.writeInt(checkList ? 1 : 0);
     }
 
     public int getAlarm_id() {
@@ -106,11 +110,13 @@ public class Todo implements Parcelable {
     }
 
     public String getId() {
-        return id.toString();
+        return id != null ? id.toString() : "";
     }
 
     public void setId(String id) {
-        this.id = UUID.fromString(id);
+        if (FormatUtils.isNotEmpty(id)) {
+            this.id = UUID.fromString(id);
+        }
     }
 
     public String getTitle() {

@@ -20,17 +20,18 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
+import com.devmoroz.moneyme.MainActivity;
 import com.devmoroz.moneyme.MoneyApplication;
 import com.devmoroz.moneyme.R;
 import com.devmoroz.moneyme.adapters.AccountsAdapter;
 import com.devmoroz.moneyme.adapters.AccountSpinnerWithIconsAdapter;
 import com.devmoroz.moneyme.eventBus.BusProvider;
-import com.devmoroz.moneyme.eventBus.DBRestoredEvent;
 import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
 import com.devmoroz.moneyme.helpers.DBHelper;
 import com.devmoroz.moneyme.models.Account;
 import com.devmoroz.moneyme.models.AccountRow;
 import com.devmoroz.moneyme.models.Currency;
+import com.devmoroz.moneyme.utils.Constants;
 import com.devmoroz.moneyme.utils.CurrencyCache;
 import com.devmoroz.moneyme.utils.FormatUtils;
 import com.devmoroz.moneyme.widgets.DecimalDigitsInputFilter;
@@ -42,7 +43,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AccountsFragment extends Fragment {
+public class AccountsFragment extends Fragment implements View.OnClickListener {
 
     private View view;
     private EmptyRecyclerView recyclerView;
@@ -56,6 +57,8 @@ public class AccountsFragment extends Fragment {
 
     private TextInputLayout accountNameInput;
     private View positiveAction;
+
+    private MainActivity mainActivity;
 
     public static AccountsFragment getInstance() {
         Bundle args = new Bundle();
@@ -80,17 +83,15 @@ public class AccountsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        mainActivity = (MainActivity) getActivity();
+
         view = inflater.inflate(R.layout.accounts_fragment, container, false);
         recyclerView = (EmptyRecyclerView) view.findViewById(R.id.accountsList);
         btnAddAccount = (CardView) view.findViewById(R.id.add_new_account);
         balanceTextView = (TextView) view.findViewById(R.id.balanceTextView);
         transferContainerView = view.findViewById(R.id.transferContainerView);
-        btnAddAccount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AddNewAccount();
-            }
-        });
+        transferContainerView.setOnClickListener(this);
+        btnAddAccount.setOnClickListener(this);
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
 
         adapter = new AccountsAdapter(getActivity());
@@ -100,28 +101,29 @@ public class AccountsFragment extends Fragment {
         return view;
     }
 
-    private void SetTotalBalance(){
+    private void SetTotalBalance() {
         Currency currency = CurrencyCache.getCurrencyOrEmpty();
         String value = FormatUtils.amountToString(currency, totalBalance, true);
         balanceTextView.setText(value);
+
     }
 
-    private void CheckWallet(){
+    private void CheckWallet() {
         accounts = MoneyApplication.getInstance().getAccounts();
-        if(accounts.size()>=2){
+        if (accounts.size() >= 2) {
             transferContainerView.setVisibility(View.VISIBLE);
-        }
-        else{
+            transferContainerView.setOnClickListener(this);
+        } else {
             transferContainerView.setVisibility(View.GONE);
         }
-        DBHelper dbHelper = MoneyApplication.getInstance().GetDBHelper();
+        DBHelper dbHelper = MoneyApplication.GetDBHelper();
         data.clear();
         totalBalance = 0;
         for (Account acc : accounts) {
             double spendings = 0;
             try {
                 spendings = dbHelper.getTransactionDAO().getTotalOutcomeForAccount(acc.getId());
-            }catch(SQLException ex){
+            } catch (SQLException ex) {
 
             }
             data.add(new AccountRow(acc.getId(), acc.getName(), acc.getBalance(), spendings, acc.getType()));
@@ -131,7 +133,7 @@ public class AccountsFragment extends Fragment {
         adapter.setAccountsData(data);
     }
 
-    private void AddNewAccount(){
+    private void AddNewAccount() {
         MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
                 .title(R.string.add_account)
                 .customView(R.layout.dialog_fragment_add_account, true)
@@ -155,7 +157,7 @@ public class AccountsFragment extends Fragment {
         accountNameInput = (TextInputLayout) dialog.getCustomView().findViewById(R.id.text_input_layout_add_account_name);
         EditText accountBalanceInput = (EditText) dialog.getCustomView().findViewById(R.id.accountAddBalance);
         Spinner accountTypesSpinner = (Spinner) dialog.getCustomView().findViewById(R.id.accountAddType);
-        AccountSpinnerWithIconsAdapter adapter = new AccountSpinnerWithIconsAdapter(getContext(),R.layout.account_type_row,types);
+        AccountSpinnerWithIconsAdapter adapter = new AccountSpinnerWithIconsAdapter(getContext(), R.layout.account_type_row, types);
         accountTypesSpinner.setAdapter(adapter);
         accountBalanceInput.setFilters(new InputFilter[]{new DecimalDigitsInputFilter()});
         accountNameInput.getEditText().addTextChangedListener(new TextWatcher() {
@@ -177,24 +179,24 @@ public class AccountsFragment extends Fragment {
         positiveAction.setEnabled(false);
     }
 
-    private void CreateNewAccount(MaterialDialog materialDialog){
+    private void CreateNewAccount(MaterialDialog materialDialog) {
         View v = materialDialog.getCustomView();
 
-        EditText nameEditText =(EditText) v.findViewById(R.id.accountAddName);
-        EditText balanceEditText =(EditText) v.findViewById(R.id.accountAddBalance);
+        EditText nameEditText = (EditText) v.findViewById(R.id.accountAddName);
+        EditText balanceEditText = (EditText) v.findViewById(R.id.accountAddBalance);
         Spinner typeSpinner = (Spinner) v.findViewById(R.id.accountAddType);
 
         String name = nameEditText.getText().toString();
         int type = typeSpinner.getSelectedItemPosition();
         double amount = 0f;
-        if(!FormatUtils.isEmpty(balanceEditText)){
+        if (!FormatUtils.isEmpty(balanceEditText)) {
             amount = Double.parseDouble(balanceEditText.getText().toString());
         }
         try {
-            DBHelper dbHelper = MoneyApplication.getInstance().GetDBHelper();
-            Account account = new Account(name,amount,type,true);
+            DBHelper dbHelper = MoneyApplication.GetDBHelper();
+            Account account = new Account(name, amount, type, true);
             dbHelper.getAccountDAO().create(account);
-        }catch (SQLException ex){
+        } catch (SQLException ex) {
 
         }
         BusProvider.postOnMain(new WalletChangeEvent());
@@ -203,13 +205,21 @@ public class AccountsFragment extends Fragment {
 
     @Subscribe
     public void OnWalletChange(WalletChangeEvent event) {
-       CheckWallet();
-    }
-
-
-    @Subscribe
-    public void OnDbResore(DBRestoredEvent event) {
         CheckWallet();
     }
 
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.transferContainerView:
+                if (mainActivity != null) {
+                    mainActivity.startAddActivity(Constants.TRANSFER_ACTIVITY, null);
+                }
+                break;
+            case R.id.add_new_account:
+                AddNewAccount();
+                break;
+        }
+    }
 }

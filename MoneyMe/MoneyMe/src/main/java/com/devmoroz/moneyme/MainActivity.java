@@ -32,10 +32,10 @@ import com.devmoroz.moneyme.adapters.TabsPagerFragmentAdapter;
 import com.devmoroz.moneyme.eventBus.AppInitCompletedEvent;
 import com.devmoroz.moneyme.eventBus.BusProvider;
 import com.devmoroz.moneyme.eventBus.ChartSliceClickedEvent;
-import com.devmoroz.moneyme.eventBus.DBRestoredEvent;
 import com.devmoroz.moneyme.eventBus.SearchCanceled;
 import com.devmoroz.moneyme.eventBus.SearchTriggered;
 import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
+import com.devmoroz.moneyme.export.BackupRestoreHelper;
 import com.devmoroz.moneyme.export.ExportAsyncTask;
 import com.devmoroz.moneyme.export.ExportParams;
 import com.devmoroz.moneyme.export.backup.BackupTask;
@@ -45,6 +45,7 @@ import com.devmoroz.moneyme.logging.L;
 import com.devmoroz.moneyme.models.Account;
 import com.devmoroz.moneyme.models.CreatedItem;
 import com.devmoroz.moneyme.models.Currency;
+import com.devmoroz.moneyme.models.Transaction;
 import com.devmoroz.moneyme.utils.AppUtils;
 import com.devmoroz.moneyme.utils.Constants;
 import com.devmoroz.moneyme.utils.CurrencyCache;
@@ -54,12 +55,15 @@ import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.squareup.otto.Subscribe;
 
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
     final int REQUEST_CODE_INCOME = 918;
     final int REQUEST_CODE_OUTCOME = 1218;
+    final int REQUEST_CODE_TRANSFER = 1941;
 
     public static final int VIEW_SPLASH = 0;
     public static final int VIEW_CONTENT = 1;
@@ -212,6 +216,9 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.item_navigation_drawer_about:
                         navigate(AboutActivity.class);
                         return true;
+                    case R.id.item_navigation_drawer_notes:
+                        navigate(NotesActivity.class);
+                        return true;
                     case R.id.item_navigation_drawer_settings:
                         navigate(SettingsActivity.class);
                         return true;
@@ -239,14 +246,15 @@ public class MainActivity extends AppCompatActivity {
                 .itemsCallback(new MaterialDialog.ListCallback() {
                     @Override
                     public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                        BackupRestoreHelper helper = new BackupRestoreHelper(MainActivity.this);
                         switch (which) {
                             case (0):
                                 dialog.dismiss();
-                                doBackup(BackupTask.COMMAND_BACKUP);
+                                helper.Backup(MainActivity.this, coordinator);
                                 break;
                             case (1): {
                                 dialog.dismiss();
-                                doBackup(BackupTask.COMMAND_RESTORE);
+                                helper.Restore(MainActivity.this, coordinator);
                                 break;
                             }
                         }
@@ -273,12 +281,13 @@ public class MainActivity extends AppCompatActivity {
                         dialog.setMessage(getString(R.string.csv_export_inprogress));
                         dialog.show();
                         ExportParams exportParams = new ExportParams(ExportParams.ExportTarget.SHARING, ExportParams.ExportType.CSV);
-                        new ExportAsyncTask(MainActivity.this,dialog, new ExportAsyncTask.CompletionListener() {
+                        new ExportAsyncTask(MainActivity.this, dialog, new ExportAsyncTask.CompletionListener() {
                             @Override
                             public void onExportComplete() {
                                 dialog.dismiss();
                                 L.T(MainActivity.this, getString(R.string.csv_export_completed));
                             }
+
                             @Override
                             public void onError(int errorCode) {
                                 L.T(MainActivity.this, "Бляха, что-то не получилось");
@@ -294,54 +303,6 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setCurrentItem(tab);
     }
 
-    private void doBackup(final String action) {
-        int content = action.equals(BackupTask.COMMAND_BACKUP) ? R.string.backup_dialog_content : R.string.restore_dialog_content;
-        final int progressContent = action.equals(BackupTask.COMMAND_BACKUP) ? R.string.backup_database_inprogress : R.string.restore_database_inprogress;
-        new MaterialDialog.Builder(this)
-                .title(R.string.backup)
-                .content(content)
-                .positiveText(R.string.ok_continue)
-                .negativeText(R.string.cancel)
-                .positiveColorRes(R.color.colorPrimary)
-                .negativeColorRes(R.color.colorPrimary)
-                .widgetColorRes(R.color.colorPrimary)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
-
-                        final ProgressDialog dialog = new ProgressDialog(MainActivity.this);
-                        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                        dialog.setCancelable(false);
-                        dialog.setMessage(getString(progressContent));
-                        dialog.show();
-
-                        new BackupTask(MainActivity.this, new BackupTask.CompletionListener() {
-                            @Override
-                            public void onBackupComplete() {
-                                dialog.dismiss();
-                                L.T(MainActivity.this, getString(R.string.backup_completed));
-                            }
-
-                            @Override
-                            public void onRestoreComplete() {
-                                dialog.dismiss();
-                                L.T(MainActivity.this, getString(R.string.restore_completed));
-                                BusProvider.postOnMain(new DBRestoredEvent());
-                            }
-
-                            @Override
-                            public void onError(int errorCode) {
-                                dialog.dismiss();
-                                if (errorCode == BackupTask.RESTORE_NOFILEERROR) {
-                                    L.T(MainActivity.this, getString(R.string.restore_failed));
-                                }
-                                L.T(MainActivity.this, "Something went wrong.Please,try again.");
-                            }
-                        }).execute(action);
-                    }
-                })
-                .show();
-    }
 
     private void navigate(final Class<? extends Activity> activityClass) {
         if (!getClass().equals(activityClass)) {
@@ -361,19 +322,19 @@ public class MainActivity extends AppCompatActivity {
         fabIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startAddActivity(Constants.INCOME_ACTIVITY,null);
+                startAddActivity(Constants.INCOME_ACTIVITY, null);
             }
         });
 
         fabOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startAddActivity(Constants.OUTCOME_ACTIVITY,null);
+                startAddActivity(Constants.OUTCOME_ACTIVITY, null);
             }
         });
     }
 
-    private void startAddActivity(String activity, String category) {
+    public void startAddActivity(String activity, String category) {
         fab.collapse();
         Intent intent;
         switch (activity) {
@@ -383,10 +344,14 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case Constants.OUTCOME_ACTIVITY:
                 intent = new Intent(this, AddOutcomeActivity.class);
-                if(FormatUtils.isNotEmpty(category)){
-                    intent.putExtra(Constants.OUTCOME_DEFAULT_CATEGORY,category);
+                if (FormatUtils.isNotEmpty(category)) {
+                    intent.putExtra(Constants.OUTCOME_DEFAULT_CATEGORY, category);
                 }
                 startActivityForResult(intent, REQUEST_CODE_OUTCOME);
+                break;
+            case Constants.TRANSFER_ACTIVITY:
+                intent = new Intent(this, AddTransferActivity.class);
+                startActivityForResult(intent, REQUEST_CODE_TRANSFER);
                 break;
         }
     }
@@ -402,6 +367,8 @@ public class MainActivity extends AppCompatActivity {
                     info = getString(R.string.added_income, createdItem.getCategory(), createdItem.getAmount(), sign);
                 } else if (requestCode == REQUEST_CODE_OUTCOME) {
                     info = getString(R.string.added_outcome, createdItem.getCategory(), createdItem.getAmount(), sign);
+                } else if (requestCode == REQUEST_CODE_TRANSFER) {
+                    info = getString(R.string.added_transfer, createdItem.getCategory(), createdItem.getAmount(), sign);
                 }
                 final Snackbar snackBar = Snackbar.make(coordinator, info, Snackbar.LENGTH_LONG);
                 snackBar.setCallback(new Snackbar.Callback() {
@@ -426,15 +393,26 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         try {
-                            DBHelper dbhelper = MoneyApplication.getInstance().GetDBHelper();
-                            Account acc = dbhelper.getAccountDAO().queryForId(UUID.fromString(createdItem.getAccountId()));
+                            DBHelper dbhelper = MoneyApplication.GetDBHelper();
+                            Transaction t = dbhelper.getTransactionDAO().queryForId(UUID.fromString(createdItem.getItemId()));
                             if (requestCode == REQUEST_CODE_INCOME) {
+                                Account acc = t.getAccountTo();
                                 acc.setBalance(acc.getBalance() - createdItem.getAmount());
+                                dbhelper.getAccountDAO().update(acc);
                             } else if (requestCode == REQUEST_CODE_OUTCOME) {
+                                Account acc = t.getAccountFrom();
                                 acc.setBalance(acc.getBalance() + createdItem.getAmount());
+                                dbhelper.getAccountDAO().update(acc);
                             }
-                            dbhelper.getAccountDAO().update(acc);
-                            dbhelper.getTransactionDAO().deleteById(UUID.fromString(createdItem.getItemId()));
+                            else if (requestCode == REQUEST_CODE_TRANSFER) {
+                                Account aFrom = t.getAccountFrom();
+                                Account aTo = t.getAccountTo();
+                                aFrom.setBalance(aFrom.getBalance() + createdItem.getAmount());
+                                aTo.setBalance(aTo.getBalance() - createdItem.getAmount());
+                                dbhelper.getAccountDAO().update(aFrom);
+                                dbhelper.getAccountDAO().update(aTo);
+                            }
+                            dbhelper.getTransactionDAO().delete(t);
                             BusProvider.postOnMain(new WalletChangeEvent());
                         } catch (SQLException ex) {
                             L.t(MainActivity.this, "Something went wrong.Please,try again.");

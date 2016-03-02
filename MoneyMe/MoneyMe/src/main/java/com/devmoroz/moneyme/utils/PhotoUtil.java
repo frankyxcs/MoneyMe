@@ -65,17 +65,31 @@ public class PhotoUtil {
     public static String extractImageUrlFromGallery(Context context, Intent data) {
         Uri selectedImage = data.getData();
         String[] filePathColumn = {MediaStore.Images.Media.DATA};
-
-        Cursor cursor = context.getContentResolver().query(selectedImage,
-                filePathColumn, null, null, null);
         String fileName = "";
-        if (cursor != null) {
-            cursor.moveToFirst();
-            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-            fileName = cursor.getString(columnIndex);
-            cursor.close();
-        }
+        Cursor cursor = null;
+        try {
+            cursor = context.getContentResolver().query(selectedImage,
+                    filePathColumn, null, null, null);
 
+            if (cursor != null) {
+                try {
+                    if (cursor.moveToFirst()) {
+                        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                        fileName = cursor.getString(columnIndex);
+                    }
+                } catch (Exception e) {
+
+                }
+            } else {
+                fileName = selectedImage.getLastPathSegment();
+            }
+        } catch (SecurityException e) {
+            return null;
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
         return fileName;
     }
 
@@ -87,11 +101,7 @@ public class PhotoUtil {
         }
     }
 
-    public static void setImageWithGlide(Context context, String path, ImageView targetImage) {
-        if (!path.contains("file:")) {
-            Glide.with(context).load("file://" + path).centerCrop().into(targetImage);
-        } else {
-            Glide.with(context).load(path).centerCrop().into(targetImage);
-        }
+    public static void setImageWithGlide(Context context, Uri imageUri, ImageView targetImage) {
+        Glide.with(context).load(imageUri).centerCrop().crossFade().into(targetImage);
     }
 }

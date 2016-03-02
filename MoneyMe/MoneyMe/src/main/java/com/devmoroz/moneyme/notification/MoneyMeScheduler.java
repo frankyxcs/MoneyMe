@@ -5,6 +5,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 
 import com.devmoroz.moneyme.AlarmService;
 import com.devmoroz.moneyme.MoneyApplication;
@@ -23,8 +24,7 @@ import java.util.List;
 
 public class MoneyMeScheduler {
 
-    public static final String SCHEDULED_TODO_TITLE = "scheduledTodoTitle";
-    public static final String SCHEDULED_TODO_CONTENT = "scheduledTodoContent";
+    public static final String SCHEDULED_TODO_INTENT_EXTRA = "scheduledTodoIntentExtra";
 
     private DBHelper dbHelper;
 
@@ -47,7 +47,12 @@ public class MoneyMeScheduler {
             Date scheduleTime = todo.getDate();
             AlarmManager service = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
             PendingIntent pendingIntent = createPendingIntentForScheduledTodoAlarm(context, todo);
-            service.set(AlarmManager.RTC_WAKEUP, scheduleTime.getTime(), pendingIntent);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                service.setExact(AlarmManager.RTC_WAKEUP, scheduleTime.getTime(), pendingIntent);
+            } else {
+                service.set(AlarmManager.RTC_WAKEUP, scheduleTime.getTime(), pendingIntent);
+            }
+
             return true;
         }
         return false;
@@ -59,7 +64,11 @@ public class MoneyMeScheduler {
             Date scheduleTime = todo.getDate();
             AlarmManager service = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
             PendingIntent pendingIntent = createPendingIntentForScheduledTodoAlarm(context, todo);
-            service.set(AlarmManager.RTC_WAKEUP, scheduleTime.getTime(), pendingIntent);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                service.setExact(AlarmManager.RTC_WAKEUP, scheduleTime.getTime(), pendingIntent);
+            } else {
+                service.set(AlarmManager.RTC_WAKEUP, scheduleTime.getTime(), pendingIntent);
+            }
             return true;
         }
         return false;
@@ -70,10 +79,9 @@ public class MoneyMeScheduler {
     }
 
     private PendingIntent createPendingIntentForScheduledTodoAlarm(Context context, Todo todo) {
-        Intent intent = new Intent(AlarmService.ACTION_SCHEDULED_TODO_ALARM);
-        intent.putExtra(SCHEDULED_TODO_TITLE, todo.getTitle());
-        intent.putExtra(SCHEDULED_TODO_CONTENT, todo.getContent() != null ? todo.getContent() : "");
-        return PendingIntent.getBroadcast(context, todo.getAlarm_id(), intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        Intent intent = new Intent(AlarmService.ACTION_SCHEDULED_TODO_ALARM, null, context, AlarmService.class);
+        intent.putExtra(SCHEDULED_TODO_INTENT_EXTRA, todo);
+        return PendingIntent.getService(context, todo.getAlarm_id(), intent, PendingIntent.FLAG_CANCEL_CURRENT);
     }
 
     public void cancelPendingIntentForTodoSchedule(Context context, Todo todo) {
@@ -85,7 +93,7 @@ public class MoneyMeScheduler {
     private List<Todo> getSortedSchedules(long now) {
         List<Todo> needSchedule = Collections.emptyList();
         try {
-            dbHelper = MoneyApplication.getInstance().GetDBHelper();
+            dbHelper = MoneyApplication.GetDBHelper();
             needSchedule = dbHelper.getTodoDAO().queryForAlarm(now);
         } catch (SQLException ex) {
 
@@ -132,8 +140,8 @@ public class MoneyMeScheduler {
     }
 
     private PendingIntent createPendingIntent(Context context) {
-        Intent intent = new Intent(AlarmService.ACTION_SCHEDULED_BACKUP);
-        return PendingIntent.getBroadcast(context, -123456, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        Intent intent = new Intent(AlarmService.ACTION_SCHEDULED_BACKUP, null, context, AlarmService.class);
+        return PendingIntent.getService(context, -123456, intent, PendingIntent.FLAG_CANCEL_CURRENT);
     }
 
     public void scheduleBackup(Context context, int frequency) {

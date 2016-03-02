@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/mainBackground"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/add_transfer_toolbar"
+        style="@style/ToolbarStyle"
+        android:elevation="3dp" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:isScrollContainer="true"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:orientation="horizontal"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp">
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/text_input_layout_transfer_amount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/add_transfer_amount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:digits="1234567890."
+                    android:hint="@string/amount"
+                    android:imeOptions="actionDone"
+                    android:inputType="numberDecimal" />
+
+            </android.support.design.widget.TextInputLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:animateLayoutChanges="true"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp">
+
+            <ImageView
+                style="@style/ImageView.Form"
+                android:src="@drawable/ic_wallet"
+                tools:ignore="RtlHardcoded" />
+
+            <LinearLayout
+                android:id="@+id/add_transfer_accounts_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:animateLayoutChanges="true"
+                android:orientation="vertical">
+
+                <Spinner
+                    android:id="@+id/add_transfer_from"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:textAppearance="@style/Text.Subhead"
+                    android:hint="@string/from"/>
+
+                <Spinner
+                    android:id="@+id/add_transfer_to"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:textAppearance="@style/Text.Subhead"
+                    android:hint="@string/to"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <View
+            style="@style/Divider.Thick"
+            android:layout_marginLeft="72dp"
+            android:layout_marginRight="16dp"
+            tools:ignore="RtlHardcoded" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:animateLayoutChanges="true"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp">
+
+            <ImageView
+                style="@style/ImageView.Form"
+                android:src="@drawable/ic_calendar_dark"
+                tools:ignore="RtlHardcoded" />
+
+            <Button
+                android:id="@+id/add_transfer_date"
+                style="@style/Button.Flat.Select"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="12 Jan" />
+
+            <Button
+                android:id="@+id/add_transfer_time"
+                style="@style/Button.Flat.Select"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end|center_vertical"
+                tools:text="12:00" />
+
+        </LinearLayout>
+
+        <View
+            style="@style/Divider.Thick"
+            android:layout_marginLeft="72dp"
+            android:layout_marginRight="16dp"
+            tools:ignore="RtlHardcoded" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:animateLayoutChanges="true"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp">
+
+            <ImageView
+                style="@style/ImageView.Form"
+                android:src="@drawable/ic_tag_multiple"
+                tools:ignore="RtlHardcoded" />
+
+            <Button
+                android:id="@+id/add_transfer_tags"
+                style="@style/Button.Flat.Select"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/add_tags" />
+        </LinearLayout>
+
+        <View
+            style="@style/Divider.Thick"
+            android:layout_marginLeft="72dp"
+            android:layout_marginRight="16dp"
+            tools:ignore="RtlHardcoded" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:animateLayoutChanges="true"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp">
+
+            <ImageView
+                style="@style/ImageView.Form"
+                android:src="@drawable/ic_note_text"
+                tools:ignore="RtlHardcoded" />
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:counterEnabled="true"
+                app:counterMaxLength="200">
+
+                <EditText
+                    android:id="@+id/add_transfer_note"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionDone"
+                    android:inputType="textShortMessage|textAutoCorrect|textCapSentences|textMultiLine|textAutoComplete"
+                    android:maxLength="200"
+                    android:maxLines="2" />
+            </android.support.design.widget.TextInputLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/coordinator_transfer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </android.support.design.widget.CoordinatorLayout>
+
+</LinearLayout>

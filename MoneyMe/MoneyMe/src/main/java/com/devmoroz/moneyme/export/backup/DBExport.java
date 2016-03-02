@@ -49,7 +49,7 @@ public class DBExport extends Exporter{
 
     @Override
     public void generateExport(OutputStream outputStream) throws Exception{
-        dbHelper = MoneyApplication.getInstance().GetDBHelper();
+        dbHelper = MoneyApplication.GetDBHelper();
 
         transactions = dbHelper.getTransactionDAO().queryForAll();
         accounts = dbHelper.getAccountDAO().queryForAll();

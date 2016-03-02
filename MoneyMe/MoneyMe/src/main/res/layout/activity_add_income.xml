@@ -62,8 +62,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:textAppearance="@style/Text.Subhead"
-            android:entries="@array/transaction_categories" />
+            android:textAppearance="@style/Text.Subhead" />
 
         </LinearLayout>
 

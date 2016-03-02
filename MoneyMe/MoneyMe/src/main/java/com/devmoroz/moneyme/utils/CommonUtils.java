@@ -66,16 +66,26 @@ public class CommonUtils {
     }
 
     public static int deleteItem(String id, TransactionType type) {
-        DBHelper dbHelper = MoneyApplication.getInstance().GetDBHelper();
+        DBHelper dbHelper = MoneyApplication.GetDBHelper();
         try {
             Transaction transaction = dbHelper.getTransactionDAO().queryForId(UUID.fromString(id));
-            Account account = transaction.getAccount();
+
             if (type == TransactionType.INCOME) {
-                account.setBalance(account.getBalance() - transaction.getAmount());
+                Account accountTo = transaction.getAccountTo();
+                accountTo.setBalance(accountTo.getBalance() - transaction.getAmount());
+                dbHelper.getAccountDAO().update(accountTo);
+            } else if (type == TransactionType.OUTCOME) {
+                Account accountFrom = transaction.getAccountFrom();
+                accountFrom.setBalance(accountFrom.getBalance() + transaction.getAmount());
+                dbHelper.getAccountDAO().update(accountFrom);
             } else {
-                account.setBalance(account.getBalance() + transaction.getAmount());
+                Account accountTo = transaction.getAccountTo();
+                Account accountFrom = transaction.getAccountFrom();
+                accountTo.setBalance(accountTo.getBalance() - transaction.getAmount());
+                accountFrom.setBalance(accountFrom.getBalance() + transaction.getAmount());
+                dbHelper.getAccountDAO().update(accountTo);
+                dbHelper.getAccountDAO().update(accountFrom);
             }
-            dbHelper.getAccountDAO().update(account);
 
             return dbHelper.getTransactionDAO().delete(transaction);
         } catch (SQLException ex) {
@@ -84,7 +94,7 @@ public class CommonUtils {
     }
 
     public static int deleteGoal(String id) {
-        DBHelper dbHelper = MoneyApplication.getInstance().GetDBHelper();
+        DBHelper dbHelper = MoneyApplication.GetDBHelper();
         try {
             return dbHelper.getGoalDAO().deleteById(UUID.fromString(id));
         } catch (SQLException ex) {
@@ -93,7 +103,7 @@ public class CommonUtils {
     }
 
     public static int updateGoal(String id, int amount) {
-        DBHelper dbHelper = MoneyApplication.getInstance().GetDBHelper();
+        DBHelper dbHelper = MoneyApplication.GetDBHelper();
         try {
             Goal goal = dbHelper.getGoalDAO().queryForId(UUID.fromString(id));
             goal.setAccumulated(goal.getAccumulated() + amount);

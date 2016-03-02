@@ -4,6 +4,7 @@ package com.devmoroz.moneyme.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
@@ -38,6 +39,7 @@ import com.devmoroz.moneyme.widgets.TextBackgroundSpan;
 
 import org.joda.time.DateTime;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
@@ -51,7 +53,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
     public interface Callback {
         void onDeleteClick(String id, TransactionType type);
 
-        void onEditClick(String id, TransactionType type);
+        void onEditClick(int position);
     }
 
     public HistoryAdapter(Context context, Callback callback) {
@@ -66,6 +68,13 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
         notifyDataSetChanged();
     }
 
+    public Transaction getTransationByPosition(int position) {
+        if (position <= getItemCount()) {
+            return transactions.get(position);
+        }
+        return null;
+    }
+
     @Override
     public MainViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = wInflater.inflate(R.layout.card_history, parent, false);
@@ -76,7 +85,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
     @Override
     public void onBindViewHolder(final MainViewHolder holder, int position) {
         final Transaction wData = transactions.get(position);
-        holder.setItemDetails(wData.getId(), wData.getType());
+        holder.setItemDetails(wData.getId(), wData.getType(), position);
 
         TextView textAmount = holder.textAmount;
         TextView textCategory = holder.textCategory;
@@ -89,24 +98,16 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
 
         if (wData.getType() == TransactionType.INCOME) {
             colorCircle.setColorFilter(CustomColorTemplate.INCOME_COLOR);
+        } else if (wData.getType() == TransactionType.TRANSFER) {
+            colorCircle.setColorFilter(CustomColorTemplate.TRANSFER_COLOR);
         } else {
             colorCircle.setColorFilter(wData.getCategory().getColor());
         }
 
         textAmount.setText(wData.getFormatedAmount());
 
-        String accountName = wData.getAccountName();
-        String title = "";
-        switch (wData.getType()){
-            case INCOME:
-                title = appContext.getString(R.string.income_toolbar_name);
-                break;
-            case OUTCOME:
-                title = wData.getCategory().getTitle();
-                break;
-            case TRANSFER:
-                title = appContext.getString(R.string.transfer_toolbar_name);
-        }
+        String title = FormatUtils.getTransactionTitle(appContext, wData);
+        String accountName = FormatUtils.getAccountTitle(wData);
         textCategory.setText(title);
         DateTime date = new DateTime(wData.getDateAdded());
         textCircle.setText(date.dayOfWeek().getAsShortText());
@@ -137,7 +138,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
         }
 
         if (FormatUtils.isNotEmpty(wData.getPhoto())) {
-            PhotoUtil.setImageWithGlide(appContext, wData.getPhoto(), photoView);
+            PhotoUtil.setImageWithGlide(appContext, Uri.fromFile(new File(wData.getPhoto())), photoView);
             photoView.setVisibility(View.VISIBLE);
             holder.attachedPhoto.setOnClickListener(v -> {
                 Intent intent = new Intent(appContext, FullScreenImageActivity.class);
@@ -164,15 +165,14 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
 
                         appContext.startActivity(intent);
 
-                    }
-                    else{
-                        L.T(appContext,appContext.getString(R.string.no_internet_connection));
+                    } else {
+                        L.T(appContext, appContext.getString(R.string.no_internet_connection));
                     }
                 }
             });
             holder.locationContainer.setVisibility(View.VISIBLE);
         } else {
-            holder.locationContainer.setVisibility(View.GONE);
+            holder.locationContainer.setVisibility(View.INVISIBLE);
             holder.textLocation.setText("");
         }
 
@@ -207,10 +207,12 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
         Button textLocation;
         String itemId;
         TransactionType itemType;
+        int position;
 
-        public void setItemDetails(String id, TransactionType type) {
-            itemId = id;
-            itemType = type;
+        public void setItemDetails(String id, TransactionType type, int position) {
+            this.itemId = id;
+            this.itemType = type;
+            this.position = position;
         }
 
         public MainViewHolder(View v) {
@@ -239,7 +241,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
             this.editButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mCallback.onEditClick(itemId, itemType);
+                    mCallback.onEditClick(position);
                 }
             });
         }

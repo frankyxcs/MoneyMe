@@ -67,7 +67,7 @@ public class TransactionDAO extends BaseDaoImpl<Transaction, UUID> {
 
         QueryBuilder<Transaction, UUID> queryBuilder = queryBuilder();
         queryBuilder.selectRaw("SUM(amount)");
-        queryBuilder.where().eq("account_id", UUID.fromString(accountId)).and().eq("type", TransactionType.INCOME).and().between("dateAdded", new Date(start), new Date(end));
+        queryBuilder.where().eq("accountTo_id", UUID.fromString(accountId)).and().eq("type", TransactionType.INCOME).and().between("dateAdded", new Date(start), new Date(end));
         String[] result = queryRaw(queryBuilder.prepareStatementString()).getFirstResult();
         if (result != null && result.length >= 1 && result[0]!=null) {
             val = Float.parseFloat(result[0]);
@@ -81,7 +81,7 @@ public class TransactionDAO extends BaseDaoImpl<Transaction, UUID> {
 
         QueryBuilder<Transaction, UUID> queryBuilder = queryBuilder();
         queryBuilder.selectRaw("SUM(amount)");
-        queryBuilder.where().eq("account_id", UUID.fromString(accountId)).and().eq("type", TransactionType.OUTCOME);
+        queryBuilder.where().eq("accountFrom_id", UUID.fromString(accountId)).and().eq("type", TransactionType.OUTCOME);
         String[] result = queryRaw(queryBuilder.prepareStatementString()).getFirstResult();
         if (result != null && result.length >= 1 && result[0]!=null) {
             val = Double.parseDouble(result[0]);
@@ -92,7 +92,7 @@ public class TransactionDAO extends BaseDaoImpl<Transaction, UUID> {
 
     public List<Transaction> queryTransactionsByTypeForAccount(TransactionType type, String accountId) throws SQLException {
         QueryBuilder<Transaction, UUID> queryBuilder = queryBuilder();
-        queryBuilder.where().eq("account_id", UUID.fromString(accountId)).and().eq("type", type);
+        queryBuilder.where().eq("accountFrom_id", UUID.fromString(accountId)).or().eq("accountTo_id", UUID.fromString(accountId)).and().eq("type", type);
         queryBuilder.orderBy("dateAdded", true);
         PreparedQuery<Transaction> preparedQuery = queryBuilder.prepare();
         List<Transaction> result = query(preparedQuery);

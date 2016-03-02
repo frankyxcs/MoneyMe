@@ -17,6 +17,8 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -63,8 +65,8 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_todo);
 
-        final Todo intentTodo = getIntent().getParcelableExtra(Constants.EXTRA_TODO_ITEM);
-        final Todo parcelableTodo;
+        Todo intentTodo = getIntent().getParcelableExtra(Constants.EXTRA_TODO_ITEM);
+        Todo parcelableTodo;
         if (savedInstanceState == null) {
             editTodo = intentTodo;
         } else {
@@ -144,9 +146,7 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
         setDateTimeText();
         mDateButton.setText(TimeUtils.formatShortDate(TodoActivity.this, editTodo.getDateLong()));
         mTimeButton.setText(TimeUtils.formatShortTime(TodoActivity.this, editTodo.getDateLong()));
-        if (editTodo.isHasReminder()) {
-            toggleDateButtonsConatinerVisibility(true);
-        }
+        toggleDateButtonsConatinerVisibility(editTodo.isHasReminder());
     }
 
     private void setTodoColor() {
@@ -191,7 +191,7 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
                         @Override
                         public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                             try {
-                                DBHelper dbHelper = MoneyApplication.getInstance().GetDBHelper();
+                                DBHelper dbHelper = MoneyApplication.GetDBHelper();
                                 dbHelper.getTodoDAO().delete(editTodo);
                             } catch (SQLException ex) {
                                 L.T(TodoActivity.this, "Something went wrong.Please, try again.");
@@ -223,6 +223,7 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
         if (toolbar != null) {
             setSupportActionBar(toolbar);
             getSupportActionBar().setHomeButtonEnabled(true);
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
     }
@@ -282,14 +283,18 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void makeResult(int result) {
-        if (editTodo.getTitle().isEmpty()) {
+        final Intent i = new Intent();
+        if (result != RESULT_CANCELED) {
+            try {
+                DBHelper dbHelper = MoneyApplication.GetDBHelper();
+                dbHelper.getTodoDAO().createOrUpdate(editTodo);
+            } catch (SQLException ex) {
 
-        } else {
-            Intent i = new Intent();
+            }
             i.putExtra(Constants.EXTRA_TODO_ITEM, editTodo);
-            setResult(result, i);
-            finish();
         }
+        setResult(result, i);
+        finish();
     }
 
     public void toggleDateButtonsConatinerVisibility(boolean checked) {
@@ -302,15 +307,16 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
 
     public void animateDateButtonsConatinerVisibility(boolean checked) {
         if (checked) {
-            mTodoDateButtonsContainer.animate().alpha(1.0f).setDuration(500).setListener(
+            mTodoDateButtonsContainer.animate().alpha(1.0f).setDuration(300).setListener(
                     new Animator.AnimatorListener() {
                         @Override
                         public void onAnimationStart(Animator animation) {
-                            mTodoDateButtonsContainer.setVisibility(View.VISIBLE);
+                            mTodoDateButtonsContainer.setVisibility(View.INVISIBLE);
                         }
 
                         @Override
                         public void onAnimationEnd(Animator animation) {
+                            mTodoDateButtonsContainer.setVisibility(View.VISIBLE);
                         }
 
                         @Override
@@ -323,11 +329,11 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
                     }
             );
         } else {
-            mTodoDateButtonsContainer.animate().alpha(0.0f).setDuration(500).setListener(
+            mTodoDateButtonsContainer.animate().alpha(0.0f).setDuration(300).setListener(
                     new Animator.AnimatorListener() {
                         @Override
                         public void onAnimationStart(Animator animation) {
-
+                            mTodoDateButtonsContainer.setVisibility(View.INVISIBLE);
                         }
 
                         @Override
@@ -360,7 +366,12 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
                 showTimePickerDialog();
                 break;
             case R.id.saveToDoFAB:
-                makeResult(RESULT_OK);
+                if (FormatUtils.isEmpty(mTodoTitleEditText)) {
+                    Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
+                    mTodoTitleEditText.startAnimation(shake);
+                } else {
+                    makeResult(RESULT_OK);
+                }
                 break;
         }
     }

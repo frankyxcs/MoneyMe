@@ -19,8 +19,6 @@ import java.util.UUID;
 @DatabaseTable(tableName = "transactions")
 public class Transaction {
 
-    public static final String ACCOUNT_ID_FIELD_NAME = "account_id";
-
     @DatabaseField(generatedId = true)
     private UUID id;
 
@@ -48,8 +46,11 @@ public class Transaction {
     @DatabaseField
     private String locationName;
 
-    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = ACCOUNT_ID_FIELD_NAME)
-    private Account account;
+    @DatabaseField(foreign = true, foreignAutoRefresh = true)
+    private Account accountFrom;
+
+    @DatabaseField(foreign = true, foreignAutoRefresh = true)
+    private Account accountTo;
 
     @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private Payee payee;
@@ -80,7 +81,7 @@ public class Transaction {
         this.syncState = SyncState.None;
     }
 
-    public Transaction(TransactionType type, String notes, Category category, Date dateAdded, double amount, String photo, String location, Account account) {
+    public Transaction(TransactionType type, String notes, Category category, Date dateAdded, double amount, String photo, String location, Account accountFrom) {
         this.type = type;
         this.notes = notes;
         this.category = category;
@@ -88,39 +89,50 @@ public class Transaction {
         this.amount = amount;
         this.photo = photo;
         this.location = location;
-        this.account = account;
+        this.accountFrom = accountTo;
         this.syncState = SyncState.None;
     }
 
-    public Transaction(TransactionType type,Date dateAdded, double amount, String photo, String location, Account account, String notes) {
+    public Transaction(TransactionType type,Date dateAdded, double amount, String photo, String location, Account accountFrom, String notes) {
         this.type = type;
         this.dateAdded = dateAdded;
         this.amount = amount;
         this.photo = photo;
         this.location = location;
-        this.account = account;
+        this.accountFrom = accountFrom;
         this.notes = notes;
         this.syncState = SyncState.None;
     }
 
-    public Transaction(TransactionType type, String notes, Date dateAdded, double amount, Account account) {
+    public Transaction(TransactionType type, String notes, Date dateAdded, double amount, Account accountFrom) {
         this.type = type;
         this.notes = notes;
         this.dateAdded = dateAdded;
         this.amount = amount;
-        this.account = account;
+        this.accountFrom = accountFrom;
         this.category = null;
         this.syncState = SyncState.None;
     }
 
-    public Transaction(TransactionType type, String notes, Category category, Date dateAdded, double amount, Account account) {
+    public Transaction(TransactionType type, String notes, Category category, Date dateAdded, double amount, Account accountFrom) {
         this.type = type;
         this.notes = notes;
         this.category = category;
         this.dateAdded = dateAdded;
         this.amount = amount;
-        this.account = account;
+        this.accountFrom = accountFrom;
         this.syncState = SyncState.None;
+    }
+
+    public Transaction(TransactionType type, String notes, Date dateAdded, double amount, Account accountFrom, Account accountTo, Payee payee, String tags) {
+        this.type = type;
+        this.notes = notes;
+        this.dateAdded = dateAdded;
+        this.amount = amount;
+        this.accountFrom = accountFrom;
+        this.accountTo = accountTo;
+        this.payee = payee;
+        this.tags = tags;
     }
 
     public String getId() {
@@ -167,11 +179,17 @@ public class Transaction {
         this.locationName = locationName;
     }
 
-    public Account getAccount() {
-        return account;
+    public Account getAccountFrom() {
+        return accountFrom;
     }
 
-    public String getAccountName() { return account.getName();}
+    public String getAccountFromName() { return accountFrom.getName();}
+
+    public Account getAccountTo() {
+        return accountTo;
+    }
+
+    public String getAccountToName() { return accountTo.getName();}
 
     public void setType(TransactionType type) {
         this.type = type;
@@ -203,8 +221,12 @@ public class Transaction {
         this.location = location;
     }
 
-    public void setAccount(Account account) {
-        this.account = account;
+    public void setAccountFrom(Account accountFrom) {
+        this.accountFrom = accountFrom;
+    }
+
+    public void setAccountTo(Account accountTo) {
+        this.accountTo = accountTo;
     }
 
     public Payee getPayee() {
@@ -235,14 +257,32 @@ public class Transaction {
         if (c == null) {
             c = Currency.EMPTY;
         }
-        sb.append(category!= null ? category.getTitle() : account.getName());
+        sb.append(category!= null ? category.getTitle() : getAccountFromName());
         sb.append(":");
         String a = c.getFormat().format(amount);
         sb.append(a);
-        sb.append(System.lineSeparator());
+        sb.append(System.getProperty("line.separator"));
 
-        sb.append(TimeUtils.formatHumanFriendlyShortDate(context,getDateLong()) + "," + TimeUtils.formatShortTime(context,getDateLong()));
+        sb.append(TimeUtils.formatHumanFriendlyShortDate(context, getDateLong()) + "," + TimeUtils.formatShortTime(context, getDateLong()));
 
         return sb.toString();
+    }
+
+    public String getAccountId(){
+        if(type == TransactionType.INCOME){
+            return accountTo.getId();
+        }else if(type == TransactionType.OUTCOME){
+            return accountFrom.getId();
+        }
+        else return "";
+    }
+
+    public Account getAccount(){
+        if(type == TransactionType.INCOME){
+            return accountTo;
+        }else if(type == TransactionType.OUTCOME){
+            return accountFrom;
+        }
+        else return null;
     }
 }

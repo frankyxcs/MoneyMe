@@ -12,6 +12,7 @@ import android.os.IBinder;
 import android.support.v7.app.NotificationCompat;
 import android.text.Spanned;
 
+import com.devmoroz.moneyme.export.BackupRestoreHelper;
 import com.devmoroz.moneyme.models.Todo;
 import com.devmoroz.moneyme.notification.MoneyMeScheduler;
 import com.devmoroz.moneyme.notification.NotificationsHelper;
@@ -25,7 +26,7 @@ public class AlarmService extends Service {
     public static final String ACTION_SCHEDULE_AUTO_BACKUP = "com.devmoroz.moneyme.intent.ACTION_SCHEDULE_AUTO_BACKUP";
     public static final String ACTION_AUTO_BACKUP = "com.devmoroz.moneyme.intent.ACTION_AUTO_BACKUP";
 
-    public static final String ACTION_SCHEDULED_TODO_ALARM = "com.devmoroz.moneyme.intent.ACTION_SCHEDULED_ALARM";
+    public static final String ACTION_SCHEDULED_TODO_ALARM = "com.devmoroz.moneyme.intent.ACTION_SCHEDULED_TODO_ALARM";
     public static final String ACTION_SCHEDULE_ALL = "com.devmoroz.moneyme.intent.ACTION_SCHEDULE_ALL";
 
     public static final String ACTION_DAILY_NOTIFICATION = "com.devmoroz.moneyme.intent.ACTION_DAILY_NOTIFICATION";
@@ -43,14 +44,19 @@ public class AlarmService extends Service {
             switch (intentAction) {
                 case ACTION_SCHEDULE_ALL:
                     scheduleAll();
+                    break;
                 case ACTION_SCHEDULE_AUTO_BACKUP:
                     scheduleNextAutoBackup();
+                    break;
                 case ACTION_AUTO_BACKUP:
                     doAutoBackup();
+                    break;
                 case ACTION_SCHEDULED_TODO_ALARM:
                     notifyTodo(intent);
+                    break;
                 case ACTION_DAILY_NOTIFICATION:
                     makeDailyNotification(startId);
+                    break;
             }
         }
 
@@ -58,27 +64,31 @@ public class AlarmService extends Service {
     }
 
     private void scheduleAll() {
-        scheduler.scheduleAll(this);
+        scheduler.scheduleAll(getApplicationContext());
     }
 
     private void scheduleNextAutoBackup() {
-        scheduler.scheduleNextAutoBackup(this);
+        scheduler.scheduleNextAutoBackup(getApplicationContext());
     }
 
     private void doAutoBackup() {
         try {
-
+            BackupRestoreHelper helper = new BackupRestoreHelper(getApplicationContext());
+            helper.shadowBackup();
         } finally {
             scheduleNextAutoBackup();
         }
     }
 
     private void notifyTodo(Intent intent) {
-
+        Todo todoForNotify = intent.getParcelableExtra(MoneyMeScheduler.SCHEDULED_TODO_INTENT_EXTRA);
+        if(todoForNotify!= null){
+            createNotification(getApplicationContext(),todoForNotify);
+        }
     }
 
     private void makeDailyNotification(int startId){
-        final Notification note = buildNotification();
+        final Notification note = buildDailyNotification(getApplicationContext());
         mManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mManager.notify(startId, note);
     }
@@ -88,7 +98,7 @@ public class AlarmService extends Service {
         return null;
     }
 
-    private Notification buildNotification() {
+    private Notification buildDailyNotification(Context context) {
         Intent notifyIntent =
                 new Intent(this, MainActivity.class);
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -100,6 +110,7 @@ public class AlarmService extends Service {
         String text_large = getString(R.string.main_notification_content_large);
 
         builder.setSmallIcon(R.drawable.ic_notification_moneyme)
+                .setColor(context.getResources().getColor(R.color.colorPrimary))
                 .setTicker("MoneyMe")
                 .setWhen(System.currentTimeMillis())
                 .setAutoCancel(true)
@@ -112,12 +123,11 @@ public class AlarmService extends Service {
         NotificationCompat.BigTextStyle expandedStyle =
                 new NotificationCompat.BigTextStyle(builder);
         expandedStyle.bigText(text_large);
-        Notification note = expandedStyle.build();
 
-        return note;
+        return expandedStyle.build();
     }
 
-    private void createNotification(Context mContext, Todo todo, int startId) {
+    private void createNotification(Context mContext, Todo todo) {
 
 
         // Prepare text contents

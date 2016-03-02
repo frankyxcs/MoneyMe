@@ -2,9 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item android:id="@+id/save_income_toolbar"
-        android:title="@string/save"
+    <item android:id="@+id/action_new_note"
+        android:title="@string/create"
         android:orderInCategory="1"
-        android:icon="@drawable/ic_fab_check"
+        android:icon="@drawable/ic_fab_income"
         app:showAsAction="always"/>
 </menu>

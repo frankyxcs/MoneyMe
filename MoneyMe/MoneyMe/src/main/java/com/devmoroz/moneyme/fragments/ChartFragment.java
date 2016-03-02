@@ -19,7 +19,6 @@ import com.devmoroz.moneyme.R;
 import com.devmoroz.moneyme.adapters.ChartLegendAdapter;
 import com.devmoroz.moneyme.eventBus.BusProvider;
 import com.devmoroz.moneyme.eventBus.ChartSliceClickedEvent;
-import com.devmoroz.moneyme.eventBus.DBRestoredEvent;
 import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
 import com.devmoroz.moneyme.helpers.DBHelper;
 import com.devmoroz.moneyme.models.Account;
@@ -120,7 +119,7 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
     private void getDataForCurrentMonth(){
         try {
             int monthStart = Preferences.getMonthStart(getContext());
-            DBHelper helper = MoneyApplication.getInstance().GetDBHelper();
+            DBHelper helper = MoneyApplication.GetDBHelper();
             outs = helper.getTransactionDAO().queryByTypeForCurrentMonth(monthStart - 1, TransactionType.OUTCOME);
         }catch (SQLException ex){
 
@@ -245,11 +244,6 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
         CheckWallet();
     }
 
-
-    @Subscribe
-    public void OnDbResore(DBRestoredEvent event) {
-        CheckWallet();
-    }
 
     public void CheckWallet(){
         getDataForCurrentMonth();

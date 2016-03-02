@@ -3,6 +3,7 @@ package com.devmoroz.moneyme.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.devmoroz.moneyme.utils.FormatUtils;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
@@ -176,5 +177,22 @@ public class Account implements Parcelable{
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    @Override public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Account)) return false;
+
+        final Account model = (Account) o;
+
+        // We are only checking id, because otherwise some parts of the app might misbehave
+        // For example BaseModelAdapter contains Set<BaseModel> selectedItems
+        // noinspection RedundantIfStatement
+        return !(FormatUtils.isEmpty(getId()) || FormatUtils.isEmpty(model.getId())) && id.equals(model.id);
+
+    }
+
+    @Override public int hashCode() {
+        return id != null ? id.hashCode() : 0;
     }
 }

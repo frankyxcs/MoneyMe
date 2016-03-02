@@ -10,8 +10,12 @@ import android.widget.TextView;
 
 import com.devmoroz.moneyme.R;
 import com.devmoroz.moneyme.models.Currency;
+import com.devmoroz.moneyme.models.Transaction;
 
 public class FormatUtils {
+
+    private static final String TRANSFER_SYMBOL = " → ";
+    private static final String UNKNOWN_VALUE = "?";
 
     private final StringBuilder sb = new StringBuilder();
 
@@ -138,6 +142,32 @@ public class FormatUtils {
 
     public static void setTextViewText(TextView textView, String text) {
         textView.setText(isEmpty(text) ? null : Html.fromHtml(text));
+    }
+
+    public static String getAccountTitle(Transaction transaction) {
+        switch (transaction.getType()) {
+            case OUTCOME:
+                return transaction.getAccountFrom() != null ? transaction.getAccountFrom().getName() : UNKNOWN_VALUE;
+            case INCOME:
+                return transaction.getAccountTo() != null ? transaction.getAccountTo().getName() : UNKNOWN_VALUE;
+            case TRANSFER:
+                return (transaction.getAccountFrom() != null ? transaction.getAccountFrom().getName() : UNKNOWN_VALUE) + TRANSFER_SYMBOL + (transaction.getAccountTo() != null ? transaction.getAccountTo().getName() : UNKNOWN_VALUE);
+            default:
+                throw new IllegalArgumentException("Transaction type " + transaction.getType() + " is not supported.");
+        }
+    }
+
+    public static String getTransactionTitle(Context context,Transaction transaction) {
+        switch (transaction.getType()) {
+            case OUTCOME:
+                return transaction.getCategory() != null ? transaction.getCategory().getTitle() : UNKNOWN_VALUE;
+            case INCOME:
+                return context.getString(R.string.income_toolbar_name);
+            case TRANSFER:
+                return context.getString(R.string.transfer_toolbar_name);
+            default:
+                throw new IllegalArgumentException("Transaction type " + transaction.getType() + " is not supported.");
+        }
     }
 
 }

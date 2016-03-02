@@ -114,7 +114,7 @@ public class TagsActivity extends AppCompatActivity {
 
     private List<Tag> getAllTags() {
         List<Tag> tags = Collections.emptyList();
-        DBHelper dbHelper = MoneyApplication.getInstance().GetDBHelper();
+        DBHelper dbHelper = MoneyApplication.GetDBHelper();
         try {
             tags = dbHelper.getTagDAO().getSortedTags();
             return tags;
@@ -149,7 +149,7 @@ public class TagsActivity extends AppCompatActivity {
     }
 
     private void addNewTag(String title) {
-        DBHelper dbHelper = MoneyApplication.getInstance().GetDBHelper();
+        DBHelper dbHelper = MoneyApplication.GetDBHelper();
         try {
             Tag tag = new Tag(title);
             if (!dbHelper.getTagDAO().createIfNotExist(tag)) {

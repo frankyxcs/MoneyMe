@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -60,6 +61,7 @@ import org.joda.time.LocalDateTime;
 import org.joda.time.Months;
 import org.joda.time.Period;
 
+import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -132,9 +134,9 @@ public class DetailsActivity extends AppCompatActivity {
 
     private void loadEntity() {
         try {
-            DBHelper dbHelper = MoneyApplication.getInstance().GetDBHelper();
+            DBHelper dbHelper = MoneyApplication.GetDBHelper();
             Transaction transaction = dbHelper.getTransactionDAO().queryForId(UUID.fromString(itemId));
-            accountId = transaction.getAccount().getId();
+            accountId = transaction.getAccountId();
             entityDate = transaction.getDateAdded();
             note = transaction.getNotes();
             amount = transaction.getAmount();
@@ -240,7 +242,7 @@ public class DetailsActivity extends AppCompatActivity {
             Period period = getPeriod(intervalType);
             Interval firstInterval = new Interval(wholeInterval.getStart(), period);
 
-            DBHelper dbHelper = MoneyApplication.getInstance().GetDBHelper();
+            DBHelper dbHelper = MoneyApplication.GetDBHelper();
 
             List<Transaction> transactions;
             if (type == TransactionType.OUTCOME) {
@@ -442,7 +444,7 @@ public class DetailsActivity extends AppCompatActivity {
         if (!(amountString.equals("0") || amountString.equals("0.") || amountString.equals("0.0") || amountString.equals("0.00"))) {
             double newAmount = Double.parseDouble(amountString);
             if (newAmount != amount || !note.equals(notes)) {
-                DBHelper dbHelper = MoneyApplication.getInstance().GetDBHelper();
+                DBHelper dbHelper = MoneyApplication.GetDBHelper();
                 try {
                     Transaction t = dbHelper.getTransactionDAO().queryForId(UUID.fromString(itemId));
                     t.setAmount(newAmount);
@@ -482,7 +484,7 @@ public class DetailsActivity extends AppCompatActivity {
 
     private void loadImage(String path) {
         final ImageView imageView = (ImageView) findViewById(R.id.details_backdrop);
-        PhotoUtil.setImageWithGlide(getApplicationContext(), path, imageView);
+        PhotoUtil.setImageWithGlide(getApplicationContext(), Uri.fromFile(new File(path)), imageView);
     }
 
     public static class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {

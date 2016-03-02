@@ -61,6 +61,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     Context context = getContext();
                     MoneyMeScheduler.cancelDailyAlarm(context);
                     MoneyMeScheduler.scheduleDailyAlarm(context);
+                } else if(key.equals(getString(R.string.pref_auto_backup))){
+
                 }
             }
         };

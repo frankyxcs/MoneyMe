@@ -33,7 +33,6 @@ import com.devmoroz.moneyme.MoneyApplication;
 import com.devmoroz.moneyme.R;
 import com.devmoroz.moneyme.adapters.GoalsAdapter;
 import com.devmoroz.moneyme.eventBus.BusProvider;
-import com.devmoroz.moneyme.eventBus.DBRestoredEvent;
 import com.devmoroz.moneyme.eventBus.GoalsChangeEvent;
 import com.devmoroz.moneyme.helpers.DBHelper;
 import com.devmoroz.moneyme.models.Goal;
@@ -77,7 +76,7 @@ public class GoalsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        goals = MoneyApplication.goals;
+        goals = MoneyApplication.getInstance().GetGoals();
         view = inflater.inflate(R.layout.goals_fragment, container, false);
         recyclerView = (EmptyRecyclerView) view.findViewById(R.id.goalsList);
         mTextEmpty = (LinearLayout) view.findViewById(R.id.goalsEmpty);
@@ -217,13 +216,8 @@ public class GoalsFragment extends Fragment {
         CheckGoals();
     }
 
-    @Subscribe
-    public void OnDbResore(DBRestoredEvent event) {
-        CheckGoals();
-    }
-
     private void CheckGoals() {
-        goals = MoneyApplication.goals;
+        goals = MoneyApplication.getInstance().GetGoals();
         adapter.setGoalsData(goals);
     }
 
@@ -242,7 +236,7 @@ public class GoalsFragment extends Fragment {
             av = Integer.parseInt(availableEditText.getText().toString());
         }
         try {
-            DBHelper dbHelper = MoneyApplication.getInstance().GetDBHelper();
+            DBHelper dbHelper = MoneyApplication.GetDBHelper();
             Goal goal = new Goal(name,notes,goalDate,req,av);
             dbHelper.getGoalDAO().create(goal);
         }catch (SQLException ex){
