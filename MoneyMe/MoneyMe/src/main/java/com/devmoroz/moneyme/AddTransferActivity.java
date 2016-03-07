@@ -30,6 +30,7 @@ import com.devmoroz.moneyme.logging.L;
 import com.devmoroz.moneyme.models.Account;
 import com.devmoroz.moneyme.models.CreatedItem;
 import com.devmoroz.moneyme.models.Currency;
+import com.devmoroz.moneyme.models.SyncState;
 import com.devmoroz.moneyme.models.Tag;
 import com.devmoroz.moneyme.models.Transaction;
 import com.devmoroz.moneyme.models.TransactionEdit;
@@ -255,6 +256,7 @@ public class AddTransferActivity extends AppCompatActivity implements View.OnCli
         Transaction transfer = transactionEdit.getModel();
         transfer.setAmount(transactionAmount);
         transfer.setNotes(transactionNote);
+        transfer.setSyncState(SyncState.None);
 
         dbHelper.getTransactionDAO().create(transfer);
         dbHelper.getAccountDAO().update(accountFrom);

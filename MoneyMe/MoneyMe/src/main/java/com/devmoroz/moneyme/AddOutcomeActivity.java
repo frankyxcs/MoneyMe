@@ -59,11 +59,13 @@ import com.devmoroz.moneyme.models.Account;
 import com.devmoroz.moneyme.models.Category;
 import com.devmoroz.moneyme.models.CreatedItem;
 import com.devmoroz.moneyme.models.Currency;
+import com.devmoroz.moneyme.models.SyncState;
 import com.devmoroz.moneyme.models.Tag;
 import com.devmoroz.moneyme.models.Location;
 import com.devmoroz.moneyme.models.Transaction;
 import com.devmoroz.moneyme.models.TransactionEdit;
 import com.devmoroz.moneyme.models.TransactionType;
+import com.devmoroz.moneyme.utils.AppUtils;
 import com.devmoroz.moneyme.utils.Constants;
 import com.devmoroz.moneyme.utils.CurrencyCache;
 import com.devmoroz.moneyme.utils.CustomColorTemplate;
@@ -351,6 +353,7 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
         outcome.setAmount(outcomeAmount);
         outcome.setNotes(outcomeNote);
         outcome.setPhoto(transactionEdit.getPhotoPath());
+        outcome.setSyncState(SyncState.None);
 
         dbHelper.getTransactionDAO().create(outcome);
         dbHelper.getAccountDAO().update(account);
@@ -528,32 +531,35 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void displayLocationDialog() {
-        mGoogleApiHelper.start();
-        PermissionsHelper.requestPermission(AddOutcomeActivity.this, Manifest.permission.ACCESS_FINE_LOCATION, R.string
-                .permission_coarse_location, AddOutcomeActivity.this.findViewById(R.id.coordinator_outcome), () -> {
-            LayoutInflater inflater = AddOutcomeActivity.this.getLayoutInflater();
-            View v = inflater.inflate(R.layout.dialog_location, null);
-            final AutoCompleteTextView autoCompView = (AutoCompleteTextView) v.findViewById(R.id
-                    .auto_complete_location);
-            autoCompView.setHint(getString(R.string.search_location));
-            mAdapter = new PlacesAutoCompleteAdapter(AddOutcomeActivity.this, mGoogleApiClient, null, null);
-            autoCompView.setAdapter(mAdapter);
-            autoCompView.setOnItemClickListener(mAutocompleteClickListener);
+        if(AppUtils.isNetworkOn(MoneyApplication.getAppContext())) {
+            mGoogleApiHelper.start();
+            PermissionsHelper.requestPermission(AddOutcomeActivity.this, Manifest.permission.ACCESS_FINE_LOCATION, R.string
+                    .permission_coarse_location, AddOutcomeActivity.this.findViewById(R.id.coordinator_outcome), () -> {
+                LayoutInflater inflater = AddOutcomeActivity.this.getLayoutInflater();
+                View v = inflater.inflate(R.layout.dialog_location, null);
+                final AutoCompleteTextView autoCompView = (AutoCompleteTextView) v.findViewById(R.id
+                        .auto_complete_location);
+                autoCompView.setHint(getString(R.string.search_location));
+                mAdapter = new PlacesAutoCompleteAdapter(AddOutcomeActivity.this, mGoogleApiClient, null, null);
+                autoCompView.setAdapter(mAdapter);
+                autoCompView.setOnItemClickListener(mAutocompleteClickListener);
 
-            final MaterialDialog dialog = new MaterialDialog.Builder(AddOutcomeActivity.this)
-                    .customView(autoCompView, false)
-                    .positiveText(R.string.confirm)
-                    .onPositive((materialDialog, dialogAction) -> {
-                        if (TextUtils.isEmpty(autoCompView.getText().toString())) {
-                            transactionEdit.setLocation(null);
-                        } else {
-                            locationButton.setText(transactionEdit.getLocation().getName());
-                        }
-                    })
-                    .build();
-            dialog.show();
-        });
-
+                final MaterialDialog dialog = new MaterialDialog.Builder(AddOutcomeActivity.this)
+                        .customView(autoCompView, false)
+                        .positiveText(R.string.confirm)
+                        .onPositive((materialDialog, dialogAction) -> {
+                            if (TextUtils.isEmpty(autoCompView.getText().toString())) {
+                                transactionEdit.setLocation(null);
+                            } else {
+                                locationButton.setText(transactionEdit.getLocation().getName());
+                            }
+                        })
+                        .build();
+                dialog.show();
+            });
+        }else{
+            showMessage(R.string.no_internet_connection);
+        }
     }
 
     private AdapterView.OnItemClickListener mAutocompleteClickListener

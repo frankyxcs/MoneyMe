@@ -35,23 +35,29 @@
     <com.devmoroz.moneyme.widgets.EmptyRecyclerView
         android:id="@+id/goalsList"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content" />
 
 
     <LinearLayout
         android:id="@+id/goalsEmpty"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center"
         android:gravity="center"
         android:orientation="vertical">
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:gravity="center"
+            android:src="@drawable/ic_goals_empty"
+            android:layout_marginBottom="16dp"
+            android:tint="@color/disable_gray"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:layout_gravity="center"
             android:textColor="@color/disable_gray"
             android:text="@string/no_goal_data_available"
-            style="@style/Text.Title"/>
+            style="@style/Text.Body2"/>
+
     </LinearLayout>
 </LinearLayout>

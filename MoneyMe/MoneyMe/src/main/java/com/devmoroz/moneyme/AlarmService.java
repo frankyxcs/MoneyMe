@@ -158,7 +158,7 @@ public class AlarmService extends Service {
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationsHelper notificationsHelper = new NotificationsHelper(mContext);
-        notificationsHelper.createNotification(R.drawable.ic_alarm_white_24dp, title, notifyIntent).setLedActive()
+        notificationsHelper.createNotification(R.drawable.ic_notification_moneyme, title, notifyIntent).setLedActive()
                 .setMessage(text);
 
         notificationsHelper.getBuilder()

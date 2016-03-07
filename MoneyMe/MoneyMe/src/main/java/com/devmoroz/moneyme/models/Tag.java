@@ -11,7 +11,7 @@ import com.j256.ormlite.table.DatabaseTable;
 import java.util.UUID;
 
 @DatabaseTable(tableName = "tags")
-public class Tag implements Parcelable{
+public class Tag implements Parcelable {
 
     public static final Parcelable.Creator<Tag> CREATOR = new Parcelable.Creator<Tag>() {
         public Tag createFromParcel(Parcel in) {
@@ -34,12 +34,14 @@ public class Tag implements Parcelable{
         setTitle(parcel.readString());
     }
 
-    @Override public void writeToParcel(Parcel parcel, int flags) {
+    @Override
+    public void writeToParcel(Parcel parcel, int flags) {
         parcel.writeString(getId());
         parcel.writeString(getTitle());
     }
 
-    @Override public int describeContents() {
+    @Override
+    public int describeContents() {
         return 0;
     }
 
@@ -56,7 +58,7 @@ public class Tag implements Parcelable{
     }
 
     public String getId() {
-        return id.toString();
+        return id != null ? id.toString() : null;
     }
 
     public String getTitle() {
@@ -64,14 +66,17 @@ public class Tag implements Parcelable{
     }
 
     public void setId(String id) {
-        this.id = UUID.fromString(id);
+        if (FormatUtils.isNotEmpty(id)) {
+            this.id = UUID.fromString(id);
+        }
     }
 
     public void setTitle(String title) {
         this.title = title;
     }
 
-    @Override public boolean equals(Object o) {
+    @Override
+    public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Tag)) return false;
 
@@ -80,7 +85,8 @@ public class Tag implements Parcelable{
         return !(FormatUtils.isEmpty(getId()) || FormatUtils.isEmpty(model.getId())) && id.equals(model.id);
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return id != null ? id.hashCode() : 0;
     }
 

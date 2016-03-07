@@ -1,6 +1,10 @@
 package com.devmoroz.moneyme.models;
 
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.devmoroz.moneyme.utils.FormatUtils;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -8,8 +12,18 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.UUID;
 
-@DatabaseTable(tableName = "currency")
-public class Currency {
+@DatabaseTable(tableName = "currencies")
+public class Currency implements Parcelable {
+
+    public static final Parcelable.Creator<Currency> CREATOR = new Parcelable.Creator<Currency>() {
+        public Currency createFromParcel(Parcel in) {
+            return new Currency(in);
+        }
+
+        public Currency[] newArray(int size) {
+            return new Currency[size];
+        }
+    };
 
     public static final Currency EMPTY = new Currency();
 
@@ -33,8 +47,25 @@ public class Currency {
     @DatabaseField
     private String symbol;
 
-    @DatabaseField
-    private boolean isDeafult;
+    public Currency(Parcel parcel) {
+        setId(parcel.readString());
+        setName(parcel.readString());
+        setTitle(parcel.readString());
+        setSymbol(parcel.readString());
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int flags) {
+        parcel.writeString(getId());
+        parcel.writeString(getName());
+        parcel.writeString(getTitle());
+        parcel.writeString(getSymbol());
+    }
 
     public Currency() {
 
@@ -47,7 +78,7 @@ public class Currency {
     }
 
     public String getId() {
-        return id.toString();
+        return id != null ? id.toString() : null;
     }
 
     public String getName() {
@@ -62,17 +93,10 @@ public class Currency {
         return symbol;
     }
 
-    public void setIsDeafult(boolean isDeafult) {
-        this.isDeafult = isDeafult;
-    }
-
-    public boolean isDeafult() {
-
-        return isDeafult;
-    }
-
     public void setId(String id) {
-        this.id = UUID.fromString(id);
+        if (FormatUtils.isNotEmpty(id)) {
+            this.id = UUID.fromString(id);
+        }
     }
 
     public void setName(String name) {
@@ -91,7 +115,7 @@ public class Currency {
         return title.equals("Default");
     }
 
-    public DecimalFormat getFormat(){
+    public DecimalFormat getFormat() {
         DecimalFormatSymbols symbols = new DecimalFormatSymbols();
         symbols.setGroupingSeparator(',');
         symbols.setDecimalSeparator('.');

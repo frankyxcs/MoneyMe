@@ -25,6 +25,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -35,6 +36,7 @@ import com.devmoroz.moneyme.fragments.custom.TimePickerFragment;
 import com.devmoroz.moneyme.helpers.DBHelper;
 import com.devmoroz.moneyme.logging.L;
 import com.devmoroz.moneyme.models.Todo;
+import com.devmoroz.moneyme.notification.MoneyMeScheduler;
 import com.devmoroz.moneyme.utils.Constants;
 import com.devmoroz.moneyme.utils.CustomColorTemplate;
 import com.devmoroz.moneyme.utils.FormatUtils;
@@ -43,7 +45,12 @@ import com.devmoroz.moneyme.utils.datetime.TimeUtils;
 import java.sql.SQLException;
 import java.util.Date;
 
-public class TodoActivity extends AppCompatActivity implements View.OnClickListener {
+import it.feio.android.checklistview.ChecklistManager;
+import it.feio.android.checklistview.exceptions.ViewNotSupportedException;
+import it.feio.android.checklistview.interfaces.CheckListChangedListener;
+import it.feio.android.checklistview.utils.AlphaManager;
+
+public class TodoActivity extends AppCompatActivity implements View.OnClickListener,CheckListChangedListener {
 
     private EditText mTodoTitleEditText;
     private EditText mTodoContentEditText;
@@ -58,6 +65,10 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
     private FloatingActionButton fab;
 
     private Todo editTodo;
+    private ChecklistManager mChecklistManager;
+    View toggleChecklistView;
+    ScrollView scrollView;
+    private int contentLineCounter = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +97,7 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
         mDateButton = (Button) findViewById(R.id.toDoDateButton);
         mTimeButton = (Button) findViewById(R.id.toDoTimeButton);
         fab = (FloatingActionButton) findViewById(R.id.saveToDoFAB);
+        scrollView = (ScrollView) findViewById(R.id.content_container);
 
         initToolbar();
         initStartState();
@@ -120,33 +132,37 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
 
             }
         });
-        mTodoContentEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                editTodo.setContent(s.toString());
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
     }
 
     private void initStartState() {
         mTodoTitleEditText.setText(editTodo.getTitle());
-        mTodoContentEditText.setText(editTodo.getContent());
+        initContent();
         setTodoColor();
         mTodoReminderSwitch.setChecked(editTodo.isHasReminder());
         setDateTimeText();
-        mDateButton.setText(TimeUtils.formatShortDate(TodoActivity.this, editTodo.getDateLong()));
-        mTimeButton.setText(TimeUtils.formatShortTime(TodoActivity.this, editTodo.getDateLong()));
+        setDateTimeButtonsText();
         toggleDateButtonsConatinerVisibility(editTodo.isHasReminder());
+    }
+
+    private void initContent() {
+        mTodoContentEditText.setText(editTodo.getContent());
+        toggleChecklistView = mTodoContentEditText;
+        if (editTodo.isCheckList()) {
+            editTodo.setCheckList(false);
+            AlphaManager.setAlpha(toggleChecklistView, 0);
+            toggleChecklist2(true, true);
+        }
+    }
+
+    private void setDateTimeButtonsText() {
+        if (editTodo.isHasReminder()) {
+            mDateButton.setText(TimeUtils.formatShortDate(TodoActivity.this, editTodo.getAlarmDateLong()));
+            mTimeButton.setText(TimeUtils.formatShortTime(TodoActivity.this, editTodo.getAlarmDateLong()));
+        } else {
+            long now = System.currentTimeMillis();
+            mDateButton.setText(TimeUtils.formatShortDate(TodoActivity.this, now));
+            mTimeButton.setText(TimeUtils.formatShortTime(TodoActivity.this, now));
+        }
     }
 
     private void setTodoColor() {
@@ -164,6 +180,14 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        menu.findItem(R.id.menu_checklist_on).setVisible(!editTodo.isCheckList());
+        menu.findItem(R.id.menu_checklist_off).setVisible(editTodo.isCheckList());
+
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_remove_todo:
@@ -171,6 +195,12 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
                 return true;
             case R.id.change_todo_color:
                 showColorPickerDialog();
+                return true;
+            case R.id.menu_checklist_on:
+                toggleChecklist();
+                return true;
+            case R.id.menu_checklist_off:
+                toggleChecklist();
                 return true;
             case android.R.id.home:
                 makeResult(RESULT_CANCELED);
@@ -180,6 +210,7 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void removeTodo() {
+        MoneyMeScheduler scheduler = new MoneyMeScheduler();
         if (FormatUtils.isNotEmpty(editTodo.getId())) {
             new MaterialDialog.Builder(TodoActivity.this)
                     .content(R.string.remove_item_confirm)
@@ -193,6 +224,7 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
                             try {
                                 DBHelper dbHelper = MoneyApplication.GetDBHelper();
                                 dbHelper.getTodoDAO().delete(editTodo);
+                                scheduler.removeReminder(MoneyApplication.getAppContext(), editTodo);
                             } catch (SQLException ex) {
                                 L.T(TodoActivity.this, "Something went wrong.Please, try again.");
                             }
@@ -208,7 +240,7 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onBackPressed() {
-        makeResult(RESULT_OK);
+        makeResult(RESULT_CANCELED);
         super.onBackPressed();
     }
 
@@ -229,7 +261,13 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void setDateTimeText() {
-        mDateTextView.setText(TimeUtils.formatHumanFriendlyShortDateTime(TodoActivity.this, editTodo.getDateLong()));
+        if (FormatUtils.isNotEmpty(editTodo.getId())) {
+            String text = getString(R.string.last_update) + TimeUtils.formatHumanFriendlyShortDateTime(TodoActivity.this, editTodo.getUpdatedDateLong());
+            mDateTextView.setText(text);
+            mDateTextView.setVisibility(View.VISIBLE);
+        } else {
+            mDateTextView.setVisibility(View.INVISIBLE);
+        }
     }
 
     public void showDatePickerDialog() {
@@ -238,8 +276,7 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
         newFragment.setCallback(new DatePickerFragment.Callback() {
             @Override
             public void onDateSet(Date date) {
-                editTodo.setDate(date);
-                setDateTimeText();
+                editTodo.setAlarmDate(date);
             }
         });
         newFragment.show(getSupportFragmentManager(), "datePicker");
@@ -251,8 +288,7 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
         newFragment.setCallback(new TimePickerFragment.Callback() {
             @Override
             public void onTimeSet(Date date) {
-                editTodo.setDate(date);
-                setDateTimeText();
+                editTodo.setAlarmDate(date);
             }
         });
         newFragment.show(getSupportFragmentManager(), "timePicker");
@@ -286,6 +322,12 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
         final Intent i = new Intent();
         if (result != RESULT_CANCELED) {
             try {
+                long now = System.currentTimeMillis();
+                if (FormatUtils.isEmpty(editTodo.getId())) {
+                    editTodo.setCreatedDateLong(now);
+                }
+                editTodo.setUpdatedDateLong(now);
+                editTodo.setContent(getNoteContent());
                 DBHelper dbHelper = MoneyApplication.GetDBHelper();
                 dbHelper.getTodoDAO().createOrUpdate(editTodo);
             } catch (SQLException ex) {
@@ -373,6 +415,86 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
                     makeResult(RESULT_OK);
                 }
                 break;
+        }
+    }
+
+    private void toggleChecklist(){
+        if (!editTodo.isCheckList()) {
+            toggleChecklist2(true,true);
+            return;
+        }
+
+        if (mChecklistManager.getCheckedCount() == 0) {
+            toggleChecklist2(true, false);
+            return;
+        }
+
+        toggleChecklist2(true, true);
+    }
+
+    private void toggleChecklist2(final boolean keepChecked, final boolean showChecks) {
+
+        mChecklistManager = ChecklistManager.getInstance(TodoActivity.this);
+        mChecklistManager.setMoveCheckedOnBottom(0);
+        mChecklistManager.setNewEntryHint(getString(R.string.checklist_item_hint));
+
+
+        mChecklistManager.setKeepChecked(keepChecked);
+        mChecklistManager.setShowChecks(showChecks);
+        mChecklistManager.setCheckListChangedListener(this);
+
+
+        mChecklistManager.setDragVibrationEnabled(false);
+
+        View newView = null;
+        try {
+            newView = mChecklistManager.convert(toggleChecklistView);
+        } catch (ViewNotSupportedException e) {
+
+        }
+
+        // Switches the views
+        if (newView != null) {
+            if(newView instanceof EditText){
+                ((android.widget.EditText) newView).setHint(R.string.content);
+            }
+            mChecklistManager.replaceViews(toggleChecklistView, newView);
+            toggleChecklistView = newView;
+            editTodo.setCheckList(!editTodo.isCheckList());
+        }
+    }
+
+    private String getNoteContent() {
+        String contentText = "";
+        if (!editTodo.isCheckList()) {
+            contentText = ((android.widget.EditText) toggleChecklistView).getText().toString();
+        } else {
+            if (mChecklistManager != null) {
+                mChecklistManager.setKeepChecked(true);
+                mChecklistManager.setShowChecks(true);
+                contentText = mChecklistManager.getText();
+            }
+        }
+        return contentText;
+    }
+
+    @Override
+    public void onCheckListChanged() {
+        scrollContent();
+    }
+
+
+    private void scrollContent() {
+        if (editTodo.isCheckList()) {
+            if (mChecklistManager.getCount() > contentLineCounter) {
+                scrollView.scrollBy(0, 60);
+            }
+            contentLineCounter = mChecklistManager.getCount();
+        } else {
+            if (mTodoContentEditText.getLineCount() > contentLineCounter) {
+                scrollView.scrollBy(0, 60);
+            }
+            contentLineCounter = mTodoContentEditText.getLineCount();
         }
     }
 }

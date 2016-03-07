@@ -271,8 +271,8 @@
     <string name="use_current_location">Текущее местоположение</string>
     <string name="confirm">Подтвердить</string>
     <string name="location_not_found">Местоположение не определено</string>
-    <string name="tags_empty_text">У вас еще нет сохраненных тегов. Нажмите \"+\" чтобы добавить новый.</string>
-    <string name="todo_empty_text">Здесь будут ваши напоминания и заметки. Нажмите \"+\" чтобы добавить новое задание.</string>
+    <string name="tags_empty_text">У вас еще нет сохраненных тегов.</string>
+    <string name="todo_empty_text">Здесь будут ваши заметки.</string>
     <string name="tag_with_current_name_exist">Тег с таким именем уже существует.</string>
     <string name="add_new_tag">Добавить тег</string>
     <string name="create">Создать</string>
@@ -293,4 +293,9 @@
     <string name="from">Из</string>
     <string name="to">В</string>
     <string name="alarm_reset_on">Напоминание установлено на:</string>
+    <string name="created">Создано:</string>
+    <string name="last_update">Обновлено:</string>
+    <string name="checklist_item_hint">Новый пункт</string>
+    <string name="checklist_on">Включить список</string>
+    <string name="checklist_off">Выключить список</string>
 </resources>

@@ -44,7 +44,7 @@ public class MoneyMeScheduler {
 
     public boolean scheduleTodoAlarm(Context context, Todo todo, long now) {
         if (shouldSchedule(todo, now)) {
-            Date scheduleTime = todo.getDate();
+            Date scheduleTime = todo.getAlarmDate();
             AlarmManager service = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
             PendingIntent pendingIntent = createPendingIntentForScheduledTodoAlarm(context, todo);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -58,24 +58,17 @@ public class MoneyMeScheduler {
         return false;
     }
 
-    public boolean rescheduleTodoAlarm(Context context, Todo todo, long now) {
-        if (shouldSchedule(todo, now)) {
-            cancelPendingIntentForTodoSchedule(context, todo);
-            Date scheduleTime = todo.getDate();
-            AlarmManager service = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-            PendingIntent pendingIntent = createPendingIntentForScheduledTodoAlarm(context, todo);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                service.setExact(AlarmManager.RTC_WAKEUP, scheduleTime.getTime(), pendingIntent);
-            } else {
-                service.set(AlarmManager.RTC_WAKEUP, scheduleTime.getTime(), pendingIntent);
-            }
-            return true;
+    public void removeReminder(Context context, Todo todo) {
+        if (todo.getAlarmDate() != null) {
+            AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+            PendingIntent p = createPendingIntentForScheduledTodoAlarm(context, todo);
+            am.cancel(p);
+            p.cancel();
         }
-        return false;
     }
 
     private boolean shouldSchedule(Todo todo, long now) {
-        return todo.getDate() != null && now < todo.getDateLong();
+        return todo.getAlarmDate() != null && now < todo.getAlarmDateLong();
     }
 
     private PendingIntent createPendingIntentForScheduledTodoAlarm(Context context, Todo todo) {
@@ -103,32 +96,35 @@ public class MoneyMeScheduler {
 
 
     public static void scheduleDailyAlarm(Context context) {
-        Intent startServiceIntent = new Intent(AlarmService.ACTION_DAILY_NOTIFICATION, null, context, AlarmService.class);
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        PendingIntent pendingIntent = PendingIntent.getService(context, 12345, startServiceIntent, 0);
 
-        int hour = 18;
-        int minute = 0;
+            Intent startServiceIntent = new Intent(AlarmService.ACTION_DAILY_NOTIFICATION, null, context, AlarmService.class);
+            AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+            PendingIntent pendingIntent = PendingIntent.getService(context, 12345, startServiceIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
-        String time = Preferences.getNotificationTime(context);
-        if (FormatUtils.isNotEmpty(time)) {
-            hour = TimeUtils.getHour(time);
-            minute = TimeUtils.getMinute(time);
-        }
+            int hour = 18;
+            int minute = 0;
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, hour);
-        calendar.set(Calendar.MINUTE, minute);
-        calendar.set(Calendar.SECOND, 00);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 24 * 60 * 60 * 1000, pendingIntent);
+            String time = Preferences.getNotificationTime(context);
+            if (FormatUtils.isNotEmpty(time)) {
+                hour = TimeUtils.getHour(time);
+                minute = TimeUtils.getMinute(time);
+            }
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY, hour);
+            calendar.set(Calendar.MINUTE, minute);
+            calendar.set(Calendar.SECOND, 00);
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 24 * 60 * 60 * 1000, pendingIntent);
+
     }
 
     public static void cancelDailyAlarm(Context context) {
         Intent startServiceIntent = new Intent(AlarmService.ACTION_DAILY_NOTIFICATION, null, context, AlarmService.class);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        PendingIntent pendingIntent = PendingIntent.getService(context, 12345, startServiceIntent, 0);
+        PendingIntent pendingIntent = PendingIntent.getService(context, 12345, startServiceIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
         alarmManager.cancel(pendingIntent);
+        pendingIntent.cancel();
     }
 
     public void scheduleNextAutoBackup(Context context) {
@@ -144,7 +140,7 @@ public class MoneyMeScheduler {
         return PendingIntent.getService(context, -123456, intent, PendingIntent.FLAG_CANCEL_CURRENT);
     }
 
-    public void scheduleBackup(Context context, int frequency) {
+    private void scheduleBackup(Context context, int frequency) {
         AlarmManager service = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         PendingIntent pendingIntent = createPendingIntent(context);
         Date scheduledTime = getBackupScheduledTime(frequency, System.currentTimeMillis());
@@ -159,8 +155,8 @@ public class MoneyMeScheduler {
         c.set(Calendar.SECOND, 0);
         if (frequency != 31) {
             c.add(Calendar.DAY_OF_MONTH, frequency);
-        }else{
-            c.add(Calendar.MONTH,1);
+        } else {
+            c.add(Calendar.MONTH, 1);
         }
 
         return c.getTime();

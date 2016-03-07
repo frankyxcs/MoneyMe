@@ -33,7 +33,7 @@ public class NotificationsHelper {
         mBuilder = new NotificationCompat.Builder(mContext).setSmallIcon(smallIcon).setContentTitle(title)
                 .setAutoCancel(true).setColor(mContext.getResources().getColor(R.color.colorAccent));
         mBuilder.setContentIntent(notifyIntent);
-
+        mBuilder.setDefaults(Notification.DEFAULT_SOUND);
         return this;
     }
 

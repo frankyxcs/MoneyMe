@@ -121,7 +121,7 @@ public class TransactionEdit implements Parcelable {
     }
 
     public Long getDate() {
-        if (isDateSet || date != null) {
+        if (isDateSet && date != null) {
             return date;
         }
         return System.currentTimeMillis();
@@ -133,7 +133,7 @@ public class TransactionEdit implements Parcelable {
     }
 
     public Account getAccountFrom() {
-        if (isAccountFromSet || accountFrom != null) {
+        if (isAccountFromSet && accountFrom != null) {
             return accountFrom;
         }
         return null;
@@ -145,7 +145,7 @@ public class TransactionEdit implements Parcelable {
     }
 
     public Account getAccountTo() {
-        if (isAccountToSet || accountTo != null) {
+        if (isAccountToSet && accountTo != null) {
             return accountTo;
         }
         return null;
@@ -157,7 +157,7 @@ public class TransactionEdit implements Parcelable {
     }
 
     public Category getCategory() {
-        if (isCategorySet || category != null) {
+        if (isCategorySet && category != null) {
             return category;
         }
         return null;
@@ -169,7 +169,7 @@ public class TransactionEdit implements Parcelable {
     }
 
     public List<Tag> getTags() {
-        if (isTagsSet || tags != null) {
+        if (isTagsSet && tags != null) {
             return tags;
         }
         return null;
@@ -193,7 +193,7 @@ public class TransactionEdit implements Parcelable {
     }
 
     public String getNote() {
-        if (isNoteSet || note != null) {
+        if (isNoteSet && note != null) {
             return note;
         }
         return null;
@@ -205,21 +205,21 @@ public class TransactionEdit implements Parcelable {
     }
 
     public Location getLocation() {
-        if (isLocationSet || location != null) {
+        if (isLocationSet && location != null) {
             return location;
         }
         return null;
     }
 
     public String getLocationName() {
-        if (isLocationSet || location != null) {
+        if (isLocationSet && location != null) {
             return location.getName();
         }
         return null;
     }
 
     public String getLocationLatLng() {
-        if (isLocationSet || location != null) {
+        if (isLocationSet && location != null) {
             return location.getStringLatLng();
         }
         return null;
@@ -231,7 +231,7 @@ public class TransactionEdit implements Parcelable {
     }
 
     public String getPhotoPath() {
-        if (isPhotoPathSet || photoPath != null) {
+        if (isPhotoPathSet && photoPath != null) {
             return photoPath;
         }
         return null;
@@ -317,4 +317,5 @@ public class TransactionEdit implements Parcelable {
 
         return transaction;
     }
+
 }

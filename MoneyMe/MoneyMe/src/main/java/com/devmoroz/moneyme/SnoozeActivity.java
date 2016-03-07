@@ -15,6 +15,7 @@ import com.devmoroz.moneyme.utils.Constants;
 import com.devmoroz.moneyme.utils.datetime.TimeUtils;
 
 import java.util.Calendar;
+import java.util.Date;
 
 public class SnoozeActivity extends AppCompatActivity {
 
@@ -33,18 +34,19 @@ public class SnoozeActivity extends AppCompatActivity {
     private void manageNotification() {
         if (Constants.ACTION_SNOOZE.equals(getIntent().getAction())) {
             String snoozeDelay = "5";
-            long newReminder = Calendar.getInstance().getTimeInMillis() + Integer.parseInt(snoozeDelay) * 60 * 1000;
-            updateTodoReminder(newReminder, todo);
+            long now = Calendar.getInstance().getTimeInMillis();
+            long newReminder = now + Integer.parseInt(snoozeDelay) * 60 * 1000;
+            todo.setAlarmDateLong(newReminder);
+            updateTodoReminder(now, todo);
             finish();
         }
         removeNotification(todo);
     }
 
-    private void updateTodoReminder(long reminder, Todo todoToUpdate) {
+    private void updateTodoReminder(long now, Todo todoToUpdate) {
         MoneyMeScheduler scheduler = new MoneyMeScheduler();
-        scheduler.scheduleTodoAlarm(MoneyApplication.getAppContext(), todoToUpdate, reminder);
-        showReminderMessage(reminder);
-
+        scheduler.scheduleTodoAlarm(MoneyApplication.getAppContext(), todoToUpdate, now);
+        showReminderMessage(todoToUpdate.getAlarmDateLong());
     }
 
     public void showReminderMessage(long reminder) {

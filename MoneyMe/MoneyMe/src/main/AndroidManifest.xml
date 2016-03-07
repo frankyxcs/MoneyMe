@@ -71,10 +71,8 @@
 
         <activity
             android:name=".NotesActivity"
-            android:configChanges="orientation|screenSize"
             android:label="@string/notes"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="stateAlwaysHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
@@ -82,7 +80,6 @@
 
         <activity
             android:name=".TodoActivity"
-            android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"/>
 

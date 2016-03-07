@@ -119,6 +119,7 @@ public class NotesActivity extends AppCompatActivity {
     }
 
     private void deleteTodo(Todo todo, int position) {
+        MoneyMeScheduler scheduler = new MoneyMeScheduler();
         new MaterialDialog.Builder(NotesActivity.this)
                 .content(R.string.remove_item_confirm)
                 .negativeText(R.string.cancel)
@@ -132,6 +133,7 @@ public class NotesActivity extends AppCompatActivity {
                             DBHelper dbHelper = MoneyApplication.GetDBHelper();
                             dbHelper.getTodoDAO().delete(todo);
                             mAdapter.remove(position);
+                            scheduler.removeReminder(MoneyApplication.getAppContext(), todo);
                         } catch (SQLException ex) {
                             L.T(NotesActivity.this, "Something went wrong.Please, try again.");
                         }
@@ -156,7 +158,7 @@ public class NotesActivity extends AppCompatActivity {
             if (item.isHasReminder()) {
                 long now = System.currentTimeMillis() + 1000;
                 MoneyMeScheduler scheduler = new MoneyMeScheduler();
-                scheduler.rescheduleTodoAlarm(NotesActivity.this,item,now);
+                scheduler.scheduleTodoAlarm(NotesActivity.this, item, now);
             }
         }
         loadTodos();

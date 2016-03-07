@@ -33,12 +33,15 @@ public class ScheduleAlarmReceiver extends BroadcastReceiver {
                 case ACTION_FASTBOOT:
                     requestScheduleAll(context);
                     requestScheduleAutoBackup(context);
+                    break;
                 case Intent.ACTION_DATE_CHANGED:
                 case Intent.ACTION_TIME_CHANGED:
                 case Intent.ACTION_TIMEZONE_CHANGED:
                     requestUpdateAll(context);
+                    break;
                 case AlarmService.ACTION_SCHEDULED_BACKUP:
                     requestAutoBackup(context);
+                    break;
 
             }
         }

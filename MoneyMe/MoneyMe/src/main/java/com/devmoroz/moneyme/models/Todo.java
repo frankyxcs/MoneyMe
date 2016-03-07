@@ -28,8 +28,8 @@ public class Todo implements Parcelable {
     @DatabaseField(generatedId = true)
     private UUID id;
 
-    @DatabaseField()
-    private int alarm_id;
+    @DatabaseField(dataType = DataType.DATE_LONG)
+    private Date createdDate;
 
     @DatabaseField(canBeNull = false)
     private String title;
@@ -41,7 +41,10 @@ public class Todo implements Parcelable {
     private int color;
 
     @DatabaseField(dataType = DataType.DATE_LONG)
-    private Date date;
+    private Date alarmDate;
+
+    @DatabaseField(dataType = DataType.DATE_LONG)
+    private Date updatedDate;
 
     @DatabaseField
     private boolean hasReminder;
@@ -50,36 +53,36 @@ public class Todo implements Parcelable {
     private boolean checkList;
 
     public Todo() {
-        this.alarm_id = (int) System.currentTimeMillis();
     }
 
-    public Todo(String title, String content, Date date, boolean hasReminder, boolean checkList) {
+    public Todo(String title, String content, Date createdDate, boolean hasReminder, boolean checkList) {
         this.title = title;
         this.content = content;
-        this.date = date;
+        this.createdDate = createdDate;
+        this.updatedDate = createdDate;
         this.hasReminder = hasReminder;
         this.checkList = checkList;
         this.color = 0;
-        this.alarm_id = (int) System.currentTimeMillis();
     }
 
-    public Todo(String title, String content, int color, Date date, boolean hasReminder, boolean checkList) {
+    public Todo(String title, String content, int color, Date createdDate,Date updatedDate, boolean hasReminder, boolean checkList) {
         this.title = title;
         this.content = content;
         this.color = color;
-        this.date = date;
+        this.createdDate = createdDate;
+        this.updatedDate = updatedDate;
         this.hasReminder = hasReminder;
         this.checkList = checkList;
-        this.alarm_id = (int) System.currentTimeMillis();
     }
 
     public Todo(Parcel parcel) {
         setId(parcel.readString());
-        setAlarm_id(parcel.readInt());
         setTitle(parcel.readString());
         setContent(parcel.readString());
         setColor(parcel.readInt());
-        setDate(new Date(parcel.readLong()));
+        setCreatedDateLong(parcel.readLong());
+        setUpdatedDateLong(parcel.readLong());
+        setAlarmDateLong(parcel.readLong());
         setHasReminder(parcel.readInt() != 0);
         setCheckList(parcel.readInt() != 0);
     }
@@ -92,21 +95,18 @@ public class Todo implements Parcelable {
     @Override
     public void writeToParcel(Parcel parcel, int flags) {
         parcel.writeString(getId());
-        parcel.writeInt(getAlarm_id());
         parcel.writeString(title);
         parcel.writeString(content);
         parcel.writeInt(color);
-        parcel.writeLong(date.getTime());
+        parcel.writeLong(createdDate != null ? createdDate.getTime() : 0);
+        parcel.writeLong(updatedDate != null ? updatedDate.getTime() : 0);
+        parcel.writeLong(alarmDate != null ? alarmDate.getTime() : 0);
         parcel.writeInt(hasReminder ? 1 : 0);
         parcel.writeInt(checkList ? 1 : 0);
     }
 
     public int getAlarm_id() {
-        return alarm_id;
-    }
-
-    public void setAlarm_id(int alarm_id) {
-        this.alarm_id = alarm_id;
+        return (int) createdDate.getTime();
     }
 
     public String getId() {
@@ -143,20 +143,58 @@ public class Todo implements Parcelable {
         this.color = color;
     }
 
-    public Date getDate() {
-        return date;
+    public Date getAlarmDate() {
+        return alarmDate;
     }
 
-    public Long getDateLong() {
-        return date.getTime();
+    public void setAlarmDate(Date alarmDate) {
+        this.alarmDate = alarmDate;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public Date getUpdatedDate() {
+        return updatedDate;
+    }
+
+    public void setUpdatedDate(Date updatedDate) {
+        this.updatedDate = updatedDate;
+    }
+
+    public void setAlarmDateLong(long alarmDate) {
+        if (alarmDate != 0) {
+            this.alarmDate = new Date(alarmDate);
+        }
+    }
+
+    public void setUpdatedDateLong(long updatedDate) {
+        if (updatedDate != 0) {
+            this.updatedDate = new Date(updatedDate);
+        }
+    }
+
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public void setCreatedDateLong(long createdDate) {
+        if (createdDate != 0) {
+            this.createdDate = new Date(createdDate);
+        }
+    }
+
+    public long getAlarmDateLong() {
+        return hasReminder ? alarmDate.getTime() : 0;
+    }
+
+    public long getUpdatedDateLong() {
+        return updatedDate != null ? updatedDate.getTime() : 0;
     }
 
     public boolean isHasReminder() {
         return hasReminder;
+    }
+
+    public boolean isShowReminderIcon() {
+        return hasReminder && (getAlarmDate() != null && System.currentTimeMillis() < getAlarmDateLong());
     }
 
     public void setHasReminder(boolean hasReminder) {

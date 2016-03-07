@@ -32,6 +32,7 @@ import com.devmoroz.moneyme.logging.L;
 import com.devmoroz.moneyme.models.Account;
 import com.devmoroz.moneyme.models.CreatedItem;
 import com.devmoroz.moneyme.models.Currency;
+import com.devmoroz.moneyme.models.SyncState;
 import com.devmoroz.moneyme.models.Tag;
 import com.devmoroz.moneyme.models.Transaction;
 import com.devmoroz.moneyme.models.TransactionEdit;
@@ -160,6 +161,7 @@ public class AddIncomeActivity extends AppCompatActivity implements View.OnClick
         Transaction income = transactionEdit.getModel();
         income.setAmount(incomeAmount);
         income.setNotes(incomeNote);
+        income.setSyncState(SyncState.None);
 
         dbHelper.getTransactionDAO().create(income);
         dbHelper.getAccountDAO().update(account);

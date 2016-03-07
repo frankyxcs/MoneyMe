@@ -124,11 +124,13 @@ public class Account implements Parcelable{
     }
 
     public String getId() {
-        return id.toString();
+        return id != null ? id.toString() : null;
     }
 
     public void setId(String id) {
-        this.id = UUID.fromString(id);
+        if (FormatUtils.isNotEmpty(id)) {
+            this.id = UUID.fromString(id);
+        }
     }
 
     public String getName() {

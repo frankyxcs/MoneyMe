@@ -16,9 +16,7 @@
         android:layout_height="match_parent"
         android:layout_width="match_parent" >
 
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
@@ -29,14 +27,13 @@
                 android:background="@color/colorPrimary"
                 android:id="@+id/editTextParentLinearLayout"
                 android:gravity="center"
-                android:layout_weight=".5"
                 android:layout_width="match_parent"
-                android:layout_height="0dp">
+                android:layout_height="116dp">
 
                 <android.support.design.widget.TextInputLayout
                     android:gravity="center"
                     android:layout_width="match_parent"
-                    android:layout_height="116dp"
+                    android:layout_height="match_parent"
                     android:textColorHint="@color/colorWhite">
 
                     <EditText
@@ -49,14 +46,20 @@
                         android:gravity="start|bottom"
                         android:imeOptions="actionDone"
                         android:theme="@style/ThemeOverlay.AppCompat.Dark"
-                        android:layout_marginRight="32dp"
-                        android:layout_marginLeft="32dp"
+                        android:layout_marginRight="16dp"
+                        android:layout_marginLeft="16dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
 
                 </android.support.design.widget.TextInputLayout>
 
             </LinearLayout>
+
+            <ScrollView
+                android:id="@+id/content_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbarStyle="outsideOverlay">
 
             <LinearLayout
                 android:id="@+id/toDoContentAndDateContainerLayout"
@@ -75,15 +78,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp">
 
-
                     <View
                         android:id="@+id/todo_color_marker"
                         android:layout_width="7dp"
                         android:layout_height="match_parent"
                         android:background="@null"/>
 
-                    <android.support.design.widget.TextInputLayout
-                        android:gravity="center"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:paddingBottom="8dp">
@@ -92,14 +93,16 @@
                             android:id="@+id/toDoContent"
                             android:hint="@string/content"
                             android:inputType="textCapSentences|textMultiLine"
-                            style="@style/Text.Subhead"
+                            style="@style/Text.Body2"
+                            android:textSize="16sp"
                             android:gravity="start|bottom"
                             android:background="@null"
+                            android:textCursorDrawable="@null"
                             android:layout_width="match_parent"
                             android:imeOptions="actionDone"
                             android:layout_height="wrap_content" />
 
-                    </android.support.design.widget.TextInputLayout>
+                    </LinearLayout>
 
                 </LinearLayout>
 
@@ -200,9 +203,9 @@
 
 
             </LinearLayout>
-
+            </ScrollView>
         </LinearLayout>
-</ScrollView>
+
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/saveToDoFAB"
             android:layout_marginEnd="16dp"

@@ -2,8 +2,11 @@ package com.devmoroz.moneyme.models;
 
 
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.devmoroz.moneyme.utils.CurrencyCache;
+import com.devmoroz.moneyme.utils.FormatUtils;
 import com.devmoroz.moneyme.utils.datetime.TimeUtils;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
@@ -17,7 +20,17 @@ import java.util.Date;
 import java.util.UUID;
 
 @DatabaseTable(tableName = "transactions")
-public class Transaction {
+public class Transaction implements Parcelable{
+
+    public static final Parcelable.Creator<Transaction> CREATOR = new Parcelable.Creator<Transaction>() {
+        public Transaction createFromParcel(Parcel in) {
+            return new Transaction(in);
+        }
+
+        public Transaction[] newArray(int size) {
+            return new Transaction[size];
+        }
+    };
 
     @DatabaseField(generatedId = true)
     private UUID id;
@@ -34,7 +47,7 @@ public class Transaction {
     @DatabaseField(dataType = DataType.DATE_LONG)
     private Date dateAdded;
 
-    @DatabaseField(canBeNull = false,dataType = DataType.DOUBLE)
+    @DatabaseField(canBeNull = false, dataType = DataType.DOUBLE)
     private double amount;
 
     @DatabaseField
@@ -60,6 +73,46 @@ public class Transaction {
 
     @DatabaseField
     private String tags;
+
+    private Transaction(Parcel in) {
+        setId(in.readString());
+        type = TransactionType.fromInt(in.readInt());
+        setNotes(in.readString());
+        category = in.readParcelable(Category.class.getClassLoader());
+        setDateAddedLong(in.readLong());
+        setAmount(in.readDouble());
+        setPhoto(in.readString());
+        setLocation(in.readString());
+        setLocationName(in.readString());
+        accountFrom = in.readParcelable(Account.class.getClassLoader());
+        accountTo = in.readParcelable(Account.class.getClassLoader());
+        payee = in.readParcelable(Payee.class.getClassLoader());
+        syncState = SyncState.fromInt(in.readInt());
+        setTags(in.readString());
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(getId());
+        dest.writeInt(type.asInt());
+        dest.writeString(getNotes());
+        dest.writeParcelable(category, flags);
+        dest.writeLong(getDateLong());
+        dest.writeDouble(getAmount());
+        dest.writeString(getPhoto());
+        dest.writeString(getLocation());
+        dest.writeString(getLocationName());
+        dest.writeParcelable(accountFrom, flags);
+        dest.writeParcelable(accountTo, flags);
+        dest.writeParcelable(payee, flags);
+        dest.writeInt(syncState.asInt());
+        dest.writeString(getTags());
+    }
 
     public String getTags() {
         return tags;
@@ -93,7 +146,7 @@ public class Transaction {
         this.syncState = SyncState.None;
     }
 
-    public Transaction(TransactionType type,Date dateAdded, double amount, String photo, String location, Account accountFrom, String notes) {
+    public Transaction(TransactionType type, Date dateAdded, double amount, String photo, String location, Account accountFrom, String notes) {
         this.type = type;
         this.dateAdded = dateAdded;
         this.amount = amount;
@@ -136,7 +189,7 @@ public class Transaction {
     }
 
     public String getId() {
-        return id.toString();
+        return id != null ? id.toString() : null;
     }
 
     public TransactionType getType() {
@@ -152,7 +205,7 @@ public class Transaction {
     }
 
     public String getCategoryName() {
-        return category!=null ? category.getTitle() : "";
+        return category != null ? category.getTitle() : "";
     }
 
     public Date getDateAdded() {
@@ -183,13 +236,29 @@ public class Transaction {
         return accountFrom;
     }
 
-    public String getAccountFromName() { return accountFrom.getName();}
+    public String getAccountFromName() {
+        return accountFrom.getName();
+    }
 
     public Account getAccountTo() {
         return accountTo;
     }
 
-    public String getAccountToName() { return accountTo.getName();}
+    public String getAccountToName() {
+        return accountTo.getName();
+    }
+
+    public void setId(String id) {
+        if (FormatUtils.isNotEmpty(id)) {
+            this.id = UUID.fromString(id);
+        }
+    }
+
+    public void setDateAddedLong(long date){
+        if(date!=0){
+            this.dateAdded = new Date(date);
+        }
+    }
 
     public void setType(TransactionType type) {
         this.type = type;
@@ -207,7 +276,9 @@ public class Transaction {
         this.dateAdded = dateAdded;
     }
 
-    public long getDateLong(){ return dateAdded.getTime();}
+    public long getDateLong() {
+        return dateAdded.getTime();
+    }
 
     public void setAmount(double amount) {
         this.amount = amount;
@@ -252,12 +323,12 @@ public class Transaction {
         return decimalFormat.format(amount);
     }
 
-    public String getMarkerSnippet(Context context,Currency c){
+    public String getMarkerSnippet(Context context, Currency c) {
         StringBuilder sb = new StringBuilder();
         if (c == null) {
             c = Currency.EMPTY;
         }
-        sb.append(category!= null ? category.getTitle() : getAccountFromName());
+        sb.append(category != null ? category.getTitle() : getAccountFromName());
         sb.append(":");
         String a = c.getFormat().format(amount);
         sb.append(a);
@@ -268,21 +339,19 @@ public class Transaction {
         return sb.toString();
     }
 
-    public String getAccountId(){
-        if(type == TransactionType.INCOME){
+    public String getAccountId() {
+        if (type == TransactionType.INCOME) {
             return accountTo.getId();
-        }else if(type == TransactionType.OUTCOME){
+        } else if (type == TransactionType.OUTCOME) {
             return accountFrom.getId();
-        }
-        else return "";
+        } else return "";
     }
 
-    public Account getAccount(){
-        if(type == TransactionType.INCOME){
+    public Account getAccount() {
+        if (type == TransactionType.INCOME) {
             return accountTo;
-        }else if(type == TransactionType.OUTCOME){
+        } else if (type == TransactionType.OUTCOME) {
             return accountFrom;
-        }
-        else return null;
+        } else return null;
     }
 }

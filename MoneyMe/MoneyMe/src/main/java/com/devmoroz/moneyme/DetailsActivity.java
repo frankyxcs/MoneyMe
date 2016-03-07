@@ -36,6 +36,7 @@ import com.devmoroz.moneyme.models.Account;
 import com.devmoroz.moneyme.models.Category;
 import com.devmoroz.moneyme.models.Currency;
 import com.devmoroz.moneyme.models.Transaction;
+import com.devmoroz.moneyme.models.TransactionEdit;
 import com.devmoroz.moneyme.models.TransactionType;
 import com.devmoroz.moneyme.utils.Constants;
 import com.devmoroz.moneyme.utils.CurrencyCache;
@@ -112,9 +113,6 @@ public class DetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_details);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
-        toolbar = (Toolbar) findViewById(R.id.details_toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.details_collapsing_toolbar);
         amountTextView = (TextView) findViewById(R.id.details_amount);
@@ -125,11 +123,23 @@ public class DetailsActivity extends AppCompatActivity {
 
         dInterval = new DataInterval(this, dataIntervalType);
 
+        initToolbar();
         loadEntity();
         setupFab();
-        initSpinner();
-        setupChart();
+        if (itemType == TransactionType.TRANSFER) {
+            findViewById(R.id.chartContainer).setVisibility(View.GONE);
+        } else {
+            initSpinner();
+            setupChart();
+        }
 
+    }
+
+    private void initToolbar() {
+        toolbar = (Toolbar) findViewById(R.id.details_toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private void loadEntity() {
@@ -142,12 +152,14 @@ public class DetailsActivity extends AppCompatActivity {
             amount = transaction.getAmount();
             if (itemType == TransactionType.INCOME) {
                 collapsingToolbar.setTitle(getString(R.string.income_toolbar_name));
-            } else {
+            } else if (itemType == TransactionType.OUTCOME) {
                 category = transaction.getCategory();
                 collapsingToolbar.setTitle(category.getTitle());
                 if (FormatUtils.isNotEmpty(transaction.getPhoto())) {
                     loadImage(transaction.getPhoto());
                 }
+            } else {
+                collapsingToolbar.setTitle(getString(R.string.transfer_toolbar_name));
             }
             amountTextView.setText(CurrencyCache.formatAmountWithSign(amount));
             dateTextView.setText(TimeUtils.formatHumanFriendlyShortDate(getApplicationContext(), entityDate.getTime()));

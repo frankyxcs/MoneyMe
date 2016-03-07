@@ -3,6 +3,7 @@ package com.devmoroz.moneyme.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.devmoroz.moneyme.utils.FormatUtils;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -76,11 +77,13 @@ public class Category implements Parcelable{
     }
 
     public String getId() {
-        return id.toString();
+        return id != null ? id.toString() : null;
     }
 
     public void setId(String id) {
-        this.id = UUID.fromString(id);
+        if (FormatUtils.isNotEmpty(id)) {
+            this.id = UUID.fromString(id);
+        }
     }
 
     public int getColor() {

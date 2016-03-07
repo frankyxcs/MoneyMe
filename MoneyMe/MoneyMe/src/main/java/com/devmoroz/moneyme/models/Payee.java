@@ -1,6 +1,10 @@
 package com.devmoroz.moneyme.models;
 
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.devmoroz.moneyme.utils.FormatUtils;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
@@ -9,7 +13,17 @@ import com.j256.ormlite.table.DatabaseTable;
 import java.util.UUID;
 
 @DatabaseTable(tableName = "payees")
-public class Payee {
+public class Payee implements Parcelable{
+
+    public static final Parcelable.Creator<Payee> CREATOR = new Parcelable.Creator<Payee>() {
+        public Payee createFromParcel(Parcel in) {
+            return new Payee(in);
+        }
+
+        public Payee[] newArray(int size) {
+            return new Payee[size];
+        }
+    };
 
     @DatabaseField(generatedId = true)
     private UUID id;
@@ -23,11 +37,26 @@ public class Payee {
     @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private Currency currency;
 
-    @ForeignCollectionField
-    private ForeignCollection<Transaction> transactions;
 
-    @ForeignCollectionField
-    private ForeignCollection<Budget> budgets;
+    public Payee(Parcel parcel) {
+        setId(parcel.readString());
+        setName(parcel.readString());
+        setIcon(parcel.readString());
+        setCurrency(parcel.readParcelable(Currency.class.getClassLoader()));
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int flags) {
+        parcel.writeString(getId());
+        parcel.writeString(getName());
+        parcel.writeString(getIcon());
+        parcel.writeParcelable(currency, flags);
+    }
 
     public Payee() {
     }
@@ -55,12 +84,8 @@ public class Payee {
         this.name = name;
     }
 
-    public ForeignCollection<Transaction> getTransactions() {
-        return transactions;
-    }
-
     public String getId() {
-        return id.toString();
+        return id != null ? id.toString() : null;
     }
 
     public String getIcon() {
@@ -73,5 +98,15 @@ public class Payee {
 
     public Currency getCurrency() {
         return currency;
+    }
+
+    public void setId(String id) {
+        if (FormatUtils.isNotEmpty(id)) {
+            this.id = UUID.fromString(id);
+        }
+    }
+
+    public void setCurrency(Currency currency) {
+        this.currency = currency;
     }
 }

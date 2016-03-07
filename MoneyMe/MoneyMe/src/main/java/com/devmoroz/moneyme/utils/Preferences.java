@@ -88,6 +88,11 @@ public class Preferences {
         return sharedPreferences.getString(context.getString(R.string.pref_notify_time), null);
     }
 
+    public static boolean isDailyNotificationEnabled(Context context) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPreferences.getBoolean(context.getString(R.string.pref_auto_backup), false);
+    }
+
     public static boolean isAutoBackupEnabled(Context context) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         return sharedPreferences.getBoolean(context.getString(R.string.pref_auto_backup), false);

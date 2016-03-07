@@ -21,7 +21,7 @@ public class TodoDAO extends BaseDaoImpl<Todo, UUID> {
 
     public List<Todo> queryForAllSorted() throws SQLException{
         QueryBuilder<Todo,UUID> queryBuilder = queryBuilder();
-        queryBuilder.orderBy("date",false);
+        queryBuilder.orderBy("updatedDate",false);
         PreparedQuery<Todo> preparedQuery = queryBuilder.prepare();
         List<Todo> result = query(preparedQuery);
 
@@ -30,8 +30,8 @@ public class TodoDAO extends BaseDaoImpl<Todo, UUID> {
 
     public List<Todo> queryForAlarm(long now) throws SQLException{
         QueryBuilder<Todo,UUID> queryBuilder = queryBuilder();
-        queryBuilder.where().eq("hasReminder",true).and().gt("date" , new Date(now));
-        queryBuilder.orderBy("date", false);
+        queryBuilder.where().eq("hasReminder",true).and().gt("alarmDate" , new Date(now));
+        queryBuilder.orderBy("alarmDate", false);
         PreparedQuery<Todo> preparedQuery = queryBuilder.prepare();
         List<Todo> result = query(preparedQuery);
 

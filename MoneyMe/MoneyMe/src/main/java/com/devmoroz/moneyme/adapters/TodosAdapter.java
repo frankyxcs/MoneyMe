@@ -129,9 +129,9 @@ public class TodosAdapter extends RecyclerView.Adapter<TodosAdapter.MainViewHold
 
             setTextView(mTodoTitleTextView, model.getTitle());
             setTextView(mTodoContentTextView, model.getContent());
-            mTodoTimeTextView.setText(TimeUtils.formatHumanFriendlyShortDateTime(context, model.getDateLong()));
+            mTodoTimeTextView.setText(TimeUtils.formatHumanFriendlyShortDateTime(context, model.getUpdatedDateLong()));
             card.setBackgroundColor(CustomColorTemplate.TODO_COLORS[model.getColor()]);
-            if (model.isHasReminder()) {
+            if (model.isShowReminderIcon()) {
                 mTodoIconHasReminder.setVisibility(View.VISIBLE);
             } else {
                 mTodoIconHasReminder.setVisibility(View.GONE);

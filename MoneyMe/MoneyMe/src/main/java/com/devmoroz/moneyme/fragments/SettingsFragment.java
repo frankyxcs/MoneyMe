@@ -8,6 +8,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 
+import com.devmoroz.moneyme.MoneyApplication;
 import com.devmoroz.moneyme.R;
 import com.devmoroz.moneyme.ScheduleAlarmReceiver;
 import com.devmoroz.moneyme.notification.MoneyMeScheduler;
@@ -58,11 +59,11 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                 if(key.equals(getString(R.string.pref_notify_time))){
-                    Context context = getContext();
-                    MoneyMeScheduler.cancelDailyAlarm(context);
-                    MoneyMeScheduler.scheduleDailyAlarm(context);
+                    MoneyMeScheduler.cancelDailyAlarm(MoneyApplication.getAppContext());
+                    MoneyMeScheduler.scheduleDailyAlarm(MoneyApplication.getAppContext());
                 } else if(key.equals(getString(R.string.pref_auto_backup))){
-
+                    MoneyMeScheduler scheduler = new MoneyMeScheduler();
+                    scheduler.scheduleNextAutoBackup(MoneyApplication.getAppContext());
                 }
             }
         };

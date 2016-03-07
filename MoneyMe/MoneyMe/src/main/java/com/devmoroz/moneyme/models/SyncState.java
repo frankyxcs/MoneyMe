@@ -3,12 +3,10 @@ package com.devmoroz.moneyme.models;
 
 public enum SyncState {
     None(SyncState.VALUE_NONE),
-    InProgress(SyncState.VALUE_IN_PROGRESS),
     Synced(SyncState.VALUE_SYNCED),
     LocalChanges(SyncState.VALUE_LOCAL_CHANGES);
 
     private static final int VALUE_NONE = 1;
-    private static final int VALUE_IN_PROGRESS = 2;
     private static final int VALUE_SYNCED = 3;
     private static final int VALUE_LOCAL_CHANGES = 4;
 
@@ -22,9 +20,6 @@ public enum SyncState {
         switch (value) {
             case VALUE_NONE:
                 return None;
-
-            case VALUE_IN_PROGRESS:
-                return InProgress;
 
             case VALUE_SYNCED:
                 return Synced;
