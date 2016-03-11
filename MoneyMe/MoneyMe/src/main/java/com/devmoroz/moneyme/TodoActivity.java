@@ -50,7 +50,7 @@ import it.feio.android.checklistview.exceptions.ViewNotSupportedException;
 import it.feio.android.checklistview.interfaces.CheckListChangedListener;
 import it.feio.android.checklistview.utils.AlphaManager;
 
-public class TodoActivity extends AppCompatActivity implements View.OnClickListener,CheckListChangedListener {
+public class TodoActivity extends AppCompatActivity implements View.OnClickListener, CheckListChangedListener {
 
     private EditText mTodoTitleEditText;
     private EditText mTodoContentEditText;
@@ -141,7 +141,7 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
         mTodoReminderSwitch.setChecked(editTodo.isHasReminder());
         setDateTimeText();
         setDateTimeButtonsText();
-        toggleDateButtonsConatinerVisibility(editTodo.isHasReminder());
+        toggleDateButtonsContainerVisibility(editTodo.isHasReminder());
     }
 
     private void initContent() {
@@ -330,6 +330,11 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
                 editTodo.setContent(getNoteContent());
                 DBHelper dbHelper = MoneyApplication.GetDBHelper();
                 dbHelper.getTodoDAO().createOrUpdate(editTodo);
+                if (editTodo.isHasReminder()) {
+                    MoneyMeScheduler scheduler = new MoneyMeScheduler();
+                    scheduler.removeReminder(MoneyApplication.getAppContext(), editTodo);
+                    scheduler.scheduleTodoAlarm(MoneyApplication.getAppContext(), editTodo, now + 1000);
+                }
             } catch (SQLException ex) {
 
             }
@@ -339,7 +344,7 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
         finish();
     }
 
-    public void toggleDateButtonsConatinerVisibility(boolean checked) {
+    public void toggleDateButtonsContainerVisibility(boolean checked) {
         if (checked) {
             mTodoDateButtonsContainer.setVisibility(View.VISIBLE);
         } else {
@@ -418,9 +423,9 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void toggleChecklist(){
+    private void toggleChecklist() {
         if (!editTodo.isCheckList()) {
-            toggleChecklist2(true,true);
+            toggleChecklist2(true, true);
             return;
         }
 
@@ -455,7 +460,7 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
 
         // Switches the views
         if (newView != null) {
-            if(newView instanceof EditText){
+            if (newView instanceof EditText) {
                 ((android.widget.EditText) newView).setHint(R.string.content);
             }
             mChecklistManager.replaceViews(toggleChecklistView, newView);

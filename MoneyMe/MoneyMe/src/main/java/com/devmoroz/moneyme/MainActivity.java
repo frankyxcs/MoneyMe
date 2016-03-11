@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -38,15 +37,11 @@ import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
 import com.devmoroz.moneyme.export.BackupRestoreHelper;
 import com.devmoroz.moneyme.export.ExportAsyncTask;
 import com.devmoroz.moneyme.export.ExportParams;
-import com.devmoroz.moneyme.export.backup.BackupTask;
-import com.devmoroz.moneyme.helpers.CurrencyHelper;
 import com.devmoroz.moneyme.helpers.DBHelper;
 import com.devmoroz.moneyme.logging.L;
 import com.devmoroz.moneyme.models.Account;
 import com.devmoroz.moneyme.models.CreatedItem;
-import com.devmoroz.moneyme.models.Currency;
 import com.devmoroz.moneyme.models.Transaction;
-import com.devmoroz.moneyme.utils.AppUtils;
 import com.devmoroz.moneyme.utils.Constants;
 import com.devmoroz.moneyme.utils.CurrencyCache;
 import com.devmoroz.moneyme.utils.FormatUtils;
@@ -55,8 +50,6 @@ import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.squareup.otto.Subscribe;
 
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
@@ -127,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
         initNavigationView();
         initTabs();
         initFloatingActionMenu();
+        handleIntents();
     }
 
     private void switchToSplashView() {
@@ -165,6 +159,23 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         BusProvider.getInstance().unregister(this);
         super.onPause();
+    }
+
+    private void handleIntents() {
+        Intent i = getIntent();
+
+        if (i.getAction() == null) return;
+
+        if (Constants.ACTION_LAUNCH_INCOME.equals(i.getAction())) {
+            startAddActivity(Constants.INCOME_ACTIVITY, null);
+            return;
+        }
+
+        if (Constants.ACTION_LAUNCH_OUTCOME.equals(i.getAction())) {
+            startAddActivity(Constants.OUTCOME_ACTIVITY, null);
+            return;
+        }
+
     }
 
     private void initToolbar() {
@@ -403,8 +414,7 @@ public class MainActivity extends AppCompatActivity {
                                 Account acc = t.getAccountFrom();
                                 acc.setBalance(acc.getBalance() + createdItem.getAmount());
                                 dbhelper.getAccountDAO().update(acc);
-                            }
-                            else if (requestCode == REQUEST_CODE_TRANSFER) {
+                            } else if (requestCode == REQUEST_CODE_TRANSFER) {
                                 Account aFrom = t.getAccountFrom();
                                 Account aTo = t.getAccountTo();
                                 aFrom.setBalance(aFrom.getBalance() + createdItem.getAmount());

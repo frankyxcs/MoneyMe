@@ -65,6 +65,10 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     MoneyMeScheduler scheduler = new MoneyMeScheduler();
                     scheduler.scheduleNextAutoBackup(MoneyApplication.getAppContext());
                 }
+                else if(key.equals(getString(R.string.pref_backup_frequency))){
+                    MoneyMeScheduler scheduler = new MoneyMeScheduler();
+                    scheduler.scheduleNextAutoBackup(MoneyApplication.getAppContext());
+                }
             }
         };
     }

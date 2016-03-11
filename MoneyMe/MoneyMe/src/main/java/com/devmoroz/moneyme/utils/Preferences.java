@@ -100,7 +100,9 @@ public class Preferences {
 
     public static int getAutoBackupFrequency(Context context) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return sharedPreferences.getInt(context.getString(R.string.pref_backup_frequency), 1);
+        String frequencyString =  sharedPreferences.getString(context.getString(R.string.pref_backup_frequency), null);
+
+        return frequencyString == null ? 1 : Integer.parseInt(frequencyString);
     }
 
     public static void removeDropboxKeys(Context context) {

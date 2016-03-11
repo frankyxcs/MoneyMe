@@ -3,7 +3,9 @@ package com.devmoroz.moneyme.fragments;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableString;
@@ -25,11 +27,13 @@ import com.devmoroz.moneyme.models.Account;
 import com.devmoroz.moneyme.models.LegendDetails;
 import com.devmoroz.moneyme.models.Transaction;
 import com.devmoroz.moneyme.models.TransactionType;
+import com.devmoroz.moneyme.utils.CommonUtils;
 import com.devmoroz.moneyme.utils.CurrencyCache;
 import com.devmoroz.moneyme.utils.CustomColorTemplate;
 import com.devmoroz.moneyme.utils.Preferences;
 import com.devmoroz.moneyme.utils.datetime.PeriodUtils;
 import com.devmoroz.moneyme.widgets.DividerItemDecoration;
+import com.devmoroz.moneyme.widgets.HistoryForCategoryDialog;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
@@ -42,6 +46,7 @@ import com.squareup.otto.Subscribe;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,6 +64,8 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
     private List<Account> accounts;
     private String totalOut;
     private String balance;
+
+    ArrayList<LegendDetails> legendData = new ArrayList<>();
 
 
     public static ChartFragment getInstance() {
@@ -128,12 +135,12 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
 
     private void customizeLegend() {
         int monthStart = Preferences.getMonthStart(getContext());
-        ArrayList<LegendDetails> legendData = new ArrayList<>();
         Legend l = chart.getLegend();
         l.setEnabled(false);
         int colorCodes[] = l.getColors();
         PieData data = chart.getData();
         List<Entry> entries = ((PieDataSet)data.getDataSet()).getYVals();
+        legendData = new ArrayList<>();
 
         for (int i = 0; i < l.getColors().length-1; i++) {
             Entry entry = entries.get(i);
@@ -230,8 +237,25 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
 
         //rotate to slice center
         chart.spin(1000, rotationAngle, end, Easing.EasingOption.EaseInOutQuad);
-        String label = chart.getXValue(i);
-        BusProvider.postOnMain(new ChartSliceClickedEvent(label));
+        showEditDialog(i);
+       // String label = chart.getXValue(i);
+        //BusProvider.postOnMain(new ChartSliceClickedEvent(label));
+    }
+
+    private void showEditDialog(int position) {
+        FragmentManager fm = getFragmentManager();
+        LegendDetails details = legendData.get(position);
+        HistoryForCategoryDialog historyCategoryDialog = HistoryForCategoryDialog.newInstance();
+        ArrayList<Transaction> list = new ArrayList<>();
+        for(Transaction t : outs){
+            if(t.getCategory()!= null && t.getCategory().getTitle().equals(details.CategoryName)){
+                list.add(t);
+            }
+        }
+        CommonUtils sorter = new CommonUtils();
+        sorter.sortWalletEntriesByDate(list,true);
+        historyCategoryDialog.setData(details, list);
+        historyCategoryDialog.show(fm, "fragment_history_category");
     }
 
     @Override

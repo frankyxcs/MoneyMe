@@ -51,6 +51,7 @@ public class NotesActivity extends AppCompatActivity {
         initToolbar();
         loadTodos();
         initRecyclerWithAdapter();
+        handleIntents();
     }
 
     @Override
@@ -109,6 +110,18 @@ public class NotesActivity extends AppCompatActivity {
         mAdapter.setList(todos);
     }
 
+    private void handleIntents(){
+        Intent i = getIntent();
+
+        if (i.getAction() == null) return;
+
+        if (Constants.ACTION_LAUNCH_TODO.equals(i.getAction())) {
+            addEditTodo(null);
+            return;
+        }
+
+    }
+
     private void loadTodos() {
         try {
             DBHelper dbHelper = MoneyApplication.GetDBHelper();
@@ -152,15 +165,6 @@ public class NotesActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode != RESULT_CANCELED && requestCode == REQUEST_TODO_ITEM) {
-            Todo item = data.getParcelableExtra(Constants.EXTRA_TODO_ITEM);
-
-            if (item.isHasReminder()) {
-                long now = System.currentTimeMillis() + 1000;
-                MoneyMeScheduler scheduler = new MoneyMeScheduler();
-                scheduler.scheduleTodoAlarm(NotesActivity.this, item, now);
-            }
-        }
         loadTodos();
         mAdapter.setList(todos);
     }

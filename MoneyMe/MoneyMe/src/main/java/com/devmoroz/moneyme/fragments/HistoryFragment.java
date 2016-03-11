@@ -81,7 +81,6 @@ public class HistoryFragment extends Fragment {
     public void onResume() {
         super.onResume();
         BusProvider.getInstance().register(this);
-        CheckWallet();
     }
 
     @Override

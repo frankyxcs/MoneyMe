@@ -14,11 +14,13 @@ public class AccountSpinnerWithIconsAdapter extends ArrayAdapter<String> {
 
     int[] typesOfAccountIcons = {R.drawable.ic_cash_multiple,R.drawable.ic_credit_card,R.drawable.ic_bank};
     String[] typesOfAccount;
+    boolean isIntro;
 
     public AccountSpinnerWithIconsAdapter(Context context, int textViewResourceId,
-                                          String[] objects) {
+                                          String[] objects, boolean isIntro) {
         super(context, textViewResourceId, objects);
         typesOfAccount = objects;
+        this.isIntro = isIntro;
     }
 
     @Override
@@ -29,6 +31,9 @@ public class AccountSpinnerWithIconsAdapter extends ArrayAdapter<String> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        if(isIntro){
+            return getClosedView(position,convertView,parent);
+        }
         return getCustomView(position, convertView, parent);
     }
 
@@ -36,6 +41,18 @@ public class AccountSpinnerWithIconsAdapter extends ArrayAdapter<String> {
                               ViewGroup parent) {
         LayoutInflater inflater = LayoutInflater.from(getContext());
         View row = inflater.inflate(R.layout.account_type_row, parent, false);
+        TextView label = (TextView) row.findViewById(R.id.accountTypeText);
+        label.setText(typesOfAccount[position]);
+
+        ImageView icon = (ImageView) row.findViewById(R.id.accountTypeIcon);
+        icon.setImageResource(typesOfAccountIcons[position]);
+
+        return row;
+    }
+
+    public View getClosedView(int position, View convertView, ViewGroup parent) {
+        LayoutInflater inflater = LayoutInflater.from(getContext());
+        View row = inflater.inflate(R.layout.account_type_row_white, parent, false);
         TextView label = (TextView) row.findViewById(R.id.accountTypeText);
         label.setText(typesOfAccount[position]);
 

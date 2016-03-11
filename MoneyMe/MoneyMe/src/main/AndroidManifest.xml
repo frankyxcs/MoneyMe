@@ -24,7 +24,7 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme"
+        android:theme="@style/AppDefault"
         android:windowSoftInputMode="stateHidden">
 
         <meta-data
@@ -166,7 +166,13 @@
             android:noHistory="true"
             android:theme="@style/AppDefault.NoDisplay" />
 
-        <receiver android:name=".widgets.WalletWidget">
+        <activity android:name=".widgets.homescreen.WidgetConfigurationActivity">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
+            </intent-filter>
+        </activity>
+
+        <receiver android:name=".widgets.homescreen.WalletWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>

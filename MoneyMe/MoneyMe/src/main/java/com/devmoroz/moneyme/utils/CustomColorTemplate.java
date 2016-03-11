@@ -44,6 +44,7 @@ public class CustomColorTemplate {
     };
 
     public static final int WHITE_TEXT = Color.parseColor("#FFFFFF");
+    public static final int TRANSPARENT = Color.parseColor("#00000000");
     public static final int SECONDARY_TEXT = Color.rgb(114, 114, 114);
     public static final int INCOME_COLOR = Color.parseColor("#388E3C");
     public static final int OUTCOME_COLOR = Color.parseColor("#D32F2F");

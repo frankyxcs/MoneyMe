@@ -60,7 +60,7 @@ public class FinishFragment extends Fragment {
         accountNameText.addTextChangedListener(createTextWatcher());
 
         String[] types = getContext().getResources().getStringArray(R.array.account_types);
-        AccountSpinnerWithIconsAdapter adapter = new AccountSpinnerWithIconsAdapter(getContext(),R.layout.account_type_row,types);
+        AccountSpinnerWithIconsAdapter adapter = new AccountSpinnerWithIconsAdapter(getContext(),R.layout.account_type_row,types,true);
         accountTypeSpinner.setAdapter(adapter);
         startBalanceText.setFilters(new InputFilter[]{new DecimalDigitsInputFilter()});
 

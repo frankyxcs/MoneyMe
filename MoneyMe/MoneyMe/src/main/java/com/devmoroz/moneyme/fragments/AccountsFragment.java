@@ -157,7 +157,7 @@ public class AccountsFragment extends Fragment implements View.OnClickListener {
         accountNameInput = (TextInputLayout) dialog.getCustomView().findViewById(R.id.text_input_layout_add_account_name);
         EditText accountBalanceInput = (EditText) dialog.getCustomView().findViewById(R.id.accountAddBalance);
         Spinner accountTypesSpinner = (Spinner) dialog.getCustomView().findViewById(R.id.accountAddType);
-        AccountSpinnerWithIconsAdapter adapter = new AccountSpinnerWithIconsAdapter(getContext(), R.layout.account_type_row, types);
+        AccountSpinnerWithIconsAdapter adapter = new AccountSpinnerWithIconsAdapter(getContext(), R.layout.account_type_row, types,false);
         accountTypesSpinner.setAdapter(adapter);
         accountBalanceInput.setFilters(new InputFilter[]{new DecimalDigitsInputFilter()});
         accountNameInput.getEditText().addTextChangedListener(new TextWatcher() {

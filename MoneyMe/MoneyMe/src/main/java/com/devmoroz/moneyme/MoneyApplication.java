@@ -2,7 +2,10 @@ package com.devmoroz.moneyme;
 
 
 import android.app.Application;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 
 import com.devmoroz.moneyme.eventBus.AppInitCompletedEvent;
@@ -17,6 +20,8 @@ import com.devmoroz.moneyme.models.Goal;
 import com.devmoroz.moneyme.models.Transaction;
 import com.devmoroz.moneyme.utils.CurrencyCache;
 import com.devmoroz.moneyme.utils.Preferences;
+import com.devmoroz.moneyme.widgets.homescreen.WalletWidget;
+import com.devmoroz.moneyme.widgets.homescreen.WidgetProvider;
 import com.squareup.otto.Subscribe;
 
 import net.danlew.android.joda.JodaTimeAndroid;
@@ -68,6 +73,17 @@ public class MoneyApplication extends Application {
             return accounts;
         } catch (SQLException ex) {
             return accounts;
+        }
+    }
+
+    private void updateAppWidgets() {
+        Intent intent = new Intent(this, WalletWidget.class);
+        intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+
+        int[] appWidgetIds = AppWidgetManager.getInstance(this).getAppWidgetIds(new ComponentName(this, WalletWidget.class));
+        if (appWidgetIds.length > 0) {
+            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
+            sendBroadcast(intent);
         }
     }
 
@@ -146,6 +162,7 @@ public class MoneyApplication extends Application {
     @Subscribe
     public void OnWalletChange(WalletChangeEvent event) {
         getInstance().GetCommonData();
+        updateAppWidgets();
     }
 
     @Subscribe

@@ -1,6 +1,11 @@
 package com.devmoroz.moneyme.utils;
 
 public class Constants {
+    public final static String PACKAGE = "com.devmoroz.moneyme";
+    public final static String PREFS_NAME = PACKAGE + "_preferences";
+    public final static String PREF_WIDGET_TC = "widgetTC_";
+    public final static String PREF_WIDGET_BC = "widgetBC_";
+    public final static String PREF_WIDGET_EX = "widgetEX_";
     public final static String CREATED_TRANSACTION_DETAILS = "CREATED_TRANSACTION_DETAILS";
     public final static String OUTCOME_ACTIVITY= "startOutcomeActivity";
     public final static String INCOME_ACTIVITY= "startIncomeActivity";
@@ -26,6 +31,10 @@ public class Constants {
     public static final String STATE_TODO_ITEM = "STATE_TODO_ITEM";
     public static final String ACTION_SNOOZE = "action_snooze";
     public static final String ACTION_NOTIFICATION_CLICK = "action_notification_click";
+    public static final String INTENT_WIDGET = "widget_id";
+    public static final String ACTION_LAUNCH_OUTCOME = "ACTION_LAUNCH_OUTCOME";
+    public static final String ACTION_LAUNCH_INCOME = "ACTION_LAUNCH_INCOME";
+    public static final String ACTION_LAUNCH_TODO = "ACTION_LAUNCH_TODO";
     public static final String[] BACKUP_TABLES = {
             "account",
             "budget",

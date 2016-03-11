@@ -9,7 +9,6 @@
         <attr name="backgroundColorPrimary" format="color" />
         <attr name="actionItemColor" format="color" />
         <attr name="colorAccentDark" format="color" />
-        <attr name="colorPrimary" format="color" />
     </declare-styleable>
 
     <declare-styleable name="PreferenceHelp">

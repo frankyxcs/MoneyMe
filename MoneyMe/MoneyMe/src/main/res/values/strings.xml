@@ -262,6 +262,7 @@
 
     <string name="app_key">sdasdas</string>
     <string name="greeting">Добро пожаловать</string>
+    <string name="greeting_explanation">Прежде, чем начать,\nдавайте настроим некоторые вещи.</string>
     <string name="tags">Теги</string>
     <string name="add_tags">Выберите теги</string>
     <string name="map">Карта</string>
@@ -298,4 +299,9 @@
     <string name="checklist_item_hint">Новый пункт</string>
     <string name="checklist_on">Включить список</string>
     <string name="checklist_off">Выключить список</string>
+    <string name="transparent">Прозрачный</string>
+    <string name="colored">Красочный</string>
+    <string name="widget_text_color">Цвет текста</string>
+    <string name="widget_text_color_description">Нажмите для выбора цвета текста</string>
+    <string name="widget_background_color">Фон</string>
 </resources>
