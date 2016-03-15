@@ -23,7 +23,6 @@ import java.util.List;
 
 public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHolder> {
 
-    private LayoutInflater inflater;
     private Context context;
     List<Goal> goalsData = Collections.emptyList();
     private final Callback mCallback;
@@ -35,7 +34,6 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHol
 
     public GoalsAdapter(Context context, List<Goal> goalsData, Callback callback) {
         this.context = context;
-        inflater = LayoutInflater.from(context);
         this.goalsData = goalsData;
         this.mCallback = callback;
     }
@@ -47,23 +45,16 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHol
 
     @Override
     public GoalsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = inflater.inflate(R.layout.goal_row,parent,false);
-        GoalsViewHolder holder = new GoalsViewHolder(view);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.goal_row, parent, false);
 
-        return holder;
+        return new GoalsViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(GoalsViewHolder holder, int position) {
         Currency currency = CurrencyCache.getCurrencyOrEmpty();
         Goal current = goalsData.get(position);
-
-        holder.goalId = current.getId();
-        holder.goalName.setText(current.getName());
-        holder.goalProgress.setMax(current.getTotalAmount());
-        holder.goalProgress.setProgress(current.getAccumulated());
-        String formatted = FormatUtils.goalProgressToString(currency, current.getAccumulated(), current.getTotalAmount());
-        holder.goalCurrNeed.setText(formatted);
+        holder.bind(current,currency);
     }
 
     @Override
@@ -76,7 +67,7 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHol
         ImageView moreMenu;
         TextView goalName;
         TextView goalCurrNeed;
-        TextView status;
+        TextView goalNotes;
         String goalId;
 
         public GoalsViewHolder(View itemView) {
@@ -85,7 +76,23 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHol
             moreMenu = (ImageView) itemView.findViewById(R.id.goal_more);
             goalName = (TextView) itemView.findViewById(R.id.goal_name);
             goalCurrNeed = (TextView) itemView.findViewById(R.id.goal_needed_available_amount);
+            goalNotes = (TextView) itemView.findViewById(R.id.goal_notes);
             moreMenu.setOnClickListener(this);
+        }
+
+        public void bind(Goal model, Currency currency){
+            this.goalId = model.getId();
+            goalName.setText(model.getName());
+            goalProgress.setMax(model.getTotalAmount());
+            goalProgress.setProgress(model.getAccumulated());
+            String formatted = FormatUtils.goalProgressToString(currency, model.getAccumulated(), model.getTotalAmount());
+            goalCurrNeed.setText(formatted);
+            if(FormatUtils.isNotEmpty(model.getNotes())){
+                goalNotes.setText(model.getNotes());
+                goalNotes.setVisibility(View.VISIBLE);
+            }else{
+                goalNotes.setVisibility(View.GONE);
+            }
         }
 
         @Override

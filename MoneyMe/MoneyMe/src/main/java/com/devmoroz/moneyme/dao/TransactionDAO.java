@@ -4,6 +4,7 @@ import com.devmoroz.moneyme.models.Account;
 import com.devmoroz.moneyme.models.Transaction;
 import com.devmoroz.moneyme.models.TransactionType;
 import com.j256.ormlite.dao.BaseDaoImpl;
+import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.support.ConnectionSource;
@@ -53,9 +54,9 @@ public class TransactionDAO extends BaseDaoImpl<Transaction, UUID> {
         float val = 0f;
         QueryBuilder<Transaction, UUID> queryBuilder = queryBuilder();
         queryBuilder.selectRaw("SUM(amount)");
-        queryBuilder.where().eq("category_id",  UUID.fromString(category)).and().between("dateAdded", new Date(start), new Date(end));
+        queryBuilder.where().eq("category_id", UUID.fromString(category)).and().between("dateAdded", new Date(start), new Date(end));
         String[] result = queryRaw(queryBuilder.prepareStatementString()).getFirstResult();
-        if (result != null && result.length >= 1 && result[0]!=null) {
+        if (result != null && result.length >= 1 && result[0] != null) {
             val = Float.parseFloat(result[0]);
         }
 
@@ -69,7 +70,7 @@ public class TransactionDAO extends BaseDaoImpl<Transaction, UUID> {
         queryBuilder.selectRaw("SUM(amount)");
         queryBuilder.where().eq("accountTo_id", UUID.fromString(accountId)).and().eq("type", TransactionType.INCOME).and().between("dateAdded", new Date(start), new Date(end));
         String[] result = queryRaw(queryBuilder.prepareStatementString()).getFirstResult();
-        if (result != null && result.length >= 1 && result[0]!=null) {
+        if (result != null && result.length >= 1 && result[0] != null) {
             val = Float.parseFloat(result[0]);
         }
 
@@ -83,7 +84,7 @@ public class TransactionDAO extends BaseDaoImpl<Transaction, UUID> {
         queryBuilder.selectRaw("SUM(amount)");
         queryBuilder.where().eq("accountFrom_id", UUID.fromString(accountId)).and().eq("type", TransactionType.OUTCOME);
         String[] result = queryRaw(queryBuilder.prepareStatementString()).getFirstResult();
-        if (result != null && result.length >= 1 && result[0]!=null) {
+        if (result != null && result.length >= 1 && result[0] != null) {
             val = Double.parseDouble(result[0]);
         }
 
@@ -255,5 +256,25 @@ public class TransactionDAO extends BaseDaoImpl<Transaction, UUID> {
         List<Transaction> result = query(preparedQuery);
 
         return result;
+    }
+
+    public int deleteAllForAccount(String accountId) throws SQLException {
+        DeleteBuilder<Transaction, UUID> deleteBuilder = deleteBuilder();
+        deleteBuilder.where().eq("accountTo_id", UUID.fromString(accountId)).and().isNull("accountFrom_id");
+        int inCount = deleteBuilder.delete();
+        deleteBuilder.reset();
+        deleteBuilder.where().eq("accountFrom_id", UUID.fromString(accountId)).and().isNull("accountTo_id");
+        int outCount = deleteBuilder.delete();
+
+        return inCount + outCount;
+    }
+
+    public boolean hasTransferTransactions(String accountId) throws SQLException {
+        QueryBuilder<Transaction, UUID> queryBuilder = queryBuilder();
+        queryBuilder.where().eq("accountTo_id", UUID.fromString(accountId)).and().isNotNull("accountFrom_id")
+                .or().eq("accountFrom_id", UUID.fromString(accountId)).and().isNotNull("accountTo_id");
+        long numRows = queryBuilder.countOf();
+
+        return numRows > 0;
     }
 }

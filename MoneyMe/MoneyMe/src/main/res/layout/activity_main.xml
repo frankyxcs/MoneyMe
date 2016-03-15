@@ -70,7 +70,7 @@
                     app:fab_colorPressed="@color/fab_income_pressed"
                     app:fab_icon="@drawable/ic_fab_income"
                     app:fab_size="mini"
-                    app:fab_title="Доход" />
+                    app:fab_title="@string/income_toolbar_name" />
 
                 <com.getbase.floatingactionbutton.FloatingActionButton
                     android:id="@+id/fab_main_outcome"
@@ -80,7 +80,7 @@
                     app:fab_colorPressed="@color/fab_outcome_pressed"
                     app:fab_icon="@drawable/ic_fab_outcome"
                     app:fab_size="mini"
-                    app:fab_title="Расход" />
+                    app:fab_title="@string/outcome_toolbar_name" />
 
             </com.getbase.floatingactionbutton.FloatingActionsMenu>
 

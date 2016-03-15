@@ -260,7 +260,7 @@ public class AddIncomeActivity extends AppCompatActivity implements View.OnClick
         switch(v.getId()){
             case R.id.add_income_tags:
                 transactionEdit.setTags(null);
-                tagsButton.setText(R.string.tags);
+                tagsButton.setText(R.string.add_tags);
                 return true;
         }
         return false;

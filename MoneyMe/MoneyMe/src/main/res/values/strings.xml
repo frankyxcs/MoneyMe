@@ -128,7 +128,7 @@
     <string name="goal">Цель</string>
     <string name="goal_name">Название</string>
     <string name="required_amount">Необходимая сумма</string>
-    <string name="goal_current_amount">Уже накопленная сумма(если есть)</string>
+    <string name="goal_current_amount">Накопленная сумма(необязательно)</string>
     <string name="goal_finish_date">Дата завершения</string>
     <string name="add_goal">Добавить цель</string>
     <string name="application_info_title">Информация о приложении</string>
@@ -141,6 +141,8 @@
     <string name="remove_goal">Удалить цель</string>
     <string name="remove_item_confirm">Удалить эту запись?</string>
     <string name="remove_goal_confirm">Удалить эту цель?</string>
+    <string name="remove_account_confirm">Удалить этот счет?</string>
+    <string name="remove_account_warning">Транзакции связанные с этим счетом будут также удалены!</string>
     <string name="text_total_income">Суммарный доход</string>
     <string name="text_total_outcome">Суммарный расход</string>
     <string name="incomes">Доходы</string>
@@ -304,4 +306,7 @@
     <string name="widget_text_color">Цвет текста</string>
     <string name="widget_text_color_description">Нажмите для выбора цвета текста</string>
     <string name="widget_background_color">Фон</string>
+    <string name="widget_style_title">Отображение баланса</string>
+    <string name="widget_style_min">Только общий баланс</string>
+    <string name="widget_style_max">Общий баланс + баланс каждого счета</string>
 </resources>

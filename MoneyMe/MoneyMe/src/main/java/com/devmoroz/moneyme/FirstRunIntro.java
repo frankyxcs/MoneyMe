@@ -56,9 +56,9 @@ public class FirstRunIntro extends AppIntro2 {
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 requestPermissions(new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE,
                         Manifest.permission.READ_EXTERNAL_STORAGE }, REQUEST_PERMISSION_WRITE_SD_CARD);
+            }else{
+                loadMainActivity();
             }
-
-            loadMainActivity();
         }
     }
 

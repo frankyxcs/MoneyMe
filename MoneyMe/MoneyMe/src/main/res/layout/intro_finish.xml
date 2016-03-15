@@ -8,6 +8,15 @@
     android:background="@color/colorPrimary"
     android:orientation="vertical">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center">
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="0dp"
@@ -17,7 +26,8 @@
         android:orientation="vertical"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
-        android:paddingTop="32dp">
+        android:paddingTop="32dp"
+        android:paddingBottom="32dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -46,9 +56,7 @@
         android:paddingLeft="16dp"
         android:paddingRight="16dp">
 
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -84,6 +92,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_weight="2"
+                        android:paddingLeft="4dp"
                         android:text="@string/type"
                         android:textAppearance="@style/Text.Subhead"
                         android:textColor="@color/colorWhite" />
@@ -131,6 +140,7 @@
                         android:layout_gravity="center"
                         android:layout_weight="2"
                         android:text="@string/currency"
+                        android:paddingLeft="4dp"
                         android:textAppearance="@style/Text.Subhead"
                         android:textColor="@color/colorWhite" />
 
@@ -140,15 +150,17 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center|right|end"
-                        android:gravity="end|right"
+                        android:gravity="end|right|center"
                         android:layout_weight="8"
                         android:singleLine="true"
+                        android:text="sdsds"
                         android:theme="@style/ThemeOverlay.AppCompat.Dark" />
                 </LinearLayout>
-            </LinearLayout>
-        </ScrollView>
-    </LinearLayout>
 
+    </LinearLayout>
+    </LinearLayout>
+        </LinearLayout>
+</ScrollView>
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="64dp" />

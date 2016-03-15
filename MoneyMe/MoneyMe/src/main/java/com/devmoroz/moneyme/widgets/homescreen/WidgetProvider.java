@@ -29,6 +29,7 @@ import com.devmoroz.moneyme.utils.CurrencyCache;
 import com.devmoroz.moneyme.utils.FormatUtils;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -58,8 +59,11 @@ public abstract class WidgetProvider extends AppWidgetProvider {
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void setLayout(Context context, AppWidgetManager appWidgetManager, int widgetId) {
+        boolean isExtended = context.getSharedPreferences(Constants.PREFS_NAME, Context.MODE_MULTI_PROCESS)
+                .getBoolean(Constants.PREF_WIDGET_EX + String.valueOf(widgetId),
+                        false);
 
-        String balanceText = loadBalance(context);
+        WalletBalance balanceText = loadBalance(context, widgetId, isExtended);
         // Create an Intent to launch AddOutcomeActivity
         Intent intentOutcome = new Intent(context, MainActivity.class);
         intentOutcome.putExtra(Constants.INTENT_WIDGET, widgetId);
@@ -98,17 +102,19 @@ public abstract class WidgetProvider extends AppWidgetProvider {
         map.put(R.id.widget_add, pendingIntentIncome);
         map.put(R.id.widget_minus, pendingIntentOutcome);
 
-        RemoteViews views = getRemoteViews(context, widgetId, isSmall, isSingleLine, map, balanceText);
+        RemoteViews views = getRemoteViews(context, widgetId, isExtended, map, balanceText);
 
         // Tell the AppWidgetManager to perform an update on the current app
         // widget
         appWidgetManager.updateAppWidget(widgetId, views);
     }
 
-    private String loadBalance(Context context) {
+    private WalletBalance loadBalance(Context context, int widgetId, boolean isExtended) {
+        String textTotalBalance = context.getString(R.string.balance);
         DBHelperFactory.setHelper(context);
         DBHelper dbHelper = DBHelperFactory.getHelper();
         CurrencyCache.initialize(dbHelper);
+        Currency currency = CurrencyCache.getCurrencyOrEmpty();
         double totalBalance = 0f;
         List<Account> accounts = Collections.emptyList();
         try {
@@ -117,16 +123,30 @@ public abstract class WidgetProvider extends AppWidgetProvider {
 
         }
         totalBalance = 0f;
+        String accountNames = "";
+        String accountBalances = "";
         for (Account acc : accounts) {
             totalBalance += acc.getBalance();
+            if (isExtended) {
+                accountNames += acc.getName() + System.getProperty("line.separator");
+                accountBalances += FormatUtils.amountToString(currency, acc.getBalance()) + System.getProperty("line.separator");
+            }
         }
-        Currency currency = CurrencyCache.getCurrencyOrEmpty();
-        String text = context.getString(R.string.balance);
-        String formattedBalanceText = FormatUtils.attachAmountToTextWithoutBrackets(text, currency, totalBalance, false);
+
+        String formattedBalanceText = FormatUtils.attachAmountToTextWithoutBrackets(textTotalBalance, currency, totalBalance, false);
+
+        WalletBalance balance = new WalletBalance();
+        balance.TotalBalance = formattedBalanceText;
+        if (isExtended) {
+            int lindex = accountNames.lastIndexOf(System.getProperty("line.separator"));
+            int lindex2 = accountBalances.lastIndexOf(System.getProperty("line.separator"));
+            balance.AccountsBalance = accountBalances.substring(0, lindex2);
+            balance.AccountsNames = accountNames.substring(0, lindex);
+        }
 
         DBHelperFactory.releaseHelper();
 
-        return formattedBalanceText;
+        return balance;
     }
 
     public static void updateConfiguration(Context mContext, int mAppWidgetId, int textColor, int backgroundColor,
@@ -150,5 +170,11 @@ public abstract class WidgetProvider extends AppWidgetProvider {
         super.onDeleted(context, appWidgetIds);
     }
 
-    abstract protected RemoteViews getRemoteViews(Context context, int widgetId, boolean isSmall, boolean isSingleLine, SparseArray<PendingIntent> pendingIntentsMap, String balance);
+    abstract protected RemoteViews getRemoteViews(Context context, int widgetId, boolean isExtended, SparseArray<PendingIntent> pendingIntentsMap, WalletBalance balance);
+
+    protected class WalletBalance {
+        public String TotalBalance;
+        public String AccountsBalance;
+        public String AccountsNames;
+    }
 }

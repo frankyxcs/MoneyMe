@@ -41,6 +41,7 @@ import com.devmoroz.moneyme.utils.CommonUtils;
 import com.devmoroz.moneyme.utils.FormatUtils;
 import com.devmoroz.moneyme.utils.datetime.TimeUtils;
 import com.devmoroz.moneyme.widgets.DecimalDigitsInputFilter;
+import com.devmoroz.moneyme.widgets.DividerItemDecoration;
 import com.devmoroz.moneyme.widgets.EmptyRecyclerView;
 import com.squareup.otto.Subscribe;
 
@@ -81,6 +82,9 @@ public class GoalsFragment extends Fragment {
         recyclerView = (EmptyRecyclerView) view.findViewById(R.id.goalsList);
         mTextEmpty = (LinearLayout) view.findViewById(R.id.goalsEmpty);
         recyclerView.setEmptyView(mTextEmpty);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
 
         btnAddNewGoal = (CardView) view.findViewById(R.id.add_new_goal);
         btnAddNewGoal.setOnClickListener(new View.OnClickListener() {
@@ -146,7 +150,6 @@ public class GoalsFragment extends Fragment {
             }
         });
         recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         return view;
     }

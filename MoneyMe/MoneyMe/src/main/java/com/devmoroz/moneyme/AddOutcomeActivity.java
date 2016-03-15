@@ -643,7 +643,7 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
                 return true;
             case R.id.add_outcome_tags:
                 transactionEdit.setTags(null);
-                tagsButton.setText(R.string.tags);
+                tagsButton.setText(R.string.add_tags);
                 return true;
         }
         return false;

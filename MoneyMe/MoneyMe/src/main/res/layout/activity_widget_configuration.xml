@@ -4,11 +4,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
+
+    android:background="@color/mainBackground"
     tools:context=".WidgetConfigurationActivity" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:orientation="vertical">
 
     <RadioGroup
         android:id="@+id/widget_config_radiogroup"
@@ -33,6 +41,41 @@
             android:layout_weight="1"
             android:text="@string/colored" />
     </RadioGroup>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:baselineAligned="false"
+            android:padding="10dp"
+            android:background="?android:attr/selectableItemBackground">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/Text.Subhead"
+                android:textColor="@color/colorPrimaryText"
+                android:text="@string/widget_style_title"/>
+            <TextView
+                android:id="@+id/widget_config_isExtended_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/Text.Body1"
+                android:textColor="@color/colorSecondaryText"
+                android:text="@string/widget_style_min"/>
+            </LinearLayout>
+
+            <android.support.v7.widget.SwitchCompat
+                android:id="@+id/widget_config_isExtended"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"/>
+
+        </LinearLayout>
 
     <LinearLayout android:id="@+id/widget_config_textcolor"
         android:layout_width="fill_parent"
@@ -80,14 +123,10 @@
             android:src="@drawable/circle" />
 
     </LinearLayout>
+    </LinearLayout>
 
-    <Button
-        android:id="@+id/widget_config_confirm"
-        style="?android:attr/buttonBarButtonStyle"
-        android:textColor="#FF9800"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="@string/confirm" />
+    <include
+        android:id="@+id/editButtonsContainerView"
+        layout="@layout/cancel_save_buttons" />
 
 </LinearLayout>

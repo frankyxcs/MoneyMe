@@ -46,7 +46,6 @@ import java.util.List;
 public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainViewHolder> {
 
     private List<Transaction> transactions = Collections.emptyList();
-    private LayoutInflater wInflater;
     private Context appContext;
     private final Callback mCallback;
 
@@ -58,7 +57,6 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
 
     public HistoryAdapter(Context context, Callback callback) {
         appContext = context;
-        wInflater = LayoutInflater.from(context);
         mCallback = callback;
     }
 
@@ -77,7 +75,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
 
     @Override
     public MainViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = wInflater.inflate(R.layout.card_history, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_history, parent, false);
 
         return new MainViewHolder(v);
     }

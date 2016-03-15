@@ -159,6 +159,8 @@ public class MoneyApplication extends Application {
         super.onTerminate();
     }
 
+
+
     @Subscribe
     public void OnWalletChange(WalletChangeEvent event) {
         getInstance().GetCommonData();

@@ -1,8 +1,8 @@
 package com.devmoroz.moneyme.fragments;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -23,8 +22,8 @@ import com.afollestad.materialdialogs.Theme;
 import com.devmoroz.moneyme.MainActivity;
 import com.devmoroz.moneyme.MoneyApplication;
 import com.devmoroz.moneyme.R;
-import com.devmoroz.moneyme.adapters.AccountsAdapter;
 import com.devmoroz.moneyme.adapters.AccountSpinnerWithIconsAdapter;
+import com.devmoroz.moneyme.adapters.AccountsAdapter;
 import com.devmoroz.moneyme.eventBus.BusProvider;
 import com.devmoroz.moneyme.eventBus.WalletChangeEvent;
 import com.devmoroz.moneyme.helpers.DBHelper;
@@ -42,6 +41,7 @@ import com.squareup.otto.Subscribe;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class AccountsFragment extends Fragment implements View.OnClickListener {
 
@@ -55,7 +55,7 @@ public class AccountsFragment extends Fragment implements View.OnClickListener {
     private CardView btnAddAccount;
     private View transferContainerView;
 
-    private TextInputLayout accountNameInput;
+    private EditText accountNameEditText;
     private View positiveAction;
 
     private MainActivity mainActivity;
@@ -88,13 +88,44 @@ public class AccountsFragment extends Fragment implements View.OnClickListener {
         view = inflater.inflate(R.layout.accounts_fragment, container, false);
         recyclerView = (EmptyRecyclerView) view.findViewById(R.id.accountsList);
         btnAddAccount = (CardView) view.findViewById(R.id.add_new_account);
+        btnAddAccount.setOnClickListener(this);
+
         balanceTextView = (TextView) view.findViewById(R.id.balanceTextView);
         transferContainerView = view.findViewById(R.id.transferContainerView);
         transferContainerView.setOnClickListener(this);
-        btnAddAccount.setOnClickListener(this);
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
 
-        adapter = new AccountsAdapter(getActivity());
+        adapter = new AccountsAdapter(getActivity(), new AccountsAdapter.Callback() {
+            @Override
+            public void onDeleteClick(String id) {
+                new MaterialDialog.Builder(getContext())
+                        .title(R.string.remove_account_confirm)
+                        .content(R.string.remove_account_warning)
+                        .negativeText(R.string.cancel)
+                        .positiveText(R.string.remove)
+                        .positiveColorRes(R.color.colorPrimary)
+                        .negativeColorRes(R.color.colorPrimary)
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+
+                            }
+                        })
+                        .show();
+            }
+
+            @Override
+            public void onEditClick(String id) {
+                DBHelper dbHelper = MoneyApplication.GetDBHelper();
+                Account account = new Account();
+                try {
+                    account = dbHelper.getAccountDAO().queryForId(UUID.fromString(id));
+                } catch (SQLException ex) {
+
+                }
+                showAccountDialog(AccountAction.Edit, account);
+            }
+        });
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         CheckWallet();
@@ -113,6 +144,9 @@ public class AccountsFragment extends Fragment implements View.OnClickListener {
         if (accounts.size() >= 2) {
             transferContainerView.setVisibility(View.VISIBLE);
             transferContainerView.setOnClickListener(this);
+            if (accounts.size() == 5) {
+                btnAddAccount.setVisibility(View.GONE);
+            }
         } else {
             transferContainerView.setVisibility(View.GONE);
         }
@@ -133,9 +167,10 @@ public class AccountsFragment extends Fragment implements View.OnClickListener {
         adapter.setAccountsData(data);
     }
 
-    private void AddNewAccount() {
+    private void showAccountDialog(final AccountAction action, Account account) {
+        int title = action == AccountAction.Create ? R.string.add_account : R.string.edit_account;
         MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-                .title(R.string.add_account)
+                .title(title)
                 .customView(R.layout.dialog_fragment_add_account, true)
                 .theme(Theme.LIGHT)
                 .negativeText(R.string.cancel)
@@ -147,20 +182,20 @@ public class AccountsFragment extends Fragment implements View.OnClickListener {
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
-                        CreateNewAccount(materialDialog);
+                        CreateOrUpdateAccount(materialDialog, action, account);
                     }
                 })
                 .build();
 
         String[] types = getContext().getResources().getStringArray(R.array.account_types);
         positiveAction = dialog.getActionButton(DialogAction.POSITIVE);
-        accountNameInput = (TextInputLayout) dialog.getCustomView().findViewById(R.id.text_input_layout_add_account_name);
-        EditText accountBalanceInput = (EditText) dialog.getCustomView().findViewById(R.id.accountAddBalance);
+        accountNameEditText = (EditText) dialog.getCustomView().findViewById(R.id.accountAddName);
+        EditText accountBalanceEditText = (EditText) dialog.getCustomView().findViewById(R.id.accountAddBalance);
         Spinner accountTypesSpinner = (Spinner) dialog.getCustomView().findViewById(R.id.accountAddType);
-        AccountSpinnerWithIconsAdapter adapter = new AccountSpinnerWithIconsAdapter(getContext(), R.layout.account_type_row, types,false);
+        AccountSpinnerWithIconsAdapter adapter = new AccountSpinnerWithIconsAdapter(getContext(), R.layout.account_type_row, types, false);
         accountTypesSpinner.setAdapter(adapter);
-        accountBalanceInput.setFilters(new InputFilter[]{new DecimalDigitsInputFilter()});
-        accountNameInput.getEditText().addTextChangedListener(new TextWatcher() {
+        accountBalanceEditText.setFilters(new InputFilter[]{new DecimalDigitsInputFilter()});
+        accountNameEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
@@ -175,11 +210,20 @@ public class AccountsFragment extends Fragment implements View.OnClickListener {
             }
         });
 
+        if (action == AccountAction.Edit) {
+            accountNameEditText.setText(account.getName());
+            accountBalanceEditText.setText(String.valueOf(account.getBalance()));
+            accountTypesSpinner.setSelection(account.getType());
+        }
+
         dialog.show();
-        positiveAction.setEnabled(false);
+
+        if (action == AccountAction.Create) {
+            positiveAction.setEnabled(false);
+        }
     }
 
-    private void CreateNewAccount(MaterialDialog materialDialog) {
+    private void CreateOrUpdateAccount(MaterialDialog materialDialog, final AccountAction action, Account account) {
         View v = materialDialog.getCustomView();
 
         EditText nameEditText = (EditText) v.findViewById(R.id.accountAddName);
@@ -194,8 +238,10 @@ public class AccountsFragment extends Fragment implements View.OnClickListener {
         }
         try {
             DBHelper dbHelper = MoneyApplication.GetDBHelper();
-            Account account = new Account(name, amount, type, true);
-            dbHelper.getAccountDAO().create(account);
+            account.setName(name);
+            account.setType(type);
+            account.setBalance(amount);
+            dbHelper.getAccountDAO().createOrUpdate(account);
         } catch (SQLException ex) {
 
         }
@@ -218,8 +264,12 @@ public class AccountsFragment extends Fragment implements View.OnClickListener {
                 }
                 break;
             case R.id.add_new_account:
-                AddNewAccount();
+                showAccountDialog(AccountAction.Create, new Account());
                 break;
         }
+    }
+
+    enum AccountAction {
+        Edit, Create
     }
 }

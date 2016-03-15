@@ -6,7 +6,6 @@
     android:padding="16dp">
 
     <android.support.design.widget.TextInputLayout
-        android:id="@+id/text_input_layout_add_goal_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="?android:attr/listPreferredItemHeight"
@@ -21,7 +20,6 @@
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
-        android:id="@+id/text_input_layout_add_goal_required"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/required_amount"
@@ -38,7 +36,6 @@
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
-        android:id="@+id/text_input_layout_add_goal_available"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/goal_current_amount"
@@ -53,6 +50,30 @@
             android:maxLength="9"/>
 
     </android.support.design.widget.TextInputLayout>
+
+
+    <LinearLayout
+        android:id="@+id/from_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:animateLayoutChanges="true">
+
+        <ImageView
+            android:id="@+id/add_income_tags_icon"
+            style="@style/ImageView.Form"
+            android:paddingLeft="4dp"
+            android:src="@drawable/ic_clock_end" />
+
+        <Button
+            android:id="@+id/goalAddDeadlineDate"
+            style="@style/Button.Flat.Select"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/goal_finish_date"
+            android:text="12-12-12"/>
+    </LinearLayout>
 
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
@@ -70,34 +91,5 @@
             android:maxLength="200"
             android:maxLines="2"  />
     </android.support.design.widget.TextInputLayout>
-
-    <LinearLayout
-        android:id="@+id/from_row"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="?android:attr/listPreferredItemHeight"
-        android:visibility="gone">
-
-        <TextView
-            android:id="@+id/from_label"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:gravity="center_vertical"
-            android:text="@string/goal_finish_date"
-            android:textAppearance="@style/Text.Body1" />
-        <Button
-            android:id="@+id/goalAddDeadlineDate"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:singleLine="true"
-            android:gravity="center_vertical"
-            android:textAppearance="@style/Text.Subhead"
-            android:textAllCaps="false"
-            android:text="12-12-12"
-            android:background="?selectableItemBackground"/>
-    </LinearLayout>
 
 </LinearLayout>
