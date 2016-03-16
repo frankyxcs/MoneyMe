@@ -45,6 +45,7 @@ public class MoneyMeScheduler {
     public boolean scheduleTodoAlarm(Context context, Todo todo, long now) {
         if (shouldSchedule(todo, now)) {
             Date scheduleTime = todo.getAlarmDate();
+            scheduleTime.setSeconds(0);
             AlarmManager service = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
             PendingIntent pendingIntent = createPendingIntentForScheduledTodoAlarm(context, todo);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -113,7 +114,7 @@ public class MoneyMeScheduler {
             Calendar calendar = Calendar.getInstance();
             calendar.set(Calendar.HOUR_OF_DAY, hour);
             calendar.set(Calendar.MINUTE, minute);
-            calendar.set(Calendar.SECOND, 00);
+            calendar.set(Calendar.SECOND, 0);
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 24 * 60 * 60 * 1000, pendingIntent);
 
     }

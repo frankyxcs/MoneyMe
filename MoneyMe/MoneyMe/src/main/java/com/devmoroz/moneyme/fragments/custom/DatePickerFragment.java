@@ -17,6 +17,7 @@ import java.util.Date;
 public class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 
     private Button date;
+    private Date selectedDate;
     private Callback listener;
 
     public interface Callback {
@@ -30,10 +31,19 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
         this.date = date;
     }
 
+    public void setDate(Date date) {
+        this.selectedDate = date;
+    }
+
+    public void setDate(long date) {
+        this.selectedDate = new Date(date);
+    }
+
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final Calendar c = Calendar.getInstance();
+        Calendar c = Calendar.getInstance();
+        c.setTime(selectedDate);
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH);
         int day = c.get(Calendar.DAY_OF_MONTH);
@@ -42,6 +52,7 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
 
     public void onDateSet(DatePicker view, int year, int month, int day) {
         Calendar cal = Calendar.getInstance();
+        cal.setTime(selectedDate);
         cal.set(Calendar.YEAR, year);
         cal.set(Calendar.MONTH, month);
         cal.set(Calendar.DAY_OF_MONTH, day);

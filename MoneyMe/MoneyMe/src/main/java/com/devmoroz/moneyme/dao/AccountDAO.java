@@ -22,7 +22,13 @@ public class AccountDAO extends BaseDaoImpl<Account, UUID> {
         QueryBuilder<Account,UUID> queryBuilder = queryBuilder();
         queryBuilder.where().eq(Account.INCLUDE_IN_TOTAL_FIELD_NAME,true);
         PreparedQuery<Account> preparedQuery = queryBuilder.prepare();
-        List<Account> result = query(preparedQuery);
-        return result;
+        return query(preparedQuery);
+    }
+
+    public List<Account> queryForNotDeleted() throws SQLException{
+        QueryBuilder<Account,UUID> queryBuilder = queryBuilder();
+        queryBuilder.where().eq("deleted",false);
+        PreparedQuery<Account> preparedQuery = queryBuilder.prepare();
+        return query(preparedQuery);
     }
 }

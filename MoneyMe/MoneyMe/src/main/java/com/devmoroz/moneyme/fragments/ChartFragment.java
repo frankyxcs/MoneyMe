@@ -31,7 +31,9 @@ import com.devmoroz.moneyme.utils.CommonUtils;
 import com.devmoroz.moneyme.utils.CurrencyCache;
 import com.devmoroz.moneyme.utils.CustomColorTemplate;
 import com.devmoroz.moneyme.utils.Preferences;
+import com.devmoroz.moneyme.utils.datetime.DataInterval;
 import com.devmoroz.moneyme.utils.datetime.PeriodUtils;
+import com.devmoroz.moneyme.utils.datetime.TimeUtils;
 import com.devmoroz.moneyme.widgets.DividerItemDecoration;
 import com.devmoroz.moneyme.widgets.HistoryForCategoryDialog;
 import com.github.mikephil.charting.animation.Easing;
@@ -43,6 +45,8 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.squareup.otto.Subscribe;
+
+import org.joda.time.Interval;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -154,7 +158,15 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
         if (legendData.size() != 0){
             adapter.setData(legendData);
             tableDetails.setVisibility(View.VISIBLE);
-            chart.setDescription(PeriodUtils.GetPeriodString(1, monthStart, getContext(), false));
+            final Interval historyInterval = DataInterval.getHistoryInterval(System.currentTimeMillis(), 1, monthStart);
+            long start;
+            long end = historyInterval.getEndMillis();
+            if(monthStart == 1){
+                start = historyInterval.getStartMillis();
+            }else{
+                start = historyInterval.getStart().minusDays(1).getMillis();
+            }
+            chart.setDescription(TimeUtils.formatIntervalTimeString(start, end, null, getContext()));
         }else{
             tableDetails.setVisibility(View.GONE);
             chart.setDescription("");

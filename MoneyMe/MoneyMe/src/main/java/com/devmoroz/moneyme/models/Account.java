@@ -52,6 +52,9 @@ public class Account implements Parcelable{
     @DatabaseField
     private boolean shared;
 
+    @DatabaseField
+    private boolean deleted;
+
     @ForeignCollectionField
     private ForeignCollection<Transaction> transactions;
 
@@ -63,6 +66,7 @@ public class Account implements Parcelable{
         setType(parcel.readInt());
         setIncludeInTotal(parcel.readInt() != 0);
         setShared(parcel.readInt() != 0);
+        setDeleted(parcel.readInt() != 0);
     }
 
     @Override public int describeContents() {
@@ -77,6 +81,7 @@ public class Account implements Parcelable{
         parcel.writeInt(type);
         parcel.writeInt(includeInTotal ? 1 : 0);
         parcel.writeInt(shared ? 1 : 0);
+        parcel.writeInt(deleted ? 1 : 0);
     }
 
 
@@ -163,6 +168,14 @@ public class Account implements Parcelable{
 
     public void setTransactions(ForeignCollection<Transaction> transactions) {
         this.transactions = transactions;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     public boolean isIncludeInTotal() {

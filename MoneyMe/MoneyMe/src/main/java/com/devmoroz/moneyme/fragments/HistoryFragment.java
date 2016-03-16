@@ -28,6 +28,7 @@ import com.devmoroz.moneyme.utils.CommonUtils;
 import com.devmoroz.moneyme.utils.CurrencyCache;
 import com.devmoroz.moneyme.utils.FormatUtils;
 import com.devmoroz.moneyme.utils.Preferences;
+import com.devmoroz.moneyme.utils.datetime.DataInterval;
 import com.devmoroz.moneyme.utils.datetime.PeriodUtils;
 import com.devmoroz.moneyme.utils.datetime.TimeUtils;
 import com.devmoroz.moneyme.widgets.EmptyRecyclerView;
@@ -35,6 +36,8 @@ import com.devmoroz.moneyme.widgets.SectionedRecyclerViewAdapter;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.squareup.otto.Subscribe;
 
+
+import org.joda.time.Interval;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -181,7 +184,15 @@ public class HistoryFragment extends Fragment {
             walletTotalOutcome.setText(totalInOut[1]);
             totalBalanceTextView.setText(formattedBalanceText);
             if (period != 0) {
-                walletDatePeriod.setText(PeriodUtils.GetPeriodString(period, monthStart, getContext(), false));
+                final Interval historyInterval = DataInterval.getHistoryInterval(System.currentTimeMillis(), period, monthStart);
+                long start;
+                long end = historyInterval.getEndMillis();
+                if(monthStart == 1){
+                    start = historyInterval.getStartMillis();
+                }else{
+                    start = historyInterval.getStart().minusDays(1).getMillis();
+                }
+                walletDatePeriod.setText(TimeUtils.formatIntervalTimeString(start,end, null, getContext()));
             } else {
                 long dateStart;
                 if (order) {

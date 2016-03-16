@@ -273,6 +273,11 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
     public void showDatePickerDialog() {
         DatePickerFragment newFragment = new DatePickerFragment();
         newFragment.setDateButton(mDateButton);
+        if(editTodo.isHasReminder() && editTodo.getAlarmDate()!= null){
+            newFragment.setDate(editTodo.getAlarmDate());
+        }else{
+            newFragment.setDate(System.currentTimeMillis());
+        }
         newFragment.setCallback(new DatePickerFragment.Callback() {
             @Override
             public void onDateSet(Date date) {
@@ -285,6 +290,11 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
     public void showTimePickerDialog() {
         TimePickerFragment newFragment = new TimePickerFragment();
         newFragment.setTimeButton(mTimeButton);
+        if(editTodo.isHasReminder() && editTodo.getAlarmDate()!= null){
+            newFragment.setTime(editTodo.getAlarmDate());
+        }else{
+            newFragment.setTime(System.currentTimeMillis());
+        }
         newFragment.setCallback(new TimePickerFragment.Callback() {
             @Override
             public void onTimeSet(Date date) {

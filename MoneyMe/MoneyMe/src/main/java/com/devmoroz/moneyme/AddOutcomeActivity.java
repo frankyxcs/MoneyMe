@@ -284,7 +284,7 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
         List<Account> accountList = Collections.emptyList();
         try {
             dbHelper = MoneyApplication.GetDBHelper();
-            accountList = dbHelper.getAccountDAO().queryForAll();
+            accountList = dbHelper.getAccountDAO().queryForNotDeleted();
             transactionEdit.setAccountFrom(accountList.get(0));
         } catch (SQLException ex) {
 
@@ -319,6 +319,7 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
     public void showDatePickerDialog() {
         DatePickerFragment newFragment = new DatePickerFragment();
         newFragment.setDateButton(date);
+        newFragment.setDate(transactionEdit.getDate());
         newFragment.setCallback(new DatePickerFragment.Callback() {
             @Override
             public void onDateSet(Date date) {
@@ -331,6 +332,7 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
     public void showTimePickerDialog() {
         TimePickerFragment newFragment = new TimePickerFragment();
         newFragment.setTimeButton(time);
+        newFragment.setTime(transactionEdit.getDate());
         newFragment.setCallback(new TimePickerFragment.Callback() {
             @Override
             public void onTimeSet(Date date) {

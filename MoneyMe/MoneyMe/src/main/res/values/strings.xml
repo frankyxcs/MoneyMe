@@ -309,4 +309,7 @@
     <string name="widget_style_title">Отображение баланса</string>
     <string name="widget_style_min">Только общий баланс</string>
     <string name="widget_style_max">Общий баланс + баланс каждого счета</string>
+    <string name="remove_account_only_account">Удалить только счет. (<i>Все операции по счету останутся видны в истории</i>)</string>
+    <string name="remove_account_all">Удалить счет полностью. (<i>Все транзакции будут удалены, переводы отменены</i>)</string>
+    <string name="removal_account">Удаление счета</string>
 </resources>

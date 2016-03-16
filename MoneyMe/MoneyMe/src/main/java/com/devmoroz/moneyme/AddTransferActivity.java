@@ -142,6 +142,7 @@ public class AddTransferActivity extends AppCompatActivity implements View.OnCli
     public void showDatePickerDialog() {
         DatePickerFragment newFragment = new DatePickerFragment();
         newFragment.setDateButton(dateButton);
+        newFragment.setDate(transactionEdit.getDate());
         newFragment.setCallback(new DatePickerFragment.Callback() {
             @Override
             public void onDateSet(Date date) {
@@ -154,6 +155,7 @@ public class AddTransferActivity extends AppCompatActivity implements View.OnCli
     public void showTimePickerDialog() {
         TimePickerFragment newFragment = new TimePickerFragment();
         newFragment.setTimeButton(timeButton);
+        newFragment.setTime(transactionEdit.getDate());
         newFragment.setCallback(new TimePickerFragment.Callback() {
             @Override
             public void onTimeSet(Date date) {
@@ -175,7 +177,7 @@ public class AddTransferActivity extends AppCompatActivity implements View.OnCli
         List<Account> accountList = Collections.emptyList();
         try {
             DBHelper dbHelper = MoneyApplication.GetDBHelper();
-            accountList = dbHelper.getAccountDAO().queryForAll();
+            accountList = dbHelper.getAccountDAO().queryForNotDeleted();
             transactionEdit.setAccountTo(accountList.get(0));
             transactionEdit.setAccountFrom(accountList.get(0));
         } catch (SQLException ex) {

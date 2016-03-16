@@ -34,6 +34,7 @@ import com.devmoroz.moneyme.R;
 import com.devmoroz.moneyme.adapters.GoalsAdapter;
 import com.devmoroz.moneyme.eventBus.BusProvider;
 import com.devmoroz.moneyme.eventBus.GoalsChangeEvent;
+import com.devmoroz.moneyme.fragments.custom.DatePickerFragment;
 import com.devmoroz.moneyme.helpers.DBHelper;
 import com.devmoroz.moneyme.models.Goal;
 import com.devmoroz.moneyme.utils.AnimationUtils;
@@ -193,7 +194,14 @@ public class GoalsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 DatePickerFragment newFragment = new DatePickerFragment();
-                newFragment.setDate(goalDeadlineDate);
+                newFragment.setDateButton(goalDeadlineDate);
+                newFragment.setDate(goalDate);
+                newFragment.setCallback(new DatePickerFragment.Callback() {
+                    @Override
+                    public void onDateSet(Date date) {
+                        goalDate = date;
+                    }
+                });
                 newFragment.show(getFragmentManager(), "datePicker");
             }
         });
@@ -247,34 +255,5 @@ public class GoalsFragment extends Fragment {
         }
         BusProvider.postOnMain(new GoalsChangeEvent());
         materialDialog.dismiss();
-    }
-
-    public static class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
-
-        private Button date;
-
-        public void setDate(Button date) {
-            this.date = date;
-        }
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-
-            final Calendar c = Calendar.getInstance();
-            int year = c.get(Calendar.YEAR);
-            int month = c.get(Calendar.MONTH);
-            int day = c.get(Calendar.DAY_OF_MONTH);
-
-            return new DatePickerDialog(getActivity(), this, year, month, day);
-        }
-
-        public void onDateSet(DatePicker view, int year, int month, int day) {
-            Calendar cal = Calendar.getInstance();
-            cal.set(Calendar.YEAR, year);
-            cal.set(Calendar.MONTH,month);
-            cal.set(Calendar.DAY_OF_MONTH, day);
-            goalDate = cal.getTime();
-            date.setText(TimeUtils.formatShortDate(getContext(),goalDate));
-        }
     }
 }

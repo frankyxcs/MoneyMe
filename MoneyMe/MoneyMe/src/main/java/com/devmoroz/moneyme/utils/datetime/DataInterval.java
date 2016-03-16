@@ -88,6 +88,31 @@ public class DataInterval {
         return new Interval(intervalStart, period);
     }
 
+    public static Interval getHistoryInterval(long now, int period, int monthStart) {
+        final DateTime currentTime = new DateTime(now);
+        final DateTime intervalEnd;
+
+        if (monthStart == 1) {
+            intervalEnd = currentTime.plusMonths(1).dayOfMonth().withMinimumValue().withTimeAtStartOfDay();
+        } else {
+            if (currentTime.getDayOfMonth() < monthStart) {
+                intervalEnd = currentTime.withDayOfMonth(monthStart + 1).withTimeAtStartOfDay();
+            } else {
+                intervalEnd = currentTime.plusMonths(1).withDayOfMonth(monthStart + 1).withTimeAtStartOfDay();
+            }
+        }
+        switch (period) {
+            case 1:
+            case 2:
+            case 3:
+            case 6:
+                return new Interval(Period.months(period), intervalEnd);
+            case 12:
+                return new Interval(Period.years(1), intervalEnd);
+        }
+        return new Interval(Period.months(period), intervalEnd);
+    }
+
     public static String getTitle(Context context, Interval interval, Type type) {
         switch (type) {
             case WEEK:

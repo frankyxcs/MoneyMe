@@ -3,11 +3,16 @@ package com.devmoroz.moneyme.dao;
 import com.devmoroz.moneyme.models.Account;
 import com.devmoroz.moneyme.models.Transaction;
 import com.devmoroz.moneyme.models.TransactionType;
+import com.devmoroz.moneyme.utils.datetime.DataInterval;
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.support.ConnectionSource;
+
+import org.joda.time.DateTime;
+import org.joda.time.Interval;
+import org.joda.time.Period;
 
 import java.sql.SQLException;
 import java.util.Calendar;
@@ -104,14 +109,17 @@ public class TransactionDAO extends BaseDaoImpl<Transaction, UUID> {
     public List<Transaction> queryAllForCurrentMonth(int monthStart) throws SQLException {
         QueryBuilder<Transaction, UUID> queryBuilder = queryBuilder();
 
-        Calendar dateStart = Calendar.getInstance();
-        dateStart.set(Calendar.DAY_OF_MONTH, monthStart);
 
-        Calendar dateEnd = Calendar.getInstance();
-        dateEnd.set(Calendar.DAY_OF_MONTH, monthStart);
-        dateEnd.add(Calendar.MONTH, 1);
+        final Interval historyInterval = DataInterval.getHistoryInterval(System.currentTimeMillis(), 1, monthStart);
+        Date start;
+        Date end = new Date(historyInterval.getEndMillis());
+        if(monthStart == 1){
+            start = new Date(historyInterval.getStartMillis());
+        }else{
+            start = new Date(historyInterval.getStart().minusDays(1).getMillis());
+        }
 
-        queryBuilder.where().between("dateAdded", dateStart.getTime(), dateEnd.getTime());
+        queryBuilder.where().between("dateAdded", start, end);
         PreparedQuery<Transaction> preparedQuery = queryBuilder.prepare();
         List<Transaction> result = query(preparedQuery);
 
@@ -121,14 +129,16 @@ public class TransactionDAO extends BaseDaoImpl<Transaction, UUID> {
     public List<Transaction> queryByTypeForCurrentMonth(int monthStart, TransactionType type) throws SQLException {
         QueryBuilder<Transaction, UUID> queryBuilder = queryBuilder();
 
-        Calendar dateStart = Calendar.getInstance();
-        dateStart.set(Calendar.DAY_OF_MONTH, monthStart);
+        final Interval historyInterval = DataInterval.getHistoryInterval(System.currentTimeMillis(), 1, monthStart);
+        Date start;
+        Date end = new Date(historyInterval.getEndMillis());
+        if(monthStart == 1){
+            start = new Date(historyInterval.getStartMillis());
+        }else{
+            start = new Date(historyInterval.getStart().minusDays(1).getMillis());
+        }
 
-        Calendar dateEnd = Calendar.getInstance();
-        dateEnd.set(Calendar.DAY_OF_MONTH, monthStart);
-        dateEnd.add(Calendar.MONTH, 1);
-
-        queryBuilder.where().between("dateAdded", dateStart.getTime(), dateEnd.getTime()).and().eq("type", type);
+        queryBuilder.where().between("dateAdded", start, end).and().eq("type", type);
 
         PreparedQuery<Transaction> preparedQuery = queryBuilder.prepare();
         List<Transaction> result = query(preparedQuery);
@@ -139,123 +149,43 @@ public class TransactionDAO extends BaseDaoImpl<Transaction, UUID> {
     public List<Transaction> queryByTypeForPeriod(int period, int monthStart, TransactionType type) throws SQLException {
         QueryBuilder<Transaction, UUID> queryBuilder = queryBuilder();
 
-        Calendar currentDate = Calendar.getInstance();
+        if (period != 0) {
+            final Interval historyInterval = DataInterval.getHistoryInterval(System.currentTimeMillis(), period, monthStart);
+            Date start;
+            Date end = new Date(historyInterval.getEndMillis());
+            if(monthStart == 1){
+                start = new Date(historyInterval.getStartMillis());
+            }else{
+                start = new Date(historyInterval.getStart().minusDays(1).getMillis());
+            }
 
-        Calendar dateStart = Calendar.getInstance();
-        Calendar dateEnd = Calendar.getInstance();
-
-        if (currentDate.get(Calendar.DAY_OF_MONTH) == monthStart) {
-            dateStart.add(Calendar.DAY_OF_MONTH, -1);
-        } else {
-            dateStart.set(Calendar.DAY_OF_MONTH, monthStart);
-            dateStart.add(Calendar.DAY_OF_MONTH, -1);
+            queryBuilder.where().between("dateAdded", start, end).and().eq("type", type);
+            PreparedQuery<Transaction> preparedQuery = queryBuilder.prepare();
+            return query(preparedQuery);
+        }else{
+            return queryForAll();
         }
-        dateEnd.add(Calendar.DAY_OF_MONTH, 1);
-
-        switch (period) {
-            case 1:
-                if (currentDate.get(Calendar.DAY_OF_MONTH) < monthStart) {
-                    dateStart.add(Calendar.MONTH, -1);
-                }
-                break;
-            case 2:
-                if (currentDate.get(Calendar.DAY_OF_MONTH) < monthStart) {
-                    dateStart.add(Calendar.MONTH, -2);
-                } else {
-                    dateStart.add(Calendar.MONTH, -1);
-                }
-                break;
-            case 3:
-                if (currentDate.get(Calendar.DAY_OF_MONTH) < monthStart) {
-                    dateStart.add(Calendar.MONTH, -3);
-                } else {
-                    dateStart.add(Calendar.MONTH, -2);
-                }
-                break;
-            case 6:
-                if (currentDate.get(Calendar.DAY_OF_MONTH) < monthStart) {
-                    dateStart.add(Calendar.MONTH, -6);
-                } else {
-                    dateStart.add(Calendar.MONTH, -5);
-                }
-                break;
-            case 12:
-                if (currentDate.get(Calendar.DAY_OF_MONTH) < monthStart) {
-                    dateStart.add(Calendar.MONTH, -12);
-                } else {
-                    dateStart.add(Calendar.MONTH, -11);
-                }
-                break;
-            case 0:
-                return queryForAll();
-        }
-
-        queryBuilder.where().between("dateAdded", dateStart.getTime(), dateEnd.getTime()).and().eq("type", type);
-        PreparedQuery<Transaction> preparedQuery = queryBuilder.prepare();
-        List<Transaction> result = query(preparedQuery);
-
-        return result;
     }
 
     public List<Transaction> queryAllForPeriod(int period, int monthStart) throws SQLException {
         QueryBuilder<Transaction, UUID> queryBuilder = queryBuilder();
 
-        Calendar currentDate = Calendar.getInstance();
+        if (period != 0) {
+            final Interval historyInterval = DataInterval.getHistoryInterval(System.currentTimeMillis(), period, monthStart);
+            Date start;
+            Date end = new Date(historyInterval.getEndMillis());
+            if(monthStart == 1){
+                start = new Date(historyInterval.getStartMillis());
+            }else{
+                start = new Date(historyInterval.getStart().minusDays(1).getMillis());
+            }
 
-        Calendar dateStart = Calendar.getInstance();
-        Calendar dateEnd = Calendar.getInstance();
-
-        if (currentDate.get(Calendar.DAY_OF_MONTH) == monthStart) {
-            dateStart.add(Calendar.DAY_OF_MONTH, -1);
-        } else {
-            dateStart.set(Calendar.DAY_OF_MONTH, monthStart);
-            dateStart.add(Calendar.DAY_OF_MONTH, -1);
+            queryBuilder.where().between("dateAdded", start, end);
+            PreparedQuery<Transaction> preparedQuery = queryBuilder.prepare();
+            return query(preparedQuery);
+        }else{
+            return queryForAll();
         }
-        dateEnd.add(Calendar.DAY_OF_MONTH, 1);
-
-        switch (period) {
-            case 1:
-                if (currentDate.get(Calendar.DAY_OF_MONTH) < monthStart) {
-                    dateStart.add(Calendar.MONTH, -1);
-                }
-                break;
-            case 2:
-                if (currentDate.get(Calendar.DAY_OF_MONTH) < monthStart) {
-                    dateStart.add(Calendar.MONTH, -2);
-                } else {
-                    dateStart.add(Calendar.MONTH, -1);
-                }
-                break;
-            case 3:
-                if (currentDate.get(Calendar.DAY_OF_MONTH) < monthStart) {
-                    dateStart.add(Calendar.MONTH, -3);
-                } else {
-                    dateStart.add(Calendar.MONTH, -2);
-                }
-                break;
-            case 6:
-                if (currentDate.get(Calendar.DAY_OF_MONTH) < monthStart) {
-                    dateStart.add(Calendar.MONTH, -6);
-                } else {
-                    dateStart.add(Calendar.MONTH, -5);
-                }
-                break;
-            case 12:
-                if (currentDate.get(Calendar.DAY_OF_MONTH) < monthStart) {
-                    dateStart.add(Calendar.MONTH, -12);
-                } else {
-                    dateStart.add(Calendar.MONTH, -11);
-                }
-                break;
-            case 0:
-                return queryForAll();
-        }
-
-        queryBuilder.where().between("dateAdded", dateStart.getTime(), dateEnd.getTime());
-        PreparedQuery<Transaction> preparedQuery = queryBuilder.prepare();
-        List<Transaction> result = query(preparedQuery);
-
-        return result;
     }
 
     public int deleteAllForAccount(String accountId) throws SQLException {

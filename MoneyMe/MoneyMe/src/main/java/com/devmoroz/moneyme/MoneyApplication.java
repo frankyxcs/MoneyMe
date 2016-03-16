@@ -26,6 +26,10 @@ import com.squareup.otto.Subscribe;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
+import org.joda.time.DateTime;
+import org.joda.time.Interval;
+import org.joda.time.Period;
+
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
@@ -59,6 +63,8 @@ public class MoneyApplication extends Application {
         try {
             int period = Preferences.getHistoryPeriod(this);
             int monthStart = Preferences.getMonthStart(this);
+
+
             accounts = dbHelper.getAccountDAO().queryForAll();
             transactions = dbHelper.getTransactionDAO().queryAllForPeriod(period, monthStart);
             goals = dbHelper.getGoalDAO().queryForInProgress();
@@ -69,7 +75,7 @@ public class MoneyApplication extends Application {
 
     public List<Account> getAccounts() {
         try {
-            accounts = dbHelper.getAccountDAO().queryForAll();
+            accounts = dbHelper.getAccountDAO().queryForNotDeleted();
             return accounts;
         } catch (SQLException ex) {
             return accounts;
@@ -158,7 +164,6 @@ public class MoneyApplication extends Application {
         BusProvider.getInstance().unregister(this);
         super.onTerminate();
     }
-
 
 
     @Subscribe

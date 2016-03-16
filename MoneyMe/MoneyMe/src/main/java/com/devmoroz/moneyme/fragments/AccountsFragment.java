@@ -134,7 +134,7 @@ public class AccountsFragment extends Fragment implements View.OnClickListener {
 
     private void SetTotalBalance() {
         Currency currency = CurrencyCache.getCurrencyOrEmpty();
-        String value = FormatUtils.amountToString(currency, totalBalance, true);
+        String value = FormatUtils.amountToString(currency, totalBalance, false);
         balanceTextView.setText(value);
 
     }
@@ -247,6 +247,32 @@ public class AccountsFragment extends Fragment implements View.OnClickListener {
         }
         BusProvider.postOnMain(new WalletChangeEvent());
         materialDialog.dismiss();
+    }
+
+    private void showDeleteChooserDialog() {
+        final String[] items = new String[]{getString(R.string.remove_account_all),
+                getString(R.string.remove_account_only_account)};
+
+        new MaterialDialog.Builder(getActivity())
+                .title(R.string.removal_account)
+                .items(items)
+                .itemsCallback(new MaterialDialog.ListCallback() {
+                    @Override
+                    public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                        switch (which) {
+                            case (0):
+                                dialog.dismiss();
+
+                                break;
+                            case (1): {
+                                dialog.dismiss();
+
+                                break;
+                            }
+                        }
+                    }
+                })
+                .show();
     }
 
     @Subscribe
