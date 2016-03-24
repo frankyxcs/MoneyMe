@@ -32,18 +32,11 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/greeting"
-            android:textColor="@color/colorWhite"
-            android:textSize="28sp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:gravity="center"
             android:text="@string/greeting_explanation"
             android:textColor="@color/colorWhite"
-            android:textSize="18sp" />
+            style="@style/Text.Subhead" />
     </LinearLayout>
 
     <LinearLayout
@@ -101,8 +94,7 @@
                         android:id="@+id/intro_accountAddType"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center|right|end"
-                        android:gravity="end|right"
+                        android:layout_gravity="center"
                         android:layout_weight="8"
                         android:minHeight="?android:attr/listPreferredItemHeight" />
                 </LinearLayout>
@@ -146,11 +138,13 @@
 
                     <Button
                         android:id="@+id/intro_accountCurrency"
-                        style="@style/Button.Flat.Select"
+                        style="@style/Button.Flat.Dropdown"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center|right|end"
-                        android:gravity="end|right|center"
+                        android:layout_gravity="left|center|start"
+                        android:gravity="left|center|start"
+                        android:paddingStart="16dp"
+                        android:paddingLeft="16dp"
                         android:layout_weight="8"
                         android:singleLine="true"
                         android:text="sdsds"

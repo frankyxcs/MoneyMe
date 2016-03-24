@@ -14,11 +14,11 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.devmoroz.moneyme.R;
-import com.devmoroz.moneyme.export.dropbox.DropboxClientFactory;
-import com.devmoroz.moneyme.export.dropbox.UploadFileTask;
-import com.dropbox.core.DbxException;
-import com.dropbox.core.v2.DbxFiles;
+import com.devmoroz.moneyme.export.drive.GoogleDriveClient;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -45,15 +45,23 @@ public class ExportAsyncTask extends AsyncTask<ExportParams, Void, Integer> {
 
     private CompletionListener listener;
 
+    private GoogleDriveClient googleDriveClient;
+
     public interface CompletionListener {
         void onExportComplete();
+
         void onError(int errorCode);
     }
 
-    public ExportAsyncTask(Context context,ProgressDialog dialog, CompletionListener callback){
+    public ExportAsyncTask(Context context, ProgressDialog dialog, CompletionListener callback) {
         this.mContext = context;
         this.listener = callback;
         this.dialog = dialog;
+    }
+
+    public ExportAsyncTask setGoogleDriveClient(GoogleDriveClient googleDriveClient) {
+        this.googleDriveClient = googleDriveClient;
+        return this;
     }
 
     @Override
@@ -65,18 +73,21 @@ public class ExportAsyncTask extends AsyncTask<ExportParams, Void, Integer> {
             if (!exportDir.exists()) {
                 exportDir.mkdirs();
             }
-            final File file = getFile(exportDir,mExportParams.getExportType().getExtention());
-            final OutputStream outputStream;
-            outputStream = new FileOutputStream(file);
-            dataExporter = mExportParams.getExportType().getDataExporter(mContext,outputStream);
+
+            final File file = getFile(exportDir, mExportParams.getExportType().getExtention());
+            final OutputStream outputStream = new FileOutputStream(file);
+            dataExporter = mExportParams.getExportType().getDataExporter(mContext, outputStream);
             dataExporter.exportData();
             dialog.dismiss();
             switch (mExportParams.getExportTarget()) {
                 case SHARING:
-                    shareFile(file,mExportParams.getExportType().getMimeType());
+                    shareFile(file, mExportParams.getExportType().getMimeType());
                     return SUCCESS;
                 case DROPBOX:
                     sendExportToDropbox(file);
+                    return SUCCESS;
+                case DRIVE:
+                    sendExportToDrive(file);
                     return SUCCESS;
                 case SD_CARD:
                     moveFile(file.getAbsolutePath(), ExportParams.BACKUP_FOLDER_PATH);
@@ -86,6 +97,22 @@ public class ExportAsyncTask extends AsyncTask<ExportParams, Void, Integer> {
             return ERROR;
         }
         return ERROR;
+    }
+
+    private void sendExportToDrive(File file) {
+        if (googleDriveClient != null) {
+            try {
+                int size = (int) file.length();
+                byte[] bytes = new byte[size];
+                BufferedInputStream buf = new BufferedInputStream(new FileInputStream(file));
+                buf.read(bytes, 0, bytes.length);
+                buf.close();
+                googleDriveClient.doDriveBackup(file.getName(), bytes);
+            }
+            catch (IOException ex){
+
+            }
+        }
     }
 
     @Override
@@ -113,23 +140,13 @@ public class ExportAsyncTask extends AsyncTask<ExportParams, Void, Integer> {
     }
 
     private String getFileTitle(String extension) {
-        final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HHmmss");
-        return mContext.getString(R.string.app_name) + " " + dateFormat.format(new Date()) + extension;
+        final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+        return mContext.getString(R.string.app_name) + "_" + dateFormat.format(new Date()) + extension;
     }
 
     private void sendExportToDropbox(File file) {
 
-        new UploadFileTask(mContext, DropboxClientFactory.getClient(), new UploadFileTask.Callback() {
-            @Override
-            public void onUploadComplete(DbxFiles.FileMetadata result) {
 
-            }
-
-            @Override
-            public void onError(Exception e) {
-
-            }
-        }).execute("", "");
     }
 
     private String stripPathPart(String fullPathName) {

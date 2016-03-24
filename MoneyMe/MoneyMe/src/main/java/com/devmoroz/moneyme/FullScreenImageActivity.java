@@ -11,9 +11,7 @@ import android.view.WindowManager;
 import com.bumptech.glide.Glide;
 import com.devmoroz.moneyme.utils.Constants;
 import com.devmoroz.moneyme.utils.FormatUtils;
-import com.devmoroz.moneyme.utils.PhotoUtil;
 import com.devmoroz.moneyme.widgets.TouchImageView;
-import com.squareup.picasso.Picasso;
 
 public class FullScreenImageActivity extends AppCompatActivity{
 

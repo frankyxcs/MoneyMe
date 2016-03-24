@@ -1,6 +1,7 @@
 package com.devmoroz.moneyme.utils.preference;
 
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.preference.PreferenceDialogFragmentCompat;
 import android.view.View;
 import android.widget.TimePicker;
@@ -59,6 +60,12 @@ public class TimePickerPreferenceDialog extends PreferenceDialogFragmentCompat {
         lastMinute = restoredState ? TimeUtils.getMinute(restoredValue) : TimeUtils.getMinute(preference.getValue());
         timePicker.setCurrentHour(lastHour);
         timePicker.setCurrentMinute(lastMinute);
+    }
+
+    @Override
+    protected void onPrepareDialogBuilder(AlertDialog.Builder builder) {
+        super.onPrepareDialogBuilder(builder);
+        builder.setTitle(null);
     }
 
 

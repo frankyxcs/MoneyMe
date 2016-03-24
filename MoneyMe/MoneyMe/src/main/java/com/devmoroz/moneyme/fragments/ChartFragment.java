@@ -58,6 +58,8 @@ import java.util.Set;
 
 public class ChartFragment extends Fragment implements OnChartValueSelectedListener {
 
+    public static final int NO_DATA_COLOR = Color.LTGRAY;
+
     private View view;
     private PieChart chart;
     private RecyclerView recyclerView;
@@ -111,30 +113,80 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
         chart.setExtraOffsets(5, 10, 5, 5);
         chart.setDragDecelerationFrictionCoef(0.95f);
 
+        chart.setOnChartValueSelectedListener(this);
+
         getDataForCurrentMonth();
         accounts = MoneyApplication.getInstance().getAccounts();
 
-        chart.setData(generatePieData());
-
-        chart.setCenterText(generateCenterText());
-        chart.setCenterTextSize(16f);
-        chart.setDescription("");
-        chart.setOnChartValueSelectedListener(this);
-        chart.invalidate();
-
-        customizeLegend();
+        displayChart();
 
         return view;
     }
 
-    private void getDataForCurrentMonth(){
+    private void getDataForCurrentMonth() {
         try {
             int monthStart = Preferences.getMonthStart(getContext());
             DBHelper helper = MoneyApplication.GetDBHelper();
             outs = helper.getTransactionDAO().queryByTypeForCurrentMonth(monthStart - 1, TransactionType.OUTCOME);
-        }catch (SQLException ex){
+        } catch (SQLException ex) {
 
         }
+    }
+
+    private void displayChart() {
+        chart.highlightValues(null);
+        chart.clear();
+
+        PieData pieData = generatePieData();
+        if (pieData != null && pieData.getYValCount() != 0) {
+            chart.setData(pieData);
+            chart.setCenterText(generateCenterText());
+            chart.setCenterTextSize(16f);
+            chart.setTouchEnabled(true);
+            chart.invalidate();
+            chart.animateXY(1400, 1400);
+            customizeLegend();
+        } else {
+            chart.setCenterText(getResources().getString(R.string.chart_no_data));
+            chart.setCenterTextSize(12f);
+            chart.setCenterTextColor(CustomColorTemplate.ACCENT_COLOR);
+            chart.setData(getEmptyData());
+            chart.setTouchEnabled(false);
+            chart.invalidate();
+            chart.setDescription("");
+            chart.getLegend().setEnabled(false);
+            tableDetails.setVisibility(View.GONE);
+        }
+    }
+
+    private void bubbleSort() {
+        List<String> labels = chart.getData().getXVals();
+        List<Entry> values = ((PieDataSet) chart.getData().getDataSet()).getYVals();
+        List<Integer> colors = chart.getData().getDataSet().getColors();
+        float tmp1;
+        String tmp2;
+        Integer tmp3;
+        for(int i = 0; i < values.size() - 1; i++) {
+            for(int j = 1; j < values.size() - i; j++) {
+                if (values.get(j-1).getVal() > values.get(j).getVal()) {
+                    tmp1 = values.get(j - 1).getVal();
+                    values.get(j - 1).setVal(values.get(j).getVal());
+                    values.get(j).setVal(tmp1);
+
+                    tmp2 = labels.get(j - 1);
+                    labels.set(j - 1, labels.get(j));
+                    labels.set(j, tmp2);
+
+                    tmp3 = colors.get(j - 1);
+                    colors.set(j - 1, colors.get(j));
+                    colors.set(j, tmp3);
+                }
+            }
+        }
+
+        chart.notifyDataSetChanged();
+        chart.highlightValues(null);
+        chart.invalidate();
     }
 
     private void customizeLegend() {
@@ -143,31 +195,31 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
         l.setEnabled(false);
         int colorCodes[] = l.getColors();
         PieData data = chart.getData();
-        List<Entry> entries = ((PieDataSet)data.getDataSet()).getYVals();
+        List<Entry> entries = ((PieDataSet) data.getDataSet()).getYVals();
         legendData = new ArrayList<>();
 
-        for (int i = 0; i < l.getColors().length-1; i++) {
+        for (int i = 0; i < l.getColors().length - 1; i++) {
             Entry entry = entries.get(i);
             String label = l.getLabel(i);
             int colorCode = colorCodes[i];
             float val = entry.getVal();
             float valPercent = entry.getVal() / data.getYValueSum() * 100f;
-            legendData.add(new LegendDetails(colorCode,label,val,valPercent));
+            legendData.add(new LegendDetails(colorCode, label, val, valPercent));
         }
 
-        if (legendData.size() != 0){
+        if (legendData.size() != 0) {
             adapter.setData(legendData);
             tableDetails.setVisibility(View.VISIBLE);
             final Interval historyInterval = DataInterval.getHistoryInterval(System.currentTimeMillis(), 1, monthStart);
             long start;
             long end = historyInterval.getEndMillis();
-            if(monthStart == 1){
+            if (monthStart == 1) {
                 start = historyInterval.getStartMillis();
-            }else{
+            } else {
                 start = historyInterval.getStart().minusDays(1).getMillis();
             }
             chart.setDescription(TimeUtils.formatIntervalTimeString(start, end, null, getContext()));
-        }else{
+        } else {
             tableDetails.setVisibility(View.GONE);
             chart.setDescription("");
         }
@@ -213,7 +265,7 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
             Set<Map.Entry<String, Float>> set = data.entrySet();
             for (Map.Entry<String, Float> entry : set) {
                 xVals.add(entry.getKey());
-                colors.add(CustomColorTemplate.getColorForCategory(getContext(),entry.getKey()));
+                colors.add(CustomColorTemplate.getColorForCategory(getContext(), entry.getKey()));
                 entries.add(new Entry(entry.getValue(), j));
                 j++;
             }
@@ -235,6 +287,14 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
         return d;
     }
 
+    private PieData getEmptyData() {
+        PieDataSet dataSet = new PieDataSet(null, getResources().getString(R.string.chart_no_data));
+        dataSet.addEntry(new Entry(1, 0));
+        dataSet.setColor(NO_DATA_COLOR);
+        dataSet.setDrawValues(false);
+        return new PieData(Collections.singletonList(""), dataSet);
+    }
+
     @Override
     public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
         float rotationAngle = chart.getRotationAngle();
@@ -250,7 +310,7 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
         //rotate to slice center
         chart.spin(1000, rotationAngle, end, Easing.EasingOption.EaseInOutQuad);
         showEditDialog(i);
-       // String label = chart.getXValue(i);
+        // String label = chart.getXValue(i);
         //BusProvider.postOnMain(new ChartSliceClickedEvent(label));
     }
 
@@ -259,13 +319,13 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
         LegendDetails details = legendData.get(position);
         HistoryForCategoryDialog historyCategoryDialog = HistoryForCategoryDialog.newInstance();
         ArrayList<Transaction> list = new ArrayList<>();
-        for(Transaction t : outs){
-            if(t.getCategory()!= null && t.getCategory().getTitle().equals(details.CategoryName)){
+        for (Transaction t : outs) {
+            if (t.getCategory() != null && t.getCategory().getTitle().equals(details.CategoryName)) {
                 list.add(t);
             }
         }
         CommonUtils sorter = new CommonUtils();
-        sorter.sortWalletEntriesByDate(list,true);
+        sorter.sortWalletEntriesByDate(list, true);
         historyCategoryDialog.setData(details, list);
         historyCategoryDialog.show(fm, "fragment_history_category");
     }
@@ -281,14 +341,10 @@ public class ChartFragment extends Fragment implements OnChartValueSelectedListe
     }
 
 
-    public void CheckWallet(){
+    public void CheckWallet() {
         getDataForCurrentMonth();
         accounts = MoneyApplication.getInstance().getAccounts();
-        chart.setData(generatePieData());
-        chart.setCenterText(generateCenterText());
-        chart.invalidate();
-        chart.animateY(1400);
-        customizeLegend();
+        displayChart();
     }
 
 }

@@ -2,11 +2,16 @@ package com.devmoroz.moneyme;
 
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -19,6 +24,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -47,6 +53,7 @@ import com.devmoroz.moneyme.utils.CurrencyCache;
 import com.devmoroz.moneyme.utils.FormatUtils;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
+import com.kobakei.ratethisapp.RateThisApp;
 import com.squareup.otto.Subscribe;
 
 import java.sql.SQLException;
@@ -60,6 +67,8 @@ public class MainActivity extends AppCompatActivity {
 
     public static final int VIEW_SPLASH = 0;
     public static final int VIEW_CONTENT = 1;
+
+    public static RateThisApp.Config rateAppConfig = new RateThisApp.Config(7, 21);
 
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
@@ -88,6 +97,17 @@ public class MainActivity extends AppCompatActivity {
         viewFlipper = (ViewFlipper) findViewById(R.id.mainViewFlipper);
 
         checkForFirstRun();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        if (BuildConfig.CAN_REQUEST_RATING) {
+            RateThisApp.init(rateAppConfig);
+            RateThisApp.onStart(this);
+            RateThisApp.showRateDialogIfNeeded(this);
+        }
     }
 
     private void checkForFirstRun() {
@@ -131,6 +151,10 @@ public class MainActivity extends AppCompatActivity {
     private void switchToContentView() {
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
         viewFlipper.setDisplayedChild(VIEW_CONTENT);
+
+        if (hasNewFeatures()){
+            showWhatsNewDialog(this);
+        }
     }
 
     @Subscribe
@@ -176,6 +200,11 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
+        if (Constants.ACTION_LAUNCH_TRANSFER.equals(i.getAction())) {
+            startAddActivity(Constants.TRANSFER_ACTIVITY, null);
+            return;
+        }
+
     }
 
     private void initToolbar() {
@@ -187,7 +216,7 @@ public class MainActivity extends AppCompatActivity {
                 int id = item.getItemId();
                 switch (id) {
                     case (R.id.synchronize):
-                        navigate(DropboxLoginActivity.class);
+
                         return true;
                     default:
                         return true;
@@ -489,5 +518,43 @@ public class MainActivity extends AppCompatActivity {
         });
 
         return true;
+    }
+
+    private boolean hasNewFeatures(){
+        String minorVersion = getResources().getString(R.string.app_minor_version);
+        int currentMinor = Integer.parseInt(minorVersion);
+
+        SharedPreferences prefs = android.preference.PreferenceManager.getDefaultSharedPreferences(this);
+        int previousMinor = prefs.getInt(getString(R.string.key_previous_minor_version), 0);
+        if (currentMinor > previousMinor){
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putInt(getString(R.string.key_previous_minor_version), currentMinor);
+            editor.apply();
+            return true;
+        }
+        return false;
+    }
+
+    public static AlertDialog showWhatsNewDialog(Context context){
+        Resources resources = context.getResources();
+        StringBuilder releaseTitle = new StringBuilder(resources.getString(R.string.whats_new_title));
+        PackageInfo packageInfo;
+        try {
+            packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+            releaseTitle.append(" - v").append(packageInfo.versionName);
+        } catch (PackageManager.NameNotFoundException e) {
+
+        }
+
+        return new AlertDialog.Builder(context)
+                .setTitle(releaseTitle.toString())
+                .setMessage(R.string.whats_new_content)
+                .setPositiveButton(R.string.close, new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).show();
     }
 }

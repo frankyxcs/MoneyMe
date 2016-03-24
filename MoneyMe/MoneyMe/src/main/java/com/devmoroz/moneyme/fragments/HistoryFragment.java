@@ -43,6 +43,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import me.grantland.widget.AutofitTextView;
+
 public class HistoryFragment extends Fragment {
 
     private final int ACTION_SEARCHED_TRIGGERED = 1;
@@ -57,10 +59,10 @@ public class HistoryFragment extends Fragment {
 
     private EmptyRecyclerView recyclerView;
     private LinearLayout mTextError;
-    private TextView totalBalanceTextView;
+    private AutofitTextView totalBalanceTextView;
     private TextView walletTotalIncome;
     private TextView walletTotalOutcome;
-    private TextView walletDatePeriod;
+    private AutofitTextView walletDatePeriod;
     private View view;
     private FloatingActionsMenu fab;
     private boolean isEmptyTextChanged = false;
@@ -97,10 +99,10 @@ public class HistoryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.history_fragment, container, false);
         mTextError = (LinearLayout) view.findViewById(R.id.walletHistoryEmpty);
-        totalBalanceTextView = (TextView) view.findViewById(R.id.dashboard_total_balance);
+        totalBalanceTextView = (AutofitTextView) view.findViewById(R.id.dashboard_total_balance);
         walletTotalIncome = (TextView) view.findViewById(R.id.walletTotalIncome);
         walletTotalOutcome = (TextView) view.findViewById(R.id.walletTotalOutcome);
-        walletDatePeriod = (TextView) view.findViewById(R.id.text_date_period);
+        walletDatePeriod = (AutofitTextView) view.findViewById(R.id.text_date_period);
         LinearLayout widg = (LinearLayout) view.findViewById(R.id.widgetBalance);
 
         recyclerView = (EmptyRecyclerView) view.findViewById(R.id.main_recycler_view);

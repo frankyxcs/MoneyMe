@@ -78,6 +78,13 @@ public abstract class WidgetProvider extends AppWidgetProvider {
         PendingIntent pendingIntentIncome = PendingIntent.getActivity(context, widgetId, intentIncome,
                 Intent.FLAG_ACTIVITY_NEW_TASK);
 
+        // Create an Intent to launch AddTransferActivity
+        Intent intentTransfer = new Intent(context, MainActivity.class);
+        intentTransfer.putExtra(Constants.INTENT_WIDGET, widgetId);
+        intentTransfer.setAction(Constants.ACTION_LAUNCH_TRANSFER);
+        PendingIntent pendingIntentTransfer = PendingIntent.getActivity(context, widgetId, intentTransfer,
+                Intent.FLAG_ACTIVITY_NEW_TASK);
+
         // Create an Intent to launch TodoActivity
         Intent intentTodo = new Intent(context, NotesActivity.class);
         intentTodo.putExtra(Constants.INTENT_WIDGET, widgetId);
@@ -101,6 +108,7 @@ public abstract class WidgetProvider extends AppWidgetProvider {
         map.put(R.id.widget_note, pendingIntentTodo);
         map.put(R.id.widget_add, pendingIntentIncome);
         map.put(R.id.widget_minus, pendingIntentOutcome);
+        map.put(R.id.widget_transfer, pendingIntentTransfer);
 
         RemoteViews views = getRemoteViews(context, widgetId, isExtended, map, balanceText);
 
@@ -118,7 +126,7 @@ public abstract class WidgetProvider extends AppWidgetProvider {
         double totalBalance = 0f;
         List<Account> accounts = Collections.emptyList();
         try {
-            accounts = dbHelper.getAccountDAO().queryForAll();
+            accounts = dbHelper.getAccountDAO().queryForNotDeleted();
         } catch (SQLException ex) {
 
         }
@@ -136,6 +144,7 @@ public abstract class WidgetProvider extends AppWidgetProvider {
         String formattedBalanceText = FormatUtils.attachAmountToTextWithoutBrackets(textTotalBalance, currency, totalBalance, false);
 
         WalletBalance balance = new WalletBalance();
+        balance.MultiAccounts = accounts.size() >=2;
         balance.TotalBalance = formattedBalanceText;
         if (isExtended) {
             int lindex = accountNames.lastIndexOf(System.getProperty("line.separator"));
@@ -174,6 +183,7 @@ public abstract class WidgetProvider extends AppWidgetProvider {
 
     protected class WalletBalance {
         public String TotalBalance;
+        public boolean MultiAccounts;
         public String AccountsBalance;
         public String AccountsNames;
     }

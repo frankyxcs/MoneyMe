@@ -1,6 +1,7 @@
 package com.devmoroz.moneyme.fragments.Intro;
 
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 
 import com.devmoroz.moneyme.MoneyApplication;
@@ -24,7 +26,7 @@ import com.devmoroz.moneyme.widgets.DecimalDigitsInputFilter;
 
 import java.sql.SQLException;
 
-public class FinishFragment extends Fragment {
+public class FinishFragment1 extends Fragment {
 
     private View view;
     private EditText accountNameText;
@@ -33,9 +35,9 @@ public class FinishFragment extends Fragment {
     private Button currencyButton;
     private View done;
 
-    public static FinishFragment newInstance(View doneButton) {
+    public static FinishFragment1 newInstance(View doneButton) {
         Bundle args = new Bundle();
-        FinishFragment finishSlide = new FinishFragment();
+        FinishFragment1 finishSlide = new FinishFragment1();
         finishSlide.setArguments(args);
         finishSlide.done = doneButton;
 
@@ -44,12 +46,16 @@ public class FinishFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.intro_finish, container, false);
+        view = inflater.inflate(R.layout.intro_finish2, container, false);
         accountNameText = (EditText) view.findViewById(R.id.intro_accountAddName);
         startBalanceText = (EditText) view.findViewById(R.id.intro_accountAddBalance);
         accountTypeSpinner = (Spinner) view.findViewById(R.id.intro_accountAddType);
         currencyButton = (Button) view.findViewById(R.id.intro_accountCurrency);
+        LinearLayout m = (LinearLayout) view.findViewById(R.id.main);
         done.setEnabled(false);
+
+
+        m.setBackgroundColor(Color.parseColor("#3F51B5"));
 
         initListenersAndWidgets();
 

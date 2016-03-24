@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">MoneyMe</string>
     <string name="search_title">Поиск</string>
     <string name="option_settings">Настройки</string>
     <string name="option_about_help">Информация</string>
@@ -62,6 +61,7 @@
     <string name="notes_and_todo">Заметки и списки</string>
     <string name="statistics">Статистика</string>
     <string name="csv_export">Экспорт в CSV</string>
+    <string name="drive_export">Экспорт в Google Drive</string>
     <string name="csv_export_dialog_content">Будет создан CSV файл ваших транзакий.</string>
     <string name="csv_export_inprogress">Экспортирование транзакций в CSV..</string>
     <string name="csv_export_completed">Файл CSV успешно создан.</string>
@@ -168,12 +168,14 @@
     <!--Preferences-->
     <string name="pref_history_order">pref_history_order</string>
     <string name="pref_history_period">pref_history_period</string>
+    <string name="pref_history_show_photos">pref_history_show_photos</string>
     <string name="pref_month_start">pref_month_start</string>
     <string name="pref_backup_frequency">pref_backup_frequency</string>
     <string name="pref_auto_backup">pref_auto_backup</string>
     <string name="pref_notify_time">pref_notify_time</string>
     <string name="pref_first_time_run">pref_first_time_run</string>
     <string name="pref_default_export_email">pref_default_export_email</string>
+    <string name="key_previous_minor_version" translatable="false">previous_minor_version</string>
 
 
     <string name="reset_preferences">Сброс настроек</string>
@@ -183,6 +185,7 @@
     <string name="history_order_desc">Новые наверху</string>
     <string name="pref_history_order_title">Порядок отображения операций</string>
     <string name="pref_history_period_title">Период операций</string>
+    <string name="pref_history_show_photos_title">Показывать изображения</string>
     <string name="pref_month_start_title">Начало месяца</string>
     <string name="number">число</string>
 
@@ -263,25 +266,27 @@
     </string-array>
 
     <string name="app_key">sdasdas</string>
-    <string name="greeting">Добро пожаловать</string>
-    <string name="greeting_explanation">Прежде, чем начать,\nдавайте настроим некоторые вещи.</string>
+    <string name="greeting">Добро пожаловать!</string>
+    <string name="greeting_explanation">Прежде, чем начать,\nдавайте создадим Ваш первый счёт</string>
+    <string name="greeting_thanks">Спасибо за выбор MoneyMe</string>
     <string name="tags">Теги</string>
     <string name="add_tags">Выберите теги</string>
     <string name="map">Карта</string>
     <string name="permission_not_granted">Разрешение не получено.</string>
     <string name="permission_coarse_location">Предоставьте разрешение на определение вашего местоположения для добавления координат к транзакции</string>
+    <string name="permission_camera_explain">Предоставьте разрешение для доступа к камере</string>
     <string name="search_location">Введите адрес</string>
     <string name="use_current_location">Текущее местоположение</string>
     <string name="confirm">Подтвердить</string>
     <string name="location_not_found">Местоположение не определено</string>
-    <string name="tags_empty_text">У вас еще нет сохраненных тегов.</string>
-    <string name="todo_empty_text">Здесь будут ваши заметки.</string>
-    <string name="tag_with_current_name_exist">Тег с таким именем уже существует.</string>
+    <string name="tags_empty_text">У вас еще нет сохраненных тегов</string>
+    <string name="todo_empty_text">Здесь будут ваши заметки</string>
+    <string name="tag_with_current_name_exist">Тег с таким именем уже существует</string>
     <string name="add_new_tag">Добавить тег</string>
     <string name="create">Создать</string>
     <string name="add_tag_dialog_title">Название</string>
     <string name="transfer_money">Трансфер средств</string>
-    <string name="no_internet_connection">Проверьте подключение к интернету и попробуйте еще раз.</string>
+    <string name="no_internet_connection">Проверьте подключение к интернету и попробуйте еще раз</string>
     <string name="no_transactions_found">Ничего не найдено :(</string>
     <string name="trends">Тенденции</string>
     <string name="remind_me_text">Напомнить</string>
@@ -312,4 +317,17 @@
     <string name="remove_account_only_account">Удалить только счет. (<i>Все операции по счету останутся видны в истории</i>)</string>
     <string name="remove_account_all">Удалить счет полностью. (<i>Все транзакции будут удалены, переводы отменены</i>)</string>
     <string name="removal_account">Удаление счета</string>
+    <string name="choose_backup_source">Выберите расположение резервной копии</string>
+    <string name="restore_program">Восстановление</string>
+    <string name="google_drive">Google Drive</string>
+    <string name="local_storage">Локальное хранилище</string>
+    <string name="restore_app_from_backup">Восстановить из резервной копии</string>
+    <string name="new_user">Новый пользователь</string>
+    <string name="choose">Выбрать</string>
+    <string name="whats_new_title">Что нового</string>
+    <string name="whats_new_content">Куча всего интересного</string>
+    <string name="close">Закрыть</string>
+    <string name="chart_no_data">Нет данных для отображения</string>
+    <string name="done">ГОТОВО</string>
+    <string name="back">НАЗАД</string>
 </resources>

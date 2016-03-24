@@ -49,6 +49,7 @@ public class CustomColorTemplate {
     public static final int INCOME_COLOR = Color.parseColor("#388E3C");
     public static final int OUTCOME_COLOR = Color.parseColor("#D32F2F");
     public static final int TRANSFER_COLOR = Color.parseColor("#78909C");
+    public static final int ACCENT_COLOR = Color.parseColor("#FFC400");
 
     public static int[] getCategoriesColors(Context context, ArrayList<String> categories) {
         int[] colors = new int[categories.size()];

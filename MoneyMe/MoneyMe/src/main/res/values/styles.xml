@@ -63,6 +63,7 @@
 
     <style name="Preference.DialogPreference.TimePickerPreference">
         <item name="dialogLayout">@layout/preference_timepicker_dialog</item>
+        <item name="android:windowNoTitle">true</item>
     </style>
 
     <style name="floating_action_button">
@@ -186,6 +187,10 @@
         <item name="android:textColor">?android:textColorPrimary</item>
         <item name="android:textColorHint">?android:textColorSecondary</item>
         <item name="android:textAllCaps">false</item>
+        <item name="android:textAppearance">@style/Text.Subhead</item>
+    </style>
+
+    <style name="Button.Flat.Dropdown" parent="@style/Widget.AppCompat.Spinner">
         <item name="android:textAppearance">@style/Text.Subhead</item>
     </style>
 

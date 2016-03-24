@@ -2,7 +2,7 @@
 <resources>
     <string name="license_text">
         <![CDATA[
-            <p>Copyright 2015 Vitalii Moroz</p>
+            <p>Copyright 2016 Vitalii Moroz</p>
             <p>Licensed under the Apache License, Version 2.0 (the "License");
             you may not use this file except in compliance with the License.
             You may obtain a copy of the License at</p>
@@ -17,11 +17,22 @@
     <string name="libraries_text">
         <![CDATA[
             <p><a href="https://github.com/square/okhttp">Square OkHttp</a> - Apache License v2.0</p>
-            <p><a href="https://github.com/square/picasso">Square Picasso</a> - Apache License v2.0</p>
+            <p><a href="https://github.com/square/android-times-square">TimesSquare for Android</a> - Apache License v2.0</p>
             <p><a href="https://github.com/square/otto">Square Otto</a> - Apache License v2.0</p>
             <p><a href="https://github.com/PhilJay/MPAndroidChart">MPAndroidChart</a> - Apache License v2.0</p>
+            <p><a href="https://github.com/federicoiosue/checklistview">CheckListView</a> - Apache License v2.0</p>
+            <p><a href="https://github.com/chrisjenx/Calligraphy">Calligraphy</a> - Apache License v2.0</p>
+            <p><a href="https://github.com/tbruyelle/RxPermissions">RxPermissions</a> - Apache License v2.0</p>
+            <p><a href="https://github.com/grantland/android-autofittextview">AutoFitTextView</a> - Apache License v2.0</p>
+            <p><a href="https://github.com/dlew/joda-time-android">joda-time-android</a> - Apache License v2.0</p>
+            <p><a href="https://github.com/PaoloRotolo/AppIntro">AppIntro</a> - Apache License v2.0</p>
+            <p><a href="https://github.com/ReactiveX/RxAndroid">RxAndroid</a> - Apache License v2.0</p>
+            <p><a href="https://github.com/ReactiveX/RxJava">RxJava</a> - Apache License v2.0</p>
+            <p><a href="https://github.com/futuresimple/android-floating-action-button">FloatingActionButton</a> - Apache License v2.0</p>
+            <p><a href="https://github.com/google/gson">google-gson</a> - Apache License v2.0</p>
+            <p><a href="https://github.com/kobakei/Android-RateThisApp">Android-RateThisApp</a> - Apache License v2.0</p>
+            <p><a href="https://github.com/bumptech/glide">Glide</a> - BSD, part MIT and Apache License v2.0</p>
             <p><a href="https://github.com/afollestad/material-dialogs">Material Dialogs</a> - MIT License</p>
-            <p><a href="https://github.com/dropbox/dropbox-sdk-java-v2">Dropbox</a> - MIT License</p>
             <p><a href="https://github.com/daimajia/NumberProgressBar">Android NumberProgressBar</a> - MIT License</p>
             <p><a href="http://developer.android.com/tools/support-library/index.html">Android support library</a> - Apache License v2.0</p>
             <p><a href="https://github.com/google/material-design-icons">Material design icons</a> - Creative Common Attribution 4.0 International License</p>

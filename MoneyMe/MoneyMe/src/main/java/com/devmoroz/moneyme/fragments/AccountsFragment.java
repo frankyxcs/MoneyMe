@@ -98,20 +98,7 @@ public class AccountsFragment extends Fragment implements View.OnClickListener {
         adapter = new AccountsAdapter(getActivity(), new AccountsAdapter.Callback() {
             @Override
             public void onDeleteClick(String id) {
-                new MaterialDialog.Builder(getContext())
-                        .title(R.string.remove_account_confirm)
-                        .content(R.string.remove_account_warning)
-                        .negativeText(R.string.cancel)
-                        .positiveText(R.string.remove)
-                        .positiveColorRes(R.color.colorPrimary)
-                        .negativeColorRes(R.color.colorPrimary)
-                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-
-                            }
-                        })
-                        .show();
+                showDeleteChooserDialog(id);
             }
 
             @Override
@@ -249,7 +236,7 @@ public class AccountsFragment extends Fragment implements View.OnClickListener {
         materialDialog.dismiss();
     }
 
-    private void showDeleteChooserDialog() {
+    private void showDeleteChooserDialog(String id) {
         final String[] items = new String[]{getString(R.string.remove_account_all),
                 getString(R.string.remove_account_only_account)};
 
@@ -266,7 +253,7 @@ public class AccountsFragment extends Fragment implements View.OnClickListener {
                                 break;
                             case (1): {
                                 dialog.dismiss();
-
+                                setAccountAsDeleted(id);
                                 break;
                             }
                         }
@@ -292,6 +279,18 @@ public class AccountsFragment extends Fragment implements View.OnClickListener {
             case R.id.add_new_account:
                 showAccountDialog(AccountAction.Create, new Account());
                 break;
+        }
+    }
+
+    private void setAccountAsDeleted(String id) {
+        try {
+            DBHelper dbHelper = MoneyApplication.GetDBHelper();
+            Account account = dbHelper.getAccountDAO().queryForId(UUID.fromString(id));
+            account.setDeleted(true);
+            dbHelper.getAccountDAO().update(account);
+            BusProvider.postOnMain(new WalletChangeEvent());
+        } catch (SQLException ex) {
+
         }
     }
 

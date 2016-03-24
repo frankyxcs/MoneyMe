@@ -8,6 +8,7 @@ import com.devmoroz.moneyme.helpers.DBHelper;
 import com.devmoroz.moneyme.models.Currency;
 import com.devmoroz.moneyme.models.Transaction;
 import com.devmoroz.moneyme.utils.CurrencyCache;
+import com.devmoroz.moneyme.utils.FormatUtils;
 import com.devmoroz.moneyme.utils.csv.Csv;
 import com.devmoroz.moneyme.utils.csv.CsvExportOptions;
 
@@ -62,9 +63,11 @@ public class CSVexport extends Exporter {
     private void writeCsv(BufferedWriter writer) throws IOException {
         // "type,date,time,amount,currency,category,note,tags,location,accountName,payeeName"
         final StringBuilder outputLine = new StringBuilder();
+        outputLine.setLength(0);
+        outputLine.append("type,date,time,amount,currency,category,note,tags,location,accountName,payeeName");
         for (Transaction transaction : transactions) {
             outputLine.setLength(0);
-            outputLine.append(QUOTE).append(transaction.getType()).append(QUOTE);
+            outputLine.append(QUOTE).append(FormatUtils.getTransactionTitle(mContext,transaction)).append(QUOTE);
             outputLine.append(SEPARATOR).append(QUOTE).append(FORMAT_DATE_ISO_8601.format(transaction.getDateAdded())).append(QUOTE);
             outputLine.append(SEPARATOR).append(QUOTE).append(FORMAT_TIME_ISO_8601.format(transaction.getDateAdded())).append(QUOTE);
             outputLine.append(SEPARATOR).append(QUOTE).append(transaction.getFormatedAmount()).append(QUOTE);
@@ -73,7 +76,7 @@ public class CSVexport extends Exporter {
             outputLine.append(SEPARATOR).append(QUOTE).append(transaction.getNotes() != null ? transaction.getNotes() : "").append(QUOTE);
             outputLine.append(SEPARATOR).append(QUOTE).append(transaction.getTags() != null ? transaction.getTags() : "").append(QUOTE);
             outputLine.append(SEPARATOR).append(QUOTE).append(transaction.getLocation() != null ? transaction.getLocation() : "").append(QUOTE);
-            outputLine.append(SEPARATOR).append(QUOTE).append(transaction.getAccount().getName()).append(QUOTE);
+            outputLine.append(SEPARATOR).append(QUOTE).append(FormatUtils.getAccountTitle(transaction)).append(QUOTE);
             outputLine.append(SEPARATOR).append(QUOTE).append(transaction.getPayee() != null ? transaction.getPayee().getName() : "").append(QUOTE);
             writer.write(outputLine.toString());
             writer.newLine();

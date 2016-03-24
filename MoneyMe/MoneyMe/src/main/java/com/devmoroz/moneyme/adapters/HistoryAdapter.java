@@ -33,6 +33,7 @@ import com.devmoroz.moneyme.utils.Constants;
 import com.devmoroz.moneyme.utils.CustomColorTemplate;
 import com.devmoroz.moneyme.utils.FormatUtils;
 import com.devmoroz.moneyme.utils.PhotoUtil;
+import com.devmoroz.moneyme.utils.Preferences;
 import com.devmoroz.moneyme.utils.ThemeUtils;
 import com.devmoroz.moneyme.utils.datetime.TimeUtils;
 import com.devmoroz.moneyme.widgets.TextBackgroundSpan;
@@ -48,6 +49,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
     private List<Transaction> transactions = Collections.emptyList();
     private Context appContext;
     private final Callback mCallback;
+    private boolean showPhoto = true;
 
     public interface Callback {
         void onDeleteClick(String id, TransactionType type);
@@ -58,6 +60,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
     public HistoryAdapter(Context context, Callback callback) {
         appContext = context;
         mCallback = callback;
+        showPhoto = Preferences.showPhoto(appContext);
     }
 
     public void setInOutData(List<Transaction> transactions) {
@@ -135,7 +138,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MainView
             tagsTextView.setVisibility(View.INVISIBLE);
         }
 
-        if (FormatUtils.isNotEmpty(wData.getPhoto())) {
+        if (showPhoto && FormatUtils.isNotEmpty(wData.getPhoto())) {
             PhotoUtil.setImageWithGlide(appContext, Uri.fromFile(new File(wData.getPhoto())), photoView);
             photoView.setVisibility(View.VISIBLE);
             holder.attachedPhoto.setOnClickListener(v -> {

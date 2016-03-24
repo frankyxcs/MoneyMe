@@ -376,7 +376,7 @@ public class DetailsActivity extends AppCompatActivity {
             yValues.add(new Entry(i % 2 == 0 ? 5f : 4.5f, i));
         }
         List<ILineDataSet> dataSets = new ArrayList<>();
-        LineDataSet set = new LineDataSet(yValues, "No chart data available");
+        LineDataSet set = new LineDataSet(yValues, getResources().getString(R.string.chart_no_data));
         set.setDrawFilled(true);
         set.setDrawValues(false);
         set.setColor(NO_DATA_COLOR);

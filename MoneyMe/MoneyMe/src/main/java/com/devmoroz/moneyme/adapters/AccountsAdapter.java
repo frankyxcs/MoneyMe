@@ -26,10 +26,11 @@ public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.Accoun
     private Context context;
     private final Callback mCallback;
     List<AccountRow> accountData = Collections.emptyList();
-    final int[] typesOfAccountIcons = {R.drawable.ic_cash_multiple,R.drawable.ic_credit_card,R.drawable.ic_bank};
+    final int[] typesOfAccountIcons = {R.drawable.ic_cash_multiple, R.drawable.ic_credit_card, R.drawable.ic_bank};
 
     public interface Callback {
         void onDeleteClick(String id);
+
         void onEditClick(String id);
     }
 
@@ -38,7 +39,7 @@ public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.Accoun
         this.mCallback = callback;
     }
 
-    public void setAccountsData(List<AccountRow> accountData){
+    public void setAccountsData(List<AccountRow> accountData) {
         this.accountData = accountData;
         notifyDataSetChanged();
     }
@@ -54,7 +55,7 @@ public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.Accoun
     public void onBindViewHolder(AccountsViewHolder holder, int position) {
         Currency currency = CurrencyCache.getCurrencyOrEmpty();
         AccountRow current = accountData.get(position);
-        holder.bind(current,currency,position);
+        holder.bind(current, currency, position);
     }
 
     @Override
@@ -62,7 +63,7 @@ public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.Accoun
         return accountData.size();
     }
 
-    public class AccountsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class AccountsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView accountName;
         TextView accountAvailable;
         TextView accountExpense;
@@ -73,18 +74,18 @@ public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.Accoun
 
         public AccountsViewHolder(View itemView) {
             super(itemView);
-            accountName = (TextView)itemView.findViewById(R.id.accountName);
-            accountAvailable = (TextView)itemView.findViewById(R.id.accountAvailable);
-            accountExpense = (TextView)itemView.findViewById(R.id.accountSpending);
-            accountIcon = (ImageView)itemView.findViewById(R.id.accountIcon);
+            accountName = (TextView) itemView.findViewById(R.id.accountName);
+            accountAvailable = (TextView) itemView.findViewById(R.id.accountAvailable);
+            accountExpense = (TextView) itemView.findViewById(R.id.accountSpending);
+            accountIcon = (ImageView) itemView.findViewById(R.id.accountIcon);
             moreMenu = (ImageView) itemView.findViewById(R.id.account_more);
             moreMenu.setOnClickListener(this);
         }
 
-        public void bind(AccountRow model, Currency currency,int position){
+        public void bind(AccountRow model, Currency currency, int position) {
             accountName.setText(model.name);
-            accountAvailable.setText(FormatUtils.attachAmountToTextWithoutBrackets(context.getString(R.string.balance),currency, model.total, false));
-            accountExpense.setText(FormatUtils.attachAmountToTextWithoutBrackets(context.getString(R.string.header_expenses),currency, model.expense, false));
+            accountAvailable.setText(FormatUtils.attachAmountToTextWithoutBrackets(context.getString(R.string.balance), currency, model.total, false));
+            accountExpense.setText(FormatUtils.attachAmountToTextWithoutBrackets(context.getString(R.string.header_expenses), currency, model.expense, false));
             accountIcon.setImageResource(typesOfAccountIcons[model.type]);
             this.accountId = model.id;
             this.position = position;
@@ -109,6 +110,9 @@ public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.Accoun
                 }
             });
             popup.inflate(R.menu.menu_account);
+            if (accountData.size() == 1) {
+                popup.getMenu().findItem(R.id.remove_account).setVisible(false);
+            }
             popup.show();
         }
     }

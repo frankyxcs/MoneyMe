@@ -5,11 +5,16 @@ import android.os.Environment;
 
 import com.devmoroz.moneyme.export.backup.DBExport;
 
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.OutputStream;
 
 public class ExportParams {
 
-    public enum ExportTarget {SD_CARD, SHARING, DROPBOX}
+    public enum ExportTarget {SD_CARD, SHARING, DROPBOX, DRIVE}
 
 
     public enum ExportType {
@@ -56,6 +61,8 @@ public class ExportParams {
     public static final String EXPORT_FOLDER_PATH =  BASE_FOLDER_PATH + "/exports/";
 
     public static final String BACKUP_FOLDER_PATH = BASE_FOLDER_PATH + "/backups/";
+
+    public static final String RECEIPTS_FOLDER_PATH = BASE_FOLDER_PATH + "/receipts/";
 
     private ExportTarget mExportTarget = ExportTarget.SHARING;
     private ExportType mExportType = ExportType.Backup;

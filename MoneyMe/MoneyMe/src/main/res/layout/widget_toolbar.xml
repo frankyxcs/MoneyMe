@@ -101,5 +101,16 @@
         android:gravity="center"
         android:padding="4dp"
         android:src="@drawable/ic_remove_circle_white_36dp" />
+
+        <ImageView
+            android:id="@+id/widget_transfer"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:layout_weight="1"
+            android:background="@drawable/icon_selector"
+            android:gravity="center"
+            android:padding="4dp"
+            android:src="@drawable/ic_swap_vertical_circle_white_36dp" />
     </LinearLayout>
 </LinearLayout>

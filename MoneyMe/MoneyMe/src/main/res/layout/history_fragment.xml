@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center">
@@ -21,21 +22,27 @@
             android:paddingRight="16dp"
             android:paddingStart="16dp"
             android:orientation="horizontal">
-            <TextView
+            <me.grantland.widget.AutofitTextView
                 android:id="@+id/dashboard_total_balance"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:maxLines="1"
                 android:text="Баланс: 2000$"
-                style="@style/Text.Body2" />
-            <TextView
+                style="@style/Text.Body2"
+                app:minTextSize="12sp"/>
+            <me.grantland.widget.AutofitTextView
                 android:id="@+id/text_date_period"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:maxLines="1"
                 android:gravity="right"
                 android:text="Nov 05 - Dec 1"
-                style="@style/Text.Body1" />
+                style="@style/Text.Body1"
+                app:minTextSize="12sp"/>
         </LinearLayout>
 
         <LinearLayout

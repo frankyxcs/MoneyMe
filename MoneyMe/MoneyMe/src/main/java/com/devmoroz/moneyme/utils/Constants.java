@@ -34,6 +34,7 @@ public class Constants {
     public static final String INTENT_WIDGET = "widget_id";
     public static final String ACTION_LAUNCH_OUTCOME = "ACTION_LAUNCH_OUTCOME";
     public static final String ACTION_LAUNCH_INCOME = "ACTION_LAUNCH_INCOME";
+    public static final String ACTION_LAUNCH_TRANSFER = "ACTION_LAUNCH_TRANSFER";
     public static final String ACTION_LAUNCH_TODO = "ACTION_LAUNCH_TODO";
     public static final String[] BACKUP_TABLES = {
             "account",

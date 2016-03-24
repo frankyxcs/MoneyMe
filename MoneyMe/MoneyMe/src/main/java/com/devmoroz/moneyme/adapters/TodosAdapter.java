@@ -2,6 +2,7 @@ package com.devmoroz.moneyme.adapters;
 
 
 import android.content.Context;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -130,7 +131,7 @@ public class TodosAdapter extends RecyclerView.Adapter<TodosAdapter.MainViewHold
             setTextView(mTodoTitleTextView, model.getTitle());
             setTextView(mTodoContentTextView, model.getContent());
             mTodoTimeTextView.setText(TimeUtils.formatHumanFriendlyShortDateTime(context, model.getUpdatedDateLong()));
-            card.setBackgroundColor(CustomColorTemplate.TODO_COLORS[model.getColor()]);
+            ((CardView)card).setCardBackgroundColor(CustomColorTemplate.TODO_COLORS[model.getColor()]);
             if (model.isShowReminderIcon()) {
                 mTodoIconHasReminder.setVisibility(View.VISIBLE);
             } else {

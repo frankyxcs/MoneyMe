@@ -45,4 +45,9 @@
 
     <color name="holo_blue_dark">#880099CC</color>
     <color name="holo_blue_light">#8833B5E5</color>
+
+    <color name="colorPrimaryIntro1">#673AB7</color>
+    <color name="colorPrimaryDarkIntro1">#512DA8</color>
+    <color name="colorPrimaryIntro2">#3F51B5</color>
+    <color name="colorPrimaryDarkIntro2">#303F9F</color>
 </resources>

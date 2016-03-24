@@ -29,7 +29,6 @@ public class ImportAsyncTask extends AsyncTask<Uri, Void, Boolean> {
     @Override
     protected Boolean doInBackground(Uri... uris) {
         try {
-            InputStream accountInputStream = mContext.getContentResolver().openInputStream(uris[0]);
 
         } catch (Exception exception){
 

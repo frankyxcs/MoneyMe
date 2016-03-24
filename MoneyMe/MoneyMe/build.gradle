@@ -1,5 +1,18 @@
+import java.text.SimpleDateFormat
+
 apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
+
+def versionMajor = 1
+def versionMinor = 0
+def versionPatch = 0
+def versionBuild = 0
+
+def buildTime() {
+    def df = new SimpleDateFormat("yyyyMMdd HH:mm 'UTC'")
+    df.setTimeZone(TimeZone.getTimeZone("UTC"))
+    return df.format(new Date())
+}
 
 android {
     compileSdkVersion 23
@@ -9,8 +22,12 @@ android {
         applicationId "com.devmoroz.moneyme"
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
+        versionCode versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
+        versionName "${versionMajor}.${versionMinor}.${versionPatch}"
+        resValue "string", "app_version_name", "${versionName}"
+        resValue "string", "app_minor_version", "${versionMinor}"
+        buildConfigField "boolean", "CAN_REQUEST_RATING", "false"
+        buildConfigField "String", "BUILD_TIME", "\"${buildTime()}\""
     }
     buildTypes {
         release {
@@ -26,8 +43,24 @@ android {
     }
 
     compileOptions {
+        encoding "UTF-8"
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    productFlavors {
+        development {
+            applicationId 'com.devmoroz.moneyme'
+            resValue "string", "app_name", "MoneyMe-dev"
+            versionName "${versionMajor}.${versionMinor}.${versionPatch}-dev${versionBuild}"
+            resValue "string", "app_version_name", "${versionName}"
+        }
+
+        production {
+            resValue "string", "app_name", "MoneyMe"
+            buildConfigField "boolean", "CAN_REQUEST_RATING", "true"
+        }
+
     }
 }
 
@@ -40,14 +73,16 @@ dependencies {
     compile 'com.android.support:preference-v7:23.2.1'
     compile 'com.android.support:support-v4:23.2.1'
     compile 'com.google.android.gms:play-services-maps:8.4.0'
+    compile 'com.google.android.gms:play-services-drive:8.4.0'
+    compile 'com.google.android.gms:play-services-location:8.4.0'
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'com.getbase:floatingactionbutton:1.10.1'
     compile 'com.squareup:otto:1.3.8'
     compile 'io.reactivex:rxandroid:1.1.0'
     compile 'io.reactivex:rxjava:1.1.0'
-    compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.squareup.okhttp:okhttp:2.4.0'
-    compile 'com.github.PhilJay:MPAndroidChart:v2.2.0'
+    compile 'com.squareup:android-times-square:1.6.5@aar'
+    compile 'com.github.PhilJay:MPAndroidChart:v2.2.2'
     compile('com.github.afollestad.material-dialogs:core:0.8.5.6@aar') {
         transitive = true
     }
@@ -55,16 +90,14 @@ dependencies {
         transitive = true
     }
     compile 'com.daimajia.numberprogressbar:library:1.2@aar'
-    compile 'com.romainpiel.shimmer:library:1.4.0@aar'
-    compile 'com.dropbox.core:dropbox-core-sdk:2.0-beta-2'
     compile 'com.github.paolorotolo:appintro:3.4.0'
     compile 'me.grantland:autofittextview:0.2.+'
     compile 'net.danlew:android.joda:2.9.2'
-    compile 'com.google.code.gson:gson:2.5'
-    compile 'io.nlopez.smartlocation:library:3.2.1'
+    compile 'com.google.code.gson:gson:2.6.2'
     compile 'com.tbruyelle.rxpermissions:rxpermissions:0.5.1@aar'
     compile 'uk.co.chrisjenx:calligraphy:2.1.0'
     compile 'com.github.federicoiosue:CheckListView:3.0.2'
+    compile 'io.github.kobakei:ratethisapp:1.0.1'
     compile files('libs/ormlite-android-4.48.jar')
     compile files('libs/ormlite-core-4.48.jar')
 }

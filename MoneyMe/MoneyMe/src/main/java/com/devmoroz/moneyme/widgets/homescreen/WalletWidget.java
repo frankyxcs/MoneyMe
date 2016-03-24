@@ -47,6 +47,14 @@ public class WalletWidget extends WidgetProvider {
             views.setViewVisibility(R.id.widget_accounts_balance_container, View.GONE);
         }
 
+        if(balance.MultiAccounts){
+            views.setOnClickPendingIntent(R.id.widget_transfer, pendingIntentsMap.get(R.id.widget_transfer));
+            views.setViewVisibility(R.id.widget_transfer, View.VISIBLE);
+        }else{
+            views.setViewVisibility(R.id.widget_transfer, View.GONE);
+        }
+
+
         return views;
     }
 

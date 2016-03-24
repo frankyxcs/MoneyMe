@@ -54,6 +54,7 @@
     </style>
     <style name="Preference.DialogPreference.TimePickerPreference">
         <item name="dialogLayout">@layout/preference_timepicker_dialog</item>
+        <item name="android:windowNoTitle">true</item>
     </style>
 
     <style name="BlackInput">

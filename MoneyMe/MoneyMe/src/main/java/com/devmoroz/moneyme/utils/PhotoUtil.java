@@ -9,16 +9,9 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
-import com.devmoroz.moneyme.logging.L;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
 
 import java.io.File;
 
@@ -91,14 +84,6 @@ public class PhotoUtil {
             }
         }
         return fileName;
-    }
-
-    public static void setImageWithPicasso(Context context, String path, ImageView target) {
-        if (!path.contains("file:")) {
-            Picasso.with(context).load("file://" + path).fit().into(target);
-        } else {
-            Picasso.with(context).load(path).fit().into(target);
-        }
     }
 
     public static void setImageWithGlide(Context context, Uri imageUri, ImageView targetImage) {

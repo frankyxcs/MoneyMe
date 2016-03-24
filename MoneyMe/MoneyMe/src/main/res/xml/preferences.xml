@@ -23,8 +23,11 @@
             android:defaultValue="0"
             android:layout="@layout/custom_pref"/>
 
-
-
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="@string/pref_history_show_photos"
+            android:title="@string/pref_history_show_photos_title"
+            android:layout="@layout/custom_checkbox_pref"/>
 
     </android.support.v7.preference.PreferenceCategory>
 
@@ -43,7 +46,7 @@
     <android.support.v7.preference.PreferenceCategory
         android:title="@string/backup">
 
-        <android.support.v7.preference.CheckBoxPreference
+        <android.support.v7.preference.SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="@string/pref_auto_backup"
             android:title="@string/auto_backup"

@@ -16,6 +16,8 @@ public class Preferences {
     public static final String DROPBOX_AUTHORIZE = "dropbox_authorize";
     public static final String DROPBOX_REMOTE_FILE = "DROPBOX_REMOTE_FILE";
     public static final String DROPBOX_LAST_SYNC_DATE = "DROPBOX_LAST_SYNC_DATE";
+    public static final String GOOGLE_DRIVE_ACCOUNT = "GOOGLE_DRIVE_ACCOUNT";
+    public static final String GOOGLE_DRIVE_FOLDER = "GOOGLE_DRIVE_FOLDER";
 
     public static void reset(Context context) {
         PreferenceManager.getDefaultSharedPreferences(context)
@@ -29,6 +31,12 @@ public class Preferences {
                 .getString(context.getString(R.string.pref_history_order),
                         context.getString(R.string.pref_history_order_value_desc))
                 .equals(context.getString(R.string.pref_history_order_value_desc));
+    }
+
+    public static boolean showPhoto(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(context.getString(R.string.pref_history_show_photos),
+                        true);
     }
 
     public static int getHistoryPeriod(Context context) {
@@ -116,6 +124,30 @@ public class Preferences {
     public static boolean isDropboxAuthorized(Context context) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         return sharedPreferences.getBoolean(DROPBOX_AUTHORIZE, false);
+    }
+
+    public static void storeGoogleDriveAccount(Context context, String account) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        sharedPreferences.edit()
+                .putString(GOOGLE_DRIVE_ACCOUNT, account)
+                .apply();
+    }
+
+    public static String getGoogleDriveAccount(Context context) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPreferences.getString(GOOGLE_DRIVE_ACCOUNT, null);
+    }
+
+    public static void storeDriveBackupFolder(Context context, String folder) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        sharedPreferences.edit()
+                .putString(GOOGLE_DRIVE_FOLDER, folder)
+                .apply();
+    }
+
+    public static String getDriveBackupFolder(Context context) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPreferences.getString(GOOGLE_DRIVE_FOLDER, null);
     }
 
 }

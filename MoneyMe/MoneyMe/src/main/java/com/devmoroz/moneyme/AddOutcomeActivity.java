@@ -49,6 +49,7 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.devmoroz.moneyme.adapters.AccountSpinnerAdapter;
 import com.devmoroz.moneyme.adapters.CategorySpinnerWithIconsAdapter;
+import com.devmoroz.moneyme.export.ExportParams;
 import com.devmoroz.moneyme.fragments.custom.DatePickerFragment;
 import com.devmoroz.moneyme.fragments.custom.TimePickerFragment;
 import com.devmoroz.moneyme.helpers.DBHelper;
@@ -425,21 +426,19 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
             switch (requestCode) {
                 case FROM_GALLERY_REQUEST_CODE:
                     transactionEdit.setPhotoPath(extractImageUrlFromGallery(this, data));
-                    L.appendLog("from gallery");
-                    L.appendLog(transactionEdit.getPhotoPath());
                     setPic();
                     break;
                 case SAVE_REQUEST_CODE:
-                    File f = new File(transactionEdit.getPhotoPath());
-                    Uri contentUri = Uri.fromFile(f);
-                    L.appendLog("take photo");
-                    L.appendLog(transactionEdit.getPhotoPath());
                     setPic();
                     break;
                 case TAGS_REQUEST_CODE:
                     transactionEdit.setTags(getTagsExtra(data));
                     setTags(transactionEdit.getTags());
                     break;
+            }
+        } else {
+            if (requestCode == SAVE_REQUEST_CODE) {
+                transactionEdit.setPhotoPath(null);
             }
         }
     }
@@ -472,24 +471,28 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void takePhoto() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            File photoFile = null;
-            try {
-                if (checkStorage()) {
-                    photoFile = filename();
+        PermissionsHelper.requestPermission(AddOutcomeActivity.this, Manifest.permission.CAMERA, R.string
+                .permission_camera_explain, AddOutcomeActivity.this.findViewById(R.id.coordinator_outcome), () -> {
+            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                File photoFile = null;
+                try {
+                    if (checkStorage()) {
+                        photoFile = filename();
+                    }
+                } catch (IOException ex) {
+                    L.t(getApplicationContext(), "No SD card");
                 }
-            } catch (IOException ex) {
-                L.t(getApplicationContext(), "No SD card");
+                if (photoFile != null) {
+                    transactionEdit.setPhotoPath(photoFile.getAbsolutePath());
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+                    startActivityForResult(takePictureIntent, SAVE_REQUEST_CODE);
+                }
+            } else {
+                showMessage(R.string.feature_not_available_on_this_device);
             }
-            if (photoFile != null) {
-                transactionEdit.setPhotoPath(photoFile.getAbsolutePath());
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
-                startActivityForResult(takePictureIntent, SAVE_REQUEST_CODE);
-            }
-        } else {
-            showMessage(R.string.feature_not_available_on_this_device);
-        }
+        });
+
     }
 
     private void chosePhotoFromGallery() {
@@ -502,7 +505,7 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
         String time = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         photoFileName = time + ".jpg";
         File photoDir =
-                new File(Environment.getExternalStorageDirectory() + "/MoneyMe/Receipts");
+                new File(ExportParams.RECEIPTS_FOLDER_PATH);
         if (!photoDir.exists()) {
             photoDir.mkdirs();
         }
@@ -533,7 +536,7 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void displayLocationDialog() {
-        if(AppUtils.isNetworkOn(MoneyApplication.getAppContext())) {
+        if (AppUtils.isNetworkOn(MoneyApplication.getAppContext())) {
             mGoogleApiHelper.start();
             PermissionsHelper.requestPermission(AddOutcomeActivity.this, Manifest.permission.ACCESS_FINE_LOCATION, R.string
                     .permission_coarse_location, AddOutcomeActivity.this.findViewById(R.id.coordinator_outcome), () -> {
@@ -559,7 +562,7 @@ public class AddOutcomeActivity extends AppCompatActivity implements View.OnClic
                         .build();
                 dialog.show();
             });
-        }else{
+        } else {
             showMessage(R.string.no_internet_connection);
         }
     }

@@ -1,31 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-android:layout_width="match_parent" android:layout_height="wrap_content"
-android:gravity="center_vertical"
-android:padding="10dp"
-android:background="?android:attr/selectableItemBackground">
-
-<RelativeLayout android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_weight="1">
+    android:background="?android:attr/selectableItemBackground"
+    android:gravity="center_vertical"
+    android:minHeight="?android:attr/listPreferredItemHeight"
+    android:padding="10dp">
 
-    <TextView android:id="@+android:id/title"
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:singleLine="true"
-        android:fadingEdge="horizontal"
-        style="@style/Text.Body2" />
+        android:layout_weight="1">
 
-    <TextView android:id="@android:id/summary"
-        android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:layout_below="@android:id/title" android:layout_alignLeft="@android:id/title"
-        android:textAppearance="?android:attr/textAppearanceSmall"/>
+        <TextView
+            android:id="@+android:id/title"
+            style="@style/Text.Subhead"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fadingEdge="horizontal"
+            android:singleLine="true" />
 
-</RelativeLayout>
+        <TextView
+            android:id="@android:id/summary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@android:id/title"
+            android:layout_below="@android:id/title"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
 
-<!-- Preference should place its actual preference widget here. -->
-<LinearLayout android:id="@android:id/widget_frame"
-    android:layout_width="wrap_content" android:layout_height="match_parent"
-    android:gravity="center_vertical" android:orientation="vertical"/>
+    </RelativeLayout>
+
+    <!-- Preference should place its actual preference widget here. -->
+    <LinearLayout
+        android:id="@android:id/widget_frame"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:orientation="vertical" />
 
 </LinearLayout>
