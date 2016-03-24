@@ -5,6 +5,7 @@ import com.devmoroz.moneyme.models.Transaction;
 import com.devmoroz.moneyme.models.TransactionType;
 import com.devmoroz.moneyme.utils.datetime.DataInterval;
 import com.j256.ormlite.dao.BaseDaoImpl;
+import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
@@ -113,9 +114,9 @@ public class TransactionDAO extends BaseDaoImpl<Transaction, UUID> {
         final Interval historyInterval = DataInterval.getHistoryInterval(System.currentTimeMillis(), 1, monthStart);
         Date start;
         Date end = new Date(historyInterval.getEndMillis());
-        if(monthStart == 1){
+        if (monthStart == 1) {
             start = new Date(historyInterval.getStartMillis());
-        }else{
+        } else {
             start = new Date(historyInterval.getStart().minusDays(1).getMillis());
         }
 
@@ -132,9 +133,9 @@ public class TransactionDAO extends BaseDaoImpl<Transaction, UUID> {
         final Interval historyInterval = DataInterval.getHistoryInterval(System.currentTimeMillis(), 1, monthStart);
         Date start;
         Date end = new Date(historyInterval.getEndMillis());
-        if(monthStart == 1){
+        if (monthStart == 1) {
             start = new Date(historyInterval.getStartMillis());
-        }else{
+        } else {
             start = new Date(historyInterval.getStart().minusDays(1).getMillis());
         }
 
@@ -153,16 +154,16 @@ public class TransactionDAO extends BaseDaoImpl<Transaction, UUID> {
             final Interval historyInterval = DataInterval.getHistoryInterval(System.currentTimeMillis(), period, monthStart);
             Date start;
             Date end = new Date(historyInterval.getEndMillis());
-            if(monthStart == 1){
+            if (monthStart == 1) {
                 start = new Date(historyInterval.getStartMillis());
-            }else{
+            } else {
                 start = new Date(historyInterval.getStart().minusDays(1).getMillis());
             }
 
             queryBuilder.where().between("dateAdded", start, end).and().eq("type", type);
             PreparedQuery<Transaction> preparedQuery = queryBuilder.prepare();
             return query(preparedQuery);
-        }else{
+        } else {
             return queryForAll();
         }
     }
@@ -174,16 +175,16 @@ public class TransactionDAO extends BaseDaoImpl<Transaction, UUID> {
             final Interval historyInterval = DataInterval.getHistoryInterval(System.currentTimeMillis(), period, monthStart);
             Date start;
             Date end = new Date(historyInterval.getEndMillis());
-            if(monthStart == 1){
+            if (monthStart == 1) {
                 start = new Date(historyInterval.getStartMillis());
-            }else{
+            } else {
                 start = new Date(historyInterval.getStart().minusDays(1).getMillis());
             }
 
             queryBuilder.where().between("dateAdded", start, end);
             PreparedQuery<Transaction> preparedQuery = queryBuilder.prepare();
             return query(preparedQuery);
-        }else{
+        } else {
             return queryForAll();
         }
     }
@@ -206,5 +207,54 @@ public class TransactionDAO extends BaseDaoImpl<Transaction, UUID> {
         long numRows = queryBuilder.countOf();
 
         return numRows > 0;
+    }
+
+    public long getTimestampOfEarliestTransactionForAccount(String accountId) {
+        return getTimestamp("MIN", UUID.fromString(accountId));
+    }
+
+    public long getTimestampOfLatestTransactionForAccount(String accountId) {
+        return getTimestamp("MAX", UUID.fromString(accountId));
+    }
+
+    public long getTimestampOfEarliestTransaction() {
+        return getTimestamp("MIN");
+    }
+
+    public long getTimestampOfLatestTransaction() {
+        return getTimestamp("MAX");
+    }
+
+    private long getTimestamp(String mode, UUID accountId) {
+        long timestamp = 0;
+        QueryBuilder<Transaction, UUID> queryBuilder = queryBuilder();
+        try {
+            queryBuilder.selectRaw(mode + "(dateAdded)");
+            queryBuilder.where().eq("accountFrom_id", accountId).or().eq("accountTo_id", accountId);
+            GenericRawResults<String[]> results = queryRaw(queryBuilder.prepareStatementString());
+            String[] result = results.getFirstResult();
+            if (result != null && result.length >= 1 && result[0] != null) {
+                timestamp = Long.parseLong(result[0]);
+            }
+        } catch (SQLException ex) {
+
+        }
+        return timestamp;
+    }
+
+    private long getTimestamp(String mode) {
+        long timestamp = 0;
+        QueryBuilder<Transaction, UUID> queryBuilder = queryBuilder();
+        try {
+            queryBuilder.selectRaw(mode + "(dateAdded)");
+            GenericRawResults<String[]> results = queryRaw(queryBuilder.prepareStatementString());
+            String[] result = results.getFirstResult();
+            if (result != null && result.length >= 1 && result[0] != null) {
+                timestamp = Long.parseLong(result[0]);
+            }
+        } catch (SQLException ex) {
+
+        }
+        return timestamp;
     }
 }

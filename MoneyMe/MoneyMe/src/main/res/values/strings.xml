@@ -8,6 +8,7 @@
     <string name="income_toolbar_name">Доход</string>
     <string name="outcome_toolbar_name">Расход</string>
     <string name="transfer_toolbar_name">Перевод</string>
+    <string name="report_toolbar_name">Статистика</string>
     <string name="default_add_toolbar_name">Кошелек</string>
     <string name="text_undo">Отмена</string>
     <string name="added_income" formatted="false">%s: добавлено %.2f%s</string>
@@ -330,4 +331,5 @@
     <string name="chart_no_data">Нет данных для отображения</string>
     <string name="done">ГОТОВО</string>
     <string name="back">НАЗАД</string>
+    <string name="period">Период:</string>
 </resources>
